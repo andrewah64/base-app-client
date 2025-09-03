@@ -1,0 +1,9 @@
+{{$numErrs := len .ResultSet.Validator.Errors}}
+
+<title>{{.T "web-core-unauth-ssn-aur-reg-page.title"}} : {{if gt $numErrs 1}}{{.T "web-core-unauth-ssn-aur-reg-page.title-warning-plural" "n" (printf "%d" $numErrs)}}{{else}}{{.T "web-core-unauth-ssn-aur-reg-page.title-warning-singular" "n" (printf "%d" $numErrs)}}{{end}}</title>
+
+<ul>
+	{{ range $k, $v := .ResultSet.Validator.Errors }}
+		<li id="{{$k}}_error">{{$v}}</li>
+	{{ end }}
+</ul>

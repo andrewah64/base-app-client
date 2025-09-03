@@ -1,0 +1,11 @@
+[web-core-unauth-otp-ssn-aur-page]
+
+title               = "<Application> : enter the one-time password"
+header              = "Enter your code"
+
+[web-core-unauth-otp-ssn-aur-mod-form]
+
+error-otp-cd        = "The one-time password is incorrect"
+error-timeout       = "Timeout. Login again"
+input-label-otp-cd  = "Enter the 6-digit security code from your authenticator app"
+submit-button-label = "Continue"

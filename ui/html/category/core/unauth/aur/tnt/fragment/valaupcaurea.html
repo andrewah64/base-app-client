@@ -1,0 +1,23 @@
+<span hx-swap-oob="true" id="aur-tnt-aupc-val-aur-ea-avb">
+	{{if .ResultSet.AurEaAvbPass}}
+	<span class="text-green-700">
+		{{.T "web-core-unauth-aur-tnt-aupc-tab.message-aur-ea-avb-success"}}
+	</span>
+	{{else}}
+	<span class="text-red-700">
+		{{.T "web-core-unauth-aur-tnt-aupc-tab.message-aur-ea-avb-error"}}
+	</span>
+	{{end}}
+</span>
+
+<span hx-swap-oob="true" id="aur-tnt-aupc-val-aur-ea-vld">
+	{{if .ResultSet.AurEaVldPass}}
+	<span class="text-green-700">
+		{{.T "web-core-unauth-aur-tnt-aupc-tab.message-aur-ea-vld-success"}}
+	</span>
+	{{else}}
+	<span class="text-red-700">
+		{{.T "web-core-unauth-aur-tnt-aupc-tab.message-aur-ea-vld-error"}}
+	</span>
+	{{end}}
+</span>

@@ -1,0 +1,101 @@
+def DecodeThing(thing)
+	set t to thing.toString()
+
+	if t.length mod 2 is 0 then
+		if t.length mod 4 is not 0 then
+			set t to t + "=="
+		end
+	else
+		if t.length mod 4 is 1 then
+			set t to t + "==="
+		else
+			set t to t + "="
+		end
+	end
+
+	set t to t.replaceAll("-", "+").replaceAll("_", "/")
+
+	make a TextEncoder called encoder
+
+	return getBytesFromBase64(t)
+end
+
+def EncodeThing(thing)
+	make a Uint8Array from thing called t
+
+	return getBase64WebEncodingFromBytes(t)
+end
+
+behavior PasskeyAuthenticator (v1)
+	on htmx:afterRequest from me
+		if     event.detail.pathInfo.requestPath                  == '/web/core/unauth/ssn/aur/pky-atn-bgn'
+		   and event.detail.xhr.getResponseHeader('content-type') == 'application/json'
+			add .htmx-request            to me
+			set aur                      to v1.value
+			set opts                     to JSON.parse(event.detail.xhr.responseText)
+			set opts.publicKey.challenge to DecodeThing(opts.publicKey.challenge)
+
+			repeat opts.publicKey.allowCredentials.length times index i
+				set opts.publicKey.allowCredentials[i].id to DecodeThing(opts.publicKey.allowCredentials[i].id)
+			end
+
+			set credential to navigator.credentials.get(opts)
+
+			set credential to {
+				id                     : credential.id,
+				type                   : credential.type,
+				rawId                  : EncodeThing(credential.rawId),
+				clientExtensionResults : credential.getClientExtensionResults(),
+				response: {
+					authenticatorData : EncodeThing(credential.response.authenticatorData),
+					clientDataJSON    : EncodeThing(credential.response.clientDataJSON),
+					signature         : EncodeThing(credential.response.signature),
+					userHandle        : "",
+				},
+			}
+
+			fetch `/web/core/unauth/ssn/aur/pky-atn-end/${aur}`
+				{
+				    method  : 'post'
+				,   headers : {
+				                  'X-CSRF-Token' : event.detail.requestConfig.headers['X-CSRF-Token']
+				              }
+				,   body    : JSON.stringify(credential)
+				}
+			then put JSON.parse(result) into r
+
+			remove .htmx-request from me
+
+			set window.location to `${r.eppPt}`
+		end
+	catch error
+		remove .htmx-request from me
+		log error
+	end
+end
+
+behavior PasskeyRegistrar (v1)
+	on htmx:afterRequest
+		if     event.detail.pathInfo.requestPath                  == '/web/core/unauth/aur/tnt/pky-reg-bgn'
+		   and event.detail.xhr.getResponseHeader('content-type') == 'application/json'
+			add .htmx-request            to me
+			set opts                     to JSON.parse(event.detail.xhr.responseText)
+			set opts.publicKey.challenge to DecodeThing(opts.publicKey.challenge)
+			set opts.publicKey.user.id   to DecodeThing(opts.publicKey.user.id)
+			set credential               to navigator.credentials.create(opts)
+			set aur                      to v1.value
+			fetch `/web/core/unauth/aur/tnt/pky-reg-end/${aur}`
+				{
+				    method  : 'post'
+				,   headers : {
+				                  'X-CSRF-Token' : event.detail.requestConfig.headers['X-CSRF-Token']
+				              }
+				,   body    : JSON.stringify(credential)
+				}
+			remove .htmx-request from me
+		end
+	catch error
+		remove .htmx-request from me
+		log error
+	end
+end

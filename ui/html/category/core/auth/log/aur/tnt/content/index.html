@@ -1,0 +1,198 @@
+{{ define "title" }}{{.T "web-core-auth-log-aur-tnt-page.title"}}{{ end }}
+
+{{ define "content" }}
+<div id="content">
+	{{if .HasRole "role_web_core_auth_log_aur_tnt_inf"}}
+		{{if .HasRole "role_web_core_auth_log_aur_tnt_mod"}}
+		<div class="grid grid-cols-2 grid-rows-1 border-b border-gray-200 pb-5 mb-5">
+		{{else}}
+		<div class="grid grid-cols-2 grid-rows-1 mb-8">
+		{{end}}
+			<div class="col-start-1 row-start-1">
+				<h2 class="text-base font-semibold text-gray-900">
+					{{.T "web-core-auth-log-aur-tnt-inf-form.header"}}
+				</h2>
+			</div>
+			<div class="col-start-1 row-start-2">
+				<p class="mt-2 max-w-4xl text-sm text-gray-500">
+					{{.T "web-core-auth-log-aur-tnt-inf-form.descr"}}
+				</p>
+			</div>
+			<div class="col-start-2 row-start-1 flex items-center gap-6">
+				<h2 class="text-base font-semibold text-gray-900">
+					{{.T "web-core-auth-log-aur-tnt-inf-form.filter-header"}}
+				</h2>
+
+				<img id="log-aur-tnt-inf-form-indicator"
+				     class="htmx-indicator htmx-spinner"
+				     src="/static/img/spinner-black.svg"
+				     alt="Progress indicator">
+			</div>
+			<div class="col-start-2 row-start-2">
+				<form id="log-aur-tnt-inf-form"
+				      hx-swap="outerHTML"
+				      hx-get="/web/core/auth/log/aur/tnt"
+				      hx-target="#log-aur-tnt-inf-res"
+				      hx-trigger="mod-log from:body, change, keyup delay:200ms"
+				      hx-push-url="true"
+				      hx-indicator="#log-aur-tnt-inf-form-indicator">
+					<fieldset>
+						<input type="hidden"
+						       name="log-aur-tnt-inf-page-number"
+						       id="log-aur-tnt-inf-page-number"
+						       value="{{ .ResultSet.PageNumber }}">
+
+						<div class="grid grid-rows-2 grid-cols-4 w-fit">
+							<div class="row-start-1 col-start-1">
+								<p class="mt-2 max-w-4xl text-sm text-gray-500">
+									<label for="log-aur-tnt-inf-aur-nm">
+										{{.T "web-core-auth-log-aur-tnt-inf-form.input-label-aur-nm"}}
+									</label>
+								</p>
+							</div>
+							<div class="row-start-2 col-start-1 flex items-center rounded-md bg-white pl-3 outline-1 -outline-offset-1 outline-gray-300 focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-indigo-600">
+								<input type="text"
+								       name="log-aur-tnt-inf-aur-nm"
+								       id="log-aur-tnt-inf-aur-nm"
+								       class="block min-w-0 grow py-1.5 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6">
+							</div>
+							<div class="row-start-1 col-start-2">
+								<p class="mt-2 max-w-4xl text-sm text-gray-500">
+									<label for="log-aur-tnt-inf-epp-pt">
+										{{.T "web-core-auth-log-aur-tnt-inf-form.input-label-epp-pt"}}
+									</label>
+								</p>
+							</div>
+							<div class="row-start-2 col-start-2 flex items-center rounded-md bg-white pl-3 outline-1 -outline-offset-1 outline-gray-300 focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-indigo-600">
+								<input type="text"
+								       name="log-aur-tnt-inf-epp-pt"
+								       id="log-aur-tnt-inf-epp-pt"
+								       class="block min-w-0 grow py-1.5 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6">
+							</div>
+							<div class="row-start-1 col-start-3">
+								<p class="mt-2 max-w-4xl text-sm text-gray-500">
+									<label for="log-aur-tnt-inf-hrm-id">
+										{{.T "web-core-auth-log-aur-tnt-inf-form.input-label-hrm-id"}}
+									</label>
+								</p>
+							</div>
+							<div class="row-start-2 col-start-3">
+								<select name="log-aur-tnt-inf-hrm-id"
+									id="log-aur-tnt-inf-hrm-id"
+									class="w-full appearance-none rounded-md bg-white py-1.5 pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6">
+									<option value="">{{.T "web-core-auth-log-aur-tnt-inf-form.input-option-hrm-id-all"}}</option>
+									{{ range $hrm := .FormOpts.Search.hrm }}
+										<option value="{{$hrm.Id}}">{{ $hrm.Value }}</option>
+									{{ end }}
+								</select>
+							</div>
+							<div class="row-start-1 col-start-4">
+								<p class="mt-2 max-w-4xl text-sm text-gray-500">
+									<label for="log-aur-tnt-inf-lvl-id">
+										{{.T "web-core-auth-log-aur-tnt-inf-form.input-label-lvl-id"}}
+									</label>
+								</p>
+							</div>
+							<div class="row-start-2 col-start-4">
+								<select name="log-aur-tnt-inf-lvl-id"
+									id="log-aur-tnt-inf-lvl-id"
+									class="w-full appearance-none rounded-md bg-white py-1.5 pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6">
+									<option value="">{{.T "web-core-auth-log-aur-tnt-inf-form.input-option-lvl-id-all"}}</option>
+									{{ range $lvl := .FormOpts.Search.lvl }}
+										<option value="{{$lvl.Id}}">{{ $lvl.Value }}</option>
+									{{ end }}
+								</select>
+							</div>
+						</div>
+					</fieldset>
+				</form>
+			</div>
+		</div>
+
+		{{if .HasRole "role_web_core_auth_log_aur_tnt_mod"}}
+		<div class="grid grid-cols-2 grid-rows-1 mb-8">
+			<div class="col-start-1 row-start-1">
+				<h2 class="text-base font-semibold text-gray-900">
+					{{.T "web-core-auth-log-aur-tnt-mod-bulk-form.header"}}
+				</h2>
+			</div>
+			<div class="col-start-1 row-start-2">
+				<p class="mt-2 max-w-4xl text-sm text-gray-500">
+					{{.T "web-core-auth-log-aur-tnt-mod-bulk-form.descr"}}
+				</p>
+			</div>
+			<div class="col-start-2 row-start-2">
+				<form id="log-aur-tnt-mod-form"
+				      hx-put="/web/core/auth/log/aur/tnt"
+				      hx-include="#log-aur-tnt-inf-form"
+				      hx-swap="none">
+					<fieldset>
+						<div class="grid grid-rows-2 grid-cols-2 w-fit">
+							<div class="row-start-1 col-start-1">
+								<p class="mt-2 max-w-4xl text-sm text-gray-500">
+									<label for="log-aur-tnt-mod-tgt-lvl-id">
+										{{ .T "web-core-auth-log-aur-tnt-mod-bulk-form.input-label-tgt-lvl-id" }}
+									</label>
+								</p>
+							</div>
+							<div class="row-start-2 col-start-1">
+								<select name="log-aur-tnt-mod-tgt-lvl-id"
+									id="log-aur-tnt-mod-tgt-lvl-id"
+									class="w-full appearance-none rounded-md bg-white py-1.5 pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6">
+									{{ range $lvl := .FormOpts.Search.lvl }}
+										<option value="{{$lvl.Id}}">{{ $lvl.Value }}</option>
+									{{ end }}
+								</select>
+							</div>
+							<div class="row-start-2 col-start-2">
+								<button class="relative flex rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+									<img class="htmx-indicator htmx-spinner absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+									     src="/static/img/spinner-white.svg"
+									     alt="Progress indicator">
+									<span class="htmx-indicator htmx-text">
+										{{.T "web-core-auth-log-aur-tnt-mod-bulk-form.save-button-label"}}
+									</span>
+								</button>
+							</div>
+						</div>
+					</fieldset>
+				</form>
+			</div>
+		</div>
+		{{end}}
+
+		<div>
+			{{$hasRoleWebCoreLogTntMod := .HasRole "role_web_core_auth_log_aur_tnt_mod"}}
+			<table class="min-w-full divide-y divide-gray-300">
+				<thead>
+					<tr>
+						<th scope="col"
+						    class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+							{{.T "web-core-auth-log-aur-tnt-inf-results.header-label-aur-nm"}}
+						</th>
+						<th scope="col"
+						    class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+							{{.T "web-core-auth-log-aur-tnt-inf-results.header-label-epp-pt"}}
+						</th>
+						<th scope="col"
+						    class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+							{{.T "web-core-auth-log-aur-tnt-inf-results.header-label-hrm-id"}}
+						</th>
+						<th scope="col"
+						    class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+							{{.T "web-core-auth-log-aur-tnt-inf-results.header-label-lvl-id"}}
+						</th>
+						{{if $hasRoleWebCoreLogTntMod}}
+						<th scope="col"
+						    class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+						</th>
+						{{end}}
+					</tr>
+				</thead>
+
+				{{template "res" .}}
+			</table>
+		</div>
+	{{end}}
+</div>
+{{ end }}

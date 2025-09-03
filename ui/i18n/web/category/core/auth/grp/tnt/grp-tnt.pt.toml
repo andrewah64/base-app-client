@@ -1,0 +1,51 @@
+[web-core-auth-grp-tnt-page]
+
+title                           = "<Application> : Manage security groups"
+
+[web-core-auth-grp-tnt-del-form]
+
+delete-button-label             = "Delete"
+message-delete-success-plural   = "{{.n}} groups were deleted"
+message-delete-success-singular = "{{.n}} group was deleted"
+
+[web-core-auth-grp-tnt-inf-form]
+
+descr                           = "Use the filters to search the security groups"
+filter-header                   = "Filters"
+header                          = "Search security groups"
+input-label-aur-nm              = "Username"
+input-label-dbrl-id             = "Role"
+input-label-grp-nm              = "Group name"
+
+[web-core-auth-grp-tnt-inf-results]
+
+edit-button-label               = "Edit"
+edit-aur-link-label             = "Edit users"
+edit-rol-link-label             = "Edit roles"
+header-label-grp-nm             = "Group name"
+header-label-num-roles          = "Number of roles in group"
+header-label-num-users          = "Number of users in group"
+save-button-label               = "Save"
+view-aur-link-label             = "View users"
+view-rol-link-label             = "View roles"
+
+[web-core-auth-grp-tnt-mod-form]
+
+warning-input-grp-nm-blank      = "Group name cannot be blank"
+warning-input-grp-nm-taken      = "'{{.grpNm}}' is taken"
+warning-input-grp-olock-error   = "Another user has modified this record"
+message-input-success           = "The group was successfully edited"
+warning-input-unexpected-error  = "Unexpected error"
+
+[web-core-auth-grp-tnt-reg-form]
+
+descr                           = "Register a security group with the system"
+header                          = "Register groups"
+input-label-grp-nm              = "Group name"
+message-input-success           = "'{{.grpNm}}' has been registered"
+submit-button-label             = "Register"
+title-warning-plural            = "{{.n}} problems were identified which prevented the group from being registered"
+title-warning-singular          = "{{.n}} problem was identified which prevented the group from being registered"
+warning-input-grp-nm-blank      = "Group name cannot be blank"
+warning-input-grp-nm-taken      = "'{{.grpNm}}' is taken"
+warning-input-unexpected-error  = "Unexpected error"

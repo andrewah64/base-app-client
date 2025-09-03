@@ -1,0 +1,17 @@
+[web-core-auth-rol-grp-tnt-page]
+
+title                           = "<Application> : Manage group's roles : {{.grpNm}}"
+
+[web-core-auth-rol-grp-tnt-mod-form]
+
+descr-edit                      = "Select the roles to assign to this group"
+descr-view                      = "Each role assigned to this group has a selected checkbox"
+header-edit                     = "Assign roles to the group : {{.grpNm}}"
+header-view                     = "View roles assigned to the group : {{.grpNm}}"
+message-input-success-plural    = "{{.n}} roles have been assigned"
+message-input-success-singular  = "{{.n}} role has been assigned"
+submit-button-label             = "Assign roles"
+
+[web-core-auth-rol-grp-tnt-mod-results]
+
+header-label-dbrl-ds            = "Role"

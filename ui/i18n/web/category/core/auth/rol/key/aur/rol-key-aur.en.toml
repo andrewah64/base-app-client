@@ -1,0 +1,15 @@
+[web-core-auth-rol-key-aur-page]
+
+title                          = "<Application> : Manage the functionality available through an API key : {{.aaukNm}}"
+
+[web-core-auth-rol-key-aur-mod-form]
+
+descr                          = "Select the roles to assign to this API key"
+header                         = "Assign roles to the API key : {{.aaukNm}}"
+message-input-success-plural   = "{{.n}} roles have been associated with this API key"
+message-input-success-singular = "{{.n}} role has been associated with this API key"
+submit-button-label            = "Assign roles"
+
+[web-core-auth-rol-key-aur-mod-results]
+
+header-label-dbrl-ds           = "Role"

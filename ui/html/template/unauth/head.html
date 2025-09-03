@@ -1,0 +1,22 @@
+{{ define "head" }}
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible"         content="IE=edge">
+	<meta http-equiv="Content-Security-Policy" content="style-src 'self' 'sha256-bsV5JivYxvGywDAZ22EZJKBFip65Ng9xoJVLbBg7bdo='; script-src 'self'">
+
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<script src="/static/js/htmx.min.js"></script>
+
+	<script type="text/javascript"  src="/static/js/base64.js"></script>
+	<script type="text/hyperscript" src="/static/hs/passkeys._hs"></script>
+	<script type="text/hyperscript" src="/static/hs/widgets._hs"></script>
+	<script                         src="/static/js/hyperscript.min.js"></script>
+
+	<link href="/static/css/htmx.css"            rel="stylesheet">
+	<link href="/static/css/tailwindcss.min.css" rel="stylesheet">
+
+	<meta name="htmx-config" content='{"allowEval":"false"}'>
+	<meta name="htmx-config" content='{"selfRequestsOnly":"true"}'>
+
+	<title>{{ template "title" . }}</title>
+{{ end }}

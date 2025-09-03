@@ -1,0 +1,26 @@
+[web-core-unauth-ssn-aur-reg-page]
+
+title                               = "<Application> : sign in to your account"
+header                              = "Sign in to your account"
+label-link-sign-up                  = "No account? Sign up"
+title-warning-plural                = "{{.n}} problems were identified which prevented sign in"
+title-warning-singular              = "{{.n}} problem was identified which prevented sign in"
+
+[web-core-unauth-ssn-aur-reg-aupc-form]
+
+error-input-aur-nm-pwd-vld          = "Username or password is incorrect"
+error-input-unexpected              = "Unexpected error"
+header                              = "Use your username & password"
+input-label-aur-nm                  = "Username (required)"
+input-label-aur-pwd                 = "Password (required)"
+submit-button-label                 = "Sign in"
+
+[web-core-unauth-ssn-aur-reg-pky-form]
+error-input-aur-nm                  = "Username is incorrect"
+error-input-unexpected              = "Unexpected error"
+header                              = "Or use a passkey"
+input-label-aur-nm                  = "Username (required)"
+submit-button-label                 = "Sign in"
+
+[web-core-unauth-ssn-aur-reg-oidc-form]
+header                              = "Or sign in with"

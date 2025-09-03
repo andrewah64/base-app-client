@@ -1,0 +1,257 @@
+{{ define "title" }}{{.T "web-core-auth-aur-tnt-page.title"}}{{ end }}
+
+{{ define "content" }}
+<div id="content">
+	{{if .HasRole "role_web_core_auth_aur_tnt_reg"}}
+	<div class="grid grid-cols-2 grid-rows-1 border-b border-gray-200 pb-5 mb-5">
+		<div class="col-start-1 row-start-1">
+			<h2 class="text-base font-semibold text-gray-900">
+				{{.T "web-core-auth-aur-tnt-reg-form.header"}}
+			</h2>
+		</div>
+		<div class="col-start-1 row-start-2">
+			<p class="mt-2 max-w-4xl text-sm text-gray-500">
+				{{.T "web-core-auth-aur-tnt-reg-form.descr"}}
+			</p>
+		</div>
+		<div class="col-start-2 row-start-1">
+			<output id="aur-tnt-reg-res"
+				role="alert"
+				aria-live="polite"
+				class="mt-2 text-sm/6 font-medium text-red-700">
+			</output>
+		</div>
+		<div class="col-start-2 row-start-2">
+			<form id="aur-tnt-reg-form"
+			      hx-post="/web/core/auth/aur/tnt"
+			      hx-target="#aur-tnt-reg-res">
+				<fieldset>
+					<div class="grid grid-rows-2 grid-cols-5 w-fit">
+						<div class="row-start-1 col-start-1">
+							<p class="mt-2 max-w-4xl text-sm text-gray-500">
+								<label for="aur-tnt-reg-aur-nm">
+									{{.T "web-core-auth-aur-tnt-reg-form.input-label-aur-nm"}}
+								</label>
+							</p>
+						</div>
+						<div class="row-start-2 col-start-1 flex items-center rounded-md bg-white pl-3 outline-1 -outline-offset-1 outline-gray-300 focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-indigo-600">
+							<input type="text"
+							       name="aur-tnt-reg-aur-nm"
+							       id="aur-tnt-reg-aur-nm"
+							       hx-get="/web/core/auth/aur/tnt/val"
+							       hx-target="#aur-tnt-reg-res"
+							       hx-trigger="change, keyup delay:200ms"
+							       hx-push-url="false"
+							       autocomplete="username"
+							       required
+							       class="block min-w-0 grow py-1.5 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6">
+						</div>
+						<div class="row-start-1 col-start-2">
+							<p class="mt-2 max-w-4xl text-sm text-gray-500">
+								<label for="aur-tnt-reg-pw">
+									{{.T "web-core-auth-aur-tnt-reg-form.input-label-pw"}}
+								</label>
+							</p>
+						</div>
+						<div class="row-start-2 col-start-2 col-start-1 flex items-center rounded-md bg-white pl-3 outline-1 -outline-offset-1 outline-gray-300 focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-indigo-600">
+							<input type="password"
+							       name="aur-tnt-reg-pw"
+							       id="aur-tnt-reg-pw"
+							       autocomplete="current-password"
+							       required
+							       class="block min-w-0 grow py-1.5 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6">
+						</div>
+						<div class="row-start-1 col-start-3">
+							<p class="mt-2 max-w-4xl text-sm text-gray-500">
+								<label for="aur-tnt-reg-grp-id">
+									{{.T "web-core-auth-aur-tnt-reg-form.input-label-grp"}}
+								</label>
+							</p>
+						</div>
+						<div class="row-start-2 col-start-3">
+							<select name="aur-tnt-reg-grp-id"
+								id="aur-tnt-reg-grp-id"
+								class="w-full appearance-none rounded-md bg-white py-1.5 pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6">
+							{{ range $grp := .FormOpts.Register.aut }}
+								<option value="{{$grp.Id}}">{{ $grp.Value }}</option>
+							{{ end }}
+							</select>
+						</div>
+						<div class="row-start-1 col-start-4">
+							<p class="mt-2 max-w-4xl text-sm text-gray-500">
+								<label for="aur-tnt-reg-lng-id">
+									{{.T "web-core-auth-aur-tnt-reg-form.input-label-lng"}}
+								</label>
+							</p>
+						</div>
+						<div class="row-start-2 col-start-4">
+							<select name="aur-tnt-reg-lng-id"
+								id="aur-tnt-reg-lng-id"
+								class="w-full appearance-none rounded-md bg-white py-1.5 pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6">
+							{{ range $lng := .FormOpts.Register.lng }}
+								<option value="{{$lng.Id}}">{{ $lng.Value }}</option>
+							{{ end }}
+							</select>
+						</div>
+						<div class="row-start-1 col-start-5">
+						</div>
+						<div class="row-start-2 col-start-5">
+							<button class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+								{{.T "web-core-auth-aur-tnt-reg-form.submit-button-label"}}
+							</button>
+						</div>
+					</div>
+				</fieldset>
+			</form>
+		</div>	
+	</div>
+	{{end}}
+
+	{{if .HasRole "role_web_core_auth_aur_tnt_inf"}}
+	<div class="grid grid-cols-2 grid-rows-1 mb-8">
+		<div class="col-start-1 row-start-1">
+			<h2 class="text-base font-semibold text-gray-900">
+				{{.T "web-core-auth-aur-tnt-inf-form.header"}}
+			</h2>
+		</div>
+		<div class="col-start-1 row-start-2">
+			<p class="mt-2 max-w-4xl text-sm text-gray-500">
+				{{.T "web-core-auth-aur-tnt-inf-form.descr"}}
+			</p>
+		</div>
+
+		<div class="col-start-2 row-start-1 flex items-center gap-6">
+			<h2 class="text-base font-semibold text-gray-900">
+				{{.T "web-core-auth-aur-tnt-inf-form.filter-header"}}
+			</h2>
+
+			<img id="aur-tnt-inf-form-indicator"
+			     class="htmx-indicator htmx-spinner"
+			     src="/static/img/spinner-black.svg"
+			     alt="Progress indicator">
+		</div>
+		<div class="col-start-2 row-start-2">
+			<form id="aur-tnt-inf-form"
+			      hx-swap="innerHTML"
+			      hx-get="/web/core/auth/aur/tnt"
+			      hx-target="#aur-tnt-inf-res"
+			      hx-trigger="mod from:body, change, keyup delay:200ms"
+			      hx-push-url="true"
+			      hx-indicator="#aur-tnt-inf-form-indicator">
+
+				<input type="hidden"
+				       name="aur-tnt-inf-page-number"
+				       id="aur-tnt-inf-page-number"
+				       value="{{ .ResultSet.PageNumber }}">
+
+				<div class="grid grid-rows-2 grid-cols-4 w-fit">
+					<div class="row-start-1 col-start-1">
+						<p class="mt-2 max-w-4xl text-sm text-gray-500">
+							<label for="aur-tnt-inf-aur-nm">
+								{{.T "web-core-auth-aur-tnt-inf-form.input-label-aur-nm"}}
+							</label>
+						</p>
+					</div>
+					<div class="row-start-2 col-start-1 row-start-2 col-start-1 flex items-center rounded-md bg-white pl-3 outline-1 -outline-offset-1 outline-gray-300 focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-indigo-600">
+						<input type="text"
+						       name="aur-tnt-inf-aur-nm"
+						       id="aur-tnt-inf-aur-nm"
+						       class="block min-w-0 grow py-1.5 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6">
+					</div>
+					<div class="row-start-1 col-start-2">
+						<p class="mt-2 max-w-4xl text-sm text-gray-500">
+							<label for="aur-tnt-inf-dbrl-id">
+								{{.T "web-core-auth-aur-tnt-inf-form.input-label-dbrl-id"}}
+							</label>
+						</p>
+					</div>
+					<div class="row-start-2 col-start-2">
+						<select name="aur-tnt-inf-dbrl-id"
+							id="aur-tnt-inf-dbrl-id"
+							class="w-full appearance-none rounded-md bg-white py-1.5 pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6">
+							<option value="">{{.T "web-core-auth-aur-tnt-inf-form.input-option-dbrl-id-all"}}</option>
+							{{ range $dbrl := .FormOpts.Search.dbrl }}
+								<option value="{{$dbrl.Id}}">{{ $dbrl.Value }}</option>
+							{{ end }}
+						</select>
+					</div>
+					<div class="row-start-1 col-start-3">
+						<p class="mt-2 max-w-4xl text-sm text-gray-500">
+							<label for="aur-tnt-inf-aur-enabled">
+								{{.T "web-core-auth-aur-tnt-inf-form.input-label-aur-enabled"}}
+							</label>
+						</p>
+					</div>
+					<div class="row-start-2 col-start-3">
+						<select name="aur-tnt-inf-aur-enabled"
+							id="aur-tnt-inf-aur-enabled"
+							class="w-full appearance-none rounded-md bg-white py-1.5 pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6">
+							<option value="">{{.T "web-core-auth-aur-tnt-inf-form.input-option-aur-enabled-all"}}</option>
+							<option value="true">{{.T "web-core-auth-aur-tnt-inf-form.input-option-aur-enabled-yes"}}</option>
+							<option value="false">{{.T "web-core-auth-aur-tnt-inf-form.input-option-aur-enabled-no"}}</option>
+						</select>
+					</div>
+					<div class="row-start-1 col-start-4">
+						<p class="mt-2 max-w-4xl text-sm text-gray-500">
+							<label for="aur-tnt-inf-lng-id">
+								{{.T "web-core-auth-aur-tnt-inf-form.input-label-lng-id"}}
+							</label>
+						</p>
+					</div>
+					<div class="row-start-2 col-start-4">
+						<select name="aur-tnt-inf-lng-id"
+							id="aur-tnt-inf-lng-id"
+							class="w-full appearance-none rounded-md bg-white py-1.5 pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6">
+							<option value="">{{.T "web-core-auth-aur-tnt-inf-form.input-option-lng-id-all"}}</option>
+							{{ range $lng := .FormOpts.Search.lng }}
+								<option value="{{$lng.Id}}">{{ $lng.Value }}</option>
+							{{ end }}
+						</select>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+
+	{{ $hasRoleWebCoreAurTntDel    := .HasRole "role_web_core_auth_aur_tnt_del"     }}
+	{{ $hasRoleWebCorePwdAurTntMod := .HasRole "role_web_core_auth_pwd_aur_tnt_mod" }}
+	{{ $hasRoleWebCoreGrpAurTntMod := .HasRole "role_web_core_auth_grp_aur_tnt_mod" }}
+	{{ $hasRoleWebCoreAurTntMod    := .HasRole "role_web_core_auth_aur_tnt_mod"     }}
+
+	<div class="pb-[100px]">
+		{{ if $hasRoleWebCoreAurTntDel }}
+		<form hx-swap="none">
+		{{ end }}
+			<table id="aur-tnt-inf-res"
+			       class="min-w-full divide-y divide-gray-300">
+				{{ template "res" . }}
+			</table>
+
+			{{ if $hasRoleWebCoreAurTntDel }}
+				<div class="fixed bottom-0 left-0 w-full h-[100px] bg-white flex items-center justify-end pr-4 border-t border-gray-200">
+					<button type="submit"
+					        class="relative flex rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+					        hx-delete="/web/core/auth/aur/tnt">
+						<img class="htmx-indicator htmx-spinner absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+						     src="/static/img/spinner-white.svg"
+						     alt="Progress indicator">
+						<span id="aur-tnt-inf-dgd-btn-txt"
+						      class="htmx-indicator htmx-text">
+							{{ .T "web-core-auth-aur-tnt-del-form.delete-button-label" }}
+						</span>
+						<span id="aur-tnt-inf-dgd-btn-tmp-txt"
+						      class="hidden">
+							{{.T "web-core-auth-key-aur-del-form.delete-button-label"}}
+						</span>
+					</button>
+				</div>
+			{{ end }}
+
+		{{ if $hasRoleWebCoreAurTntDel }}
+		</form>
+		{{ end }}
+
+	</div>
+	{{end}}
+</div>
+{{ end }}

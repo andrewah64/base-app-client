@@ -1,0 +1,15 @@
+[web-core-auth-grp-aur-tnt-page]
+
+title                          = "<Application> : Assign groups to a user : {{.aurNm}}"
+
+[web-core-auth-grp-aur-tnt-mod-form]
+
+descr                          = "Select the groups to be assigned to this user"
+header                         = "Assign groups to a user : {{.aurNm}}"
+label-submit-button            = "Assign"
+message-input-success-plural   = "{{.n}} groups have been assigned to this user"
+message-input-success-singular = "{{.n}} group has been assigned to this user"
+
+[web-core-auth-grp-aur-tnt-mod-results]
+
+header-label-grp-nm            = "Group"

@@ -1,0 +1,47 @@
+<span hx-swap-oob="true" id="aur-tnt-aupc-val-aur-pwd-len">
+	{{if .ResultSet.AurPwdLenPass}}
+	<span class="text-green-700">
+		{{.T "web-core-unauth-aur-tnt-aupc-tab.message-aur-pwd-len-success"}}
+	</span>
+	{{else}}
+	<span class="text-red-700">
+		{{.T "web-core-unauth-aur-tnt-aupc-tab.message-aur-pwd-len-error"}}
+	</span>
+	{{end}}
+</span>
+
+<span hx-swap-oob="true" id="aur-tnt-aupc-val-aur-pwd-inc-num">
+	{{if .ResultSet.AurPwdNumPass}}
+	<span class="text-green-700">
+		{{.T "web-core-unauth-aur-tnt-aupc-tab.message-aur-pwd-inc-num-success"}}
+	</span>
+	{{else}}
+	<span class="text-red-700">
+		{{.T "web-core-unauth-aur-tnt-aupc-tab.message-aur-pwd-inc-num-error"}}
+	</span>
+	{{end}}
+</span>
+
+<span hx-swap-oob="true" id="aur-tnt-aupc-val-aur-pwd-inc-sym">
+	{{if .ResultSet.AurPwdSymPass}}
+	<span class="text-green-700">
+		{{.T "web-core-unauth-aur-tnt-aupc-tab.message-aur-pwd-inc-sym-success"}}
+	</span>
+	{{else}}
+	<span class="text-red-700">
+		{{.T "web-core-unauth-aur-tnt-aupc-tab.message-aur-pwd-inc-sym-error"}}
+	</span>
+	{{end}}
+</span>
+
+<span hx-swap-oob="true" id="aur-tnt-aupc-val-aur-pwd-2">
+	{{if .ResultSet.AurPwd2Pass}}
+	<span class="text-green-700">
+		{{.T "web-core-unauth-aur-tnt-aupc-tab.message-aur-pwd-2-success"}}
+	</span>
+	{{else}}
+	<span class="text-red-700">
+		{{.T "web-core-unauth-aur-tnt-aupc-tab.message-aur-pwd-2-error"}}
+	</span>
+	{{end}}
+</span>

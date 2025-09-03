@@ -1,0 +1,24 @@
+[web-core-auth-ssn-tnt-page]
+
+title                           = "<Application> : Search and delete active HTTP sessions"
+
+[web-core-auth-ssn-tnt-del-form]
+
+delete-button-label             = "Delete"
+message-delete-success-plural   = "{{.n}} sessions were terminated"
+message-delete-success-singular = "{{.n}} session was terminated"
+
+[web-core-auth-ssn-tnt-inf-form]
+
+descr                           = "Use the filters to find active HTTP sessions"
+filter-header                   = "Filters"
+header                          = "Search active HTTP sessions"
+input-label-aur-nm              = "Username"
+
+[web-core-auth-ssn-tnt-inf-results]
+
+header-label-aur-nm             = "Username"
+header-label-rolname            = "Role"
+header-label-wauhs-ssn-tk       = "Session token"
+header-label-cts                = "Session's start time"
+header-label-wauhs-exp-ts       = "Session's end time"

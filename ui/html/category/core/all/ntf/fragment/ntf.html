@@ -1,0 +1,74 @@
+{{$typeText := ""}}
+{{if eq .NotificationData.Type "error"}}
+	{{$typeText = .T "web-core-auth-all-ntf.type-error"}}
+{{else if eq .NotificationData.Type "info"}}
+	{{$typeText = .T "web-core-auth-all-ntf.type-info"}}
+{{else if eq .NotificationData.Type "success"}}
+	{{$typeText = .T "web-core-auth-all-ntf.type-success"}}
+{{end}}
+<div hx-swap-oob="beforeend:#notifications">
+	<div _="on load wait 2s remove me"
+	     class="pointer-events-auto relative w-full max-w-sm rounded-lg border border-gray-200 bg-white p-2 shadow-lg">
+		<div class="flex items-start gap-4">
+			<div class="flex-1 py-1.5 pl-2.5 flex gap-2">
+				{{if eq .NotificationData.Type "info"}}
+				<div class="flex-shrink-0">
+					<svg xmlns="http://www.w3.org/2000/svg"
+					     viewBox="0 0 16 16"
+					     fill="currentColor"
+					     class="mt-0.5 size-4 text-gray-600">
+						<path fill-rule="evenodd"
+						      d="M15 8A7 7 0 1 1 1 8a7 7 0 0 1 14 0ZM9 5a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM6.75 8a.75.75 0 0 0 0 1.5h.75v1.75a.75.75 0 0 0 1.5 0v-2.5A.75.75 0 0 0 8.25 8h-1.5Z"
+						      clip-rule="evenodd">
+						</path>
+					</svg>
+					<span class="sr-only">{{$typeText}}</span>
+				</div>
+				{{end}}
+
+				{{if eq .NotificationData.Type "success"}}
+				<div class="flex-shrink-0">
+					<svg xmlns="http://www.w3.org/2000/svg"
+					     viewBox="0 0 16 16"
+					     fill="currentColor"
+					     class="mt-0.5 size-4 text-green-600">
+						<path fill-rule="evenodd"
+						      d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14Zm3.844-8.791a.75.75 0 0 0-1.188-.918l-3.7 4.79-1.649-1.833a.75.75 0 1 0-1.114 1.004l2.25 2.5a.75.75 0 0 0 1.15-.043l4.25-5.5Z"
+						      clip-rule="evenodd">
+						</path>
+					</svg>
+					<span class="sr-only">{{$typeText}}</span>
+				</div>
+				{{end}}
+	 
+				{{if eq .NotificationData.Type "error"}}
+				<div class="flex-shrink-0">
+					<svg xmlns="http://www.w3.org/2000/svg"
+					     viewBox="0 0 16 16"
+					     fill="currentColor"
+					     class="mt-0.5 size-4 text-red-600">
+						<path fill-rule="evenodd"
+						      d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14ZM8 4a.75.75 0 0 1 .75.75v3a.75.75 0 0 1-1.5 0v-3A.75.75 0 0 1 8 4Zm0 8a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
+						      clip-rule="evenodd">
+						</path>
+					</svg>
+					<span class="sr-only">{{$typeText}}</span>
+				</div>
+				{{end}}
+
+				<div class="flex flex-col gap-y-2">
+					<p class="capitalize font-medium text-sm text-gray-800">
+						{{$typeText}}
+					</p>
+					<div class="text-sm text-gray-600">
+						<ul>
+							{{ range $message := .NotificationData.Messages }}
+								<li>{{$message}}</li>
+							{{end}}
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

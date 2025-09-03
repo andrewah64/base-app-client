@@ -1,0 +1,16 @@
+[web-core-auth-menu]
+
+atn-tnt-inf-label       = "Authentication"
+aur-tnt-inf-label       = "Manage"
+aur-tnt-reg-label       = "Register"
+grp-tnt-inf-label       = "Groups"
+home-label              = "Dashboard"
+key-aur-mod-label       = "API keys"
+log-aur-tnt-inf-label   = "Logging"
+log-ep-tnt-inf-label    = "Logging"
+security-label          = "Security"
+settings-label          = "Settings"
+ssn-tnt-inf-label       = "HTTP sessions"
+ssn-aur-end-label       = "Logout"
+tenant-management-label = "Tenant management"
+user-management-label   = "User management"

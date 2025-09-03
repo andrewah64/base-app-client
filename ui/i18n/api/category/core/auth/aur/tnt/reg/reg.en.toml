@@ -1,0 +1,3 @@
+[api-core-auth-aur-tnt-reg-messages]
+
+warning-input-credentials-taken = "'{{.username}}' is taken"

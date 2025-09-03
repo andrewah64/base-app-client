@@ -1,0 +1,95 @@
+{{ define "title" }}{{.T "web-core-auth-ssn-tnt-page.title"}}{{ end }}
+
+{{ define "content" }}
+<div id="content">
+	{{if .HasRole "role_web_core_auth_ssn_tnt_inf"}}
+	<div class="grid grid-cols-2 grid-rows-1 mb-8">
+		<div class="col-start-1 row-start-1">
+			<h2 class="text-base font-semibold text-gray-900">
+				{{.T "web-core-auth-ssn-tnt-inf-form.header"}}
+			</h2>
+		</div>
+		<div class="col-start-1 row-start-2">
+			<p class="mt-2 max-w-4xl text-sm text-gray-500">
+				{{.T "web-core-auth-ssn-tnt-inf-form.descr"}}
+			</p>
+		</div>
+		<div class="col-start-2 row-start-1">
+			<h2 class="text-base font-semibold text-gray-900">
+				{{.T "web-core-auth-ssn-tnt-inf-form.filter-header"}}
+			</h2>
+		</div>
+		<div class="col-start-2 row-start-2">
+			<form id="ssn-tnt-inf-form"
+			      hx-swap="innerHTML"
+			      hx-get="/web/core/auth/ssn/tnt"
+			      hx-target="#ssn-tnt-inf-res"
+			      hx-trigger="mod from:body, change, keyup delay:200ms"
+			      hx-push-url="true">
+				<fieldset>
+					<input type="hidden"
+					       name="ssn-tnt-inf-page-number"
+					       id="ssn-tnt-inf-page-number"
+					       value="{{ .ResultSet.PageNumber }}">
+
+					<div class="grid grid-rows-2 grid-cols-4 w-fit">
+						<div class="row-start-1 col-start-1">
+							<p class="mt-2 max-w-4xl text-sm text-gray-500">
+								<label for="ssn-tnt-inf-aur-nm">
+									{{.T "web-core-auth-ssn-tnt-inf-form.input-label-aur-nm"}}
+								</label>
+							</p>
+						</div>
+						<div class="row-start-2 col-start-1 flex items-center rounded-md bg-white pl-3 outline-1 -outline-offset-1 outline-gray-300 focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-indigo-600">
+							<input type="text"
+							       name="ssn-tnt-inf-aur-nm"
+							       id="ssn-tnt-inf-aur-nm"
+							       class="block min-w-0 grow py-1.5 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6">
+						</div>
+					</div>
+				</fieldset>
+			</form>
+		</div>
+	</div>
+
+	{{ $hasRoleWebCoreSsnTntDel := .HasRole "role_web_core_auth_ssn_tnt_del" }}
+
+	<div>
+		{{ if $hasRoleWebCoreSsnTntDel }}
+		<form hx-swap="none">
+		{{ end }}
+
+			<div class="pb-[100px]">
+				<table id="ssn-tnt-inf-res"
+				       class="min-w-full divide-y divide-gray-300">
+					{{template "res" .}}
+				</table>
+			</div>
+			{{ if $hasRoleWebCoreSsnTntDel }}
+			<div class="fixed bottom-0 left-0 w-full h-[100px] bg-white flex items-center justify-end pr-4 border-t border-gray-200">
+				<button type="submit"
+					class="relative flex rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+				        hx-delete="/web/core/auth/ssn/tnt">
+					<img class="htmx-indicator htmx-spinner absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+					     src="/static/img/spinner-white.svg"
+					     alt="Progress indicator">
+					<span id="ssn-tnt-inf-dgd-btn-txt"
+					      class="htmx-indicator htmx-text">
+						{{ .T "web-core-auth-ssn-tnt-del-form.delete-button-label" }} (0)
+					</span>
+					<span id="ssn-tnt-inf-dgd-btn-tmp-txt"
+					      class="hidden">
+						{{ .T "web-core-auth-ssn-tnt-del-form.delete-button-label" }}
+					</span>
+				</button>
+			</div>
+			{{ end }}
+		
+
+		{{ if $hasRoleWebCoreSsnTntDel }}
+		</form>
+		{{ end }}
+	</div>
+	{{end}}
+</div>
+{{ end }}

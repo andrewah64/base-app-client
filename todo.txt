@@ -1,0 +1,66 @@
+TODO
+====
+
+1) Make the owner of the db schema - currently finops_owner - configurable
+
+14) Ability to view stats info / dictionary information
+23) Implement startup checks:
+	a) check in app_data.page that each tenant has 1 record where pg_dflt_hm = true
+	b) users whose home page is one for which they don't have the role
+24) set the loglevel of the logger used in authorised processes to the lowest of the (1) the level of the default logger and (2) the level the authorised process logger is configured to be
+26) report+api: active users who can't be authenticated because of data [because their home page isn't one they can access?]
+27) report+api: pages without entry endpoint registered
+30) when redirecting users with invalid session back to the login page, report the reason they've been redirected on the login page
+31) screens: kill any db session, set logging levels
+33) work through htmx book, apply improvements to my ui
+34) who can grant which roles
+35) accessibility mode?
+37) helper logging function to faciliate logging of pointers
+38) introduce some sort of role constants, use when init'ing the tenant cache, beforeAcquire of connection
+41) support jwts
+42) what happens if a user is authenticated but not authorised for the page they're on AND they aren't authorised for their home page?
+44) change user type drop down on register user screen to only include options which are made up of roles possessed by the current user.
+45) test what happens when a permission is taken from a user while logged in. Does it behave ok?
+46) Integrate: https://github.com/AzureAD/microsoft-authentication-library-for-go?tab=readme-ov-file
+
+
+DONE
+====
+48) Need a less hacky way of designating some html fragments as templates and others as pages
+32) style interface
+13) Ability to kill sessions
+10) use listenandservetls. added "generate_cert.go". Command to generate self-signed cert: go run generate_cert.go --host localhost.
+	adapted main.go to use ListenAndServeTLS, it just works.
+4) Enable logging to be controlled down to user and function level
+17) remove superfluous middleware
+15) remove hardcoded reference to tenant 1
+16) create function in main.go to derive tenant id from fqdn
+18) logging and control over log levels per user and process
+22) fix holes in logic in ctx middleware. what happens when the mw doesn't find a user? or finds too  mamy?
+3) Decide on a namin convention for handler functions - two types: 1 sets up pages, 1 provides results
+12) Register all pages in database. Needs to connect endpoints, allowed http methods, handler functions.
+	Doesn't need to know about locations of html files
+25) set the loglevel of the default logger at runtime
+2) Implement checks in all handler functions to raise an error if the HTTP method isn't correct
+29) support tls 1.3 only
+8) create anonymous user for managing login operations
+19) use db users 
+20) protect with db roles
+28) include licences for dependencies (pgx, alice, etc)
+36) ability to enable/disable at the tenant level: language, endpoint, page -- cancelled
+40) check behaviour when tenant can't be found - we panic.
+39) allow db connection details to be configured through command line
+11) via http headers force https
+5) Develop some uniformity around front end error handling
+9) review choice of text data types in the DB and rationalise
+21) get rid of hardcoded db connection string and URL
+6) Interpret errors which come back from user registration form and display different messages
+7) i18n
+43) fix nil pointer reference errors when sessions time out
+47) Indication that csrf & authorize middleware is web only - need to redirect and set base cookie path. Categorize accordingly in source.
+48) pass key/val pairs as param to routes/initcache
+50) move util/page/page.go too fundamental to be a "utility"
+49) change template/initcache, i18n/initcache to receive file system as a parameter
+47) Fix strange behaviour when chopping urls ("expectation failed" message)
+50) standardise html ids
+49) allow associating multiple roles with a screen

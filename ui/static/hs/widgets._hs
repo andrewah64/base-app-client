@@ -1,0 +1,327 @@
+behavior CbdgSelectAll(tb, rcb, btn, btntmptxt)
+	init
+		set n to 0
+		set c to 0
+		for cb in <input[name=`${rcb}`] /> in tb
+			set n to n + 1
+			if cb.checked is true then 
+				set c to c + 1
+			end
+		end
+
+		if n == 0 then
+			add [@disabled] to me
+		else
+			put `${btntmptxt.innerHTML} (${c})` into btn
+			if n == c then
+				set me.checked to true
+			end
+		end
+	end
+
+	on click from me
+		set n to 0
+		if me.checked is true then
+			for cb in <input[name=`${rcb}`] /> in tb
+				set n to n + 1
+				set cb.checked to true
+			end
+		else
+			for cb in <input[name=`${rcb}`] /> in tb
+				set cb.checked to false
+			end
+		end
+		put `${btntmptxt.innerHTML} (${n})` into btn
+	end
+
+	on inf from body
+		if me.checked is true then
+			set n to 0
+			for cb in <input[name=`${rcb}`] /> in tb
+				set n to n + 1
+				set cb.checked to true
+			end
+			put `${btntmptxt.innerHTML} (${n})` into btn
+		end
+	end
+
+	on src from body
+		put `${btntmptxt.innerHTML} (0)` into btn
+	end
+end
+
+behavior CbdgSelectRow(tb, acb, btn, btntmptxt)
+	on click from me
+		set c to 0
+		set n to 0
+		for cb in <input[name=`${me.name}`] /> in tb
+			set c to c + 1
+			if cb.checked is true
+				set n to n + 1
+			end
+		end
+
+		if n < c then
+			set acb.checked to false
+		end
+
+		if n == c and n > 0 then
+			set acb.checked to true
+		end
+
+		put `${btntmptxt.innerHTML} (${n})` into btn
+	end
+end
+
+behavior MultiSelect
+	def getSelectedLabel(container)
+		-- try the .selected label
+		set result to the first <label.selected/> in container
+		if result is not null then
+			return result
+		end
+
+		-- try the document's active element
+		set result to document's activeElement
+		if (closest <div.multiselect/> to result) is me then
+			take .selected for result
+			return result
+		end
+
+		-- bail out to the first label in the container
+		set result to first <label/> in container
+		take .selected for result
+		return result
+	end
+
+	init
+		add .multiselect
+		add [@role="menu"]
+
+		tell <label/> in me
+			add [@tabIndex=0]
+			add [@role="menuitem"]
+		end
+
+		tell <input/> in me
+			add [@role="menuitemcheckbox"]
+		end
+
+		-- if available, make the label sortable
+		if Sortable is not null then
+			tell <div.options/> in me
+				make a Sortable from yourself, {animation:150, whisperClass:'multiselect-whisper', onEnd: \ evt -> evt.item.focus()}
+			end
+		end
+	end
+
+	on change
+		set label to the closest <label/> to the target
+		if label is not null then
+			take .selected for label
+		end
+	end
+
+	on click from <button[data-sort=up]/> in me
+		set currentLabel to getSelectedLabel(me)
+
+		if currentLabel is null then
+			exit
+		end
+
+		set container to the currentLabel's parentNode
+		set previousLabel to the currentLabel's previousElementSibling
+
+		if previousLabel is null then
+			exit
+		end
+		
+		container.insertBefore(currentLabel, previousLabel)
+		focus() the target
+	end
+
+	on click from <button[data-sort=down]/> in me
+		set currentLabel to getSelectedLabel(me)
+		if currentLabel is null then
+			exit
+		end
+
+		set container to the currentLabel's parentNode
+		set nextLabel to the currentLabel's nextElementSibling
+		if nextLabel is null then
+			exit
+		end
+		
+		container.insertBefore(nextLabel, currentLabel)
+		focus() the target
+	end
+
+	on focus from <label/> in me
+		take .selected for target
+	end
+
+	on focus from <input/> in me
+		focus() the closest <label/> to the target
+	end
+
+	on keydown[code=="ArrowUp"]
+		halt the event
+		set currentLabel to getSelectedLabel(me)
+		set previousLabel to previous <label/> from currentLabel
+		if previousLabel is not null then
+			take .selected for previousLabel		
+			if currentLabel is document.activeElement then
+				focus() the previousLabel
+			end
+		end
+	end
+	
+	on keydown[code=="ArrowDown"]
+		halt the event
+		set currentLabel to getSelectedLabel(me)
+		set nextLabel to next <label/> from currentLabel
+		if nextLabel is not null then
+			take .selected for nextLabel
+			if currentLabel is document.activeElement then
+				focus() the nextLabel
+			end
+		end
+	end
+
+	on keypress[code=="Space"]
+
+		-- handle "sort" buttons
+		if target[@data-sort] is not null then
+			exit
+		end
+
+		-- otherwise, toggle checkboxes
+		set selection to first <label.selected/> in me
+		if selection is not null then
+			set input to first <input/> in selection
+			set input.checked to (input.checked == false)
+			focus() the selection
+			halt the event
+		end
+	end
+end
+
+behavior NumberRange (v1, v2)
+	on input from v1
+		if v1.value as Int > v2.value as Int
+			set v1.value to v2.value
+		end
+	end
+
+	on input from v2
+		if v2.value as Int < v1.value as Int
+			set v2.value to v1.value
+		end
+	end
+end
+
+behavior TabContainer
+
+	-- init handles the default tab selection.  If a document hash exists 
+	-- (and points to one of our tabs) then select it first.  Otherwise,
+	-- select the first tab in the list
+	init
+		if window.location.hash is not "" then
+			set target to the first <[aria-controls="${window.location.hash.slice(1)}"]/>
+		end
+
+		if target is null then 
+			set target to first <[role=tab]/> in me
+		end
+
+		send select to target
+	end
+
+	-- handle mouse clicks directly on tabs
+	on mousedown(target)[button==0] from <[role=tablist] [role=tab] />
+		send select to target
+	end
+
+	-- handle touch events for phones and tablets
+	on touchstart(target) from <[role=tablist] [role=tab] />
+		send select to target
+	end
+
+	on select(target)
+		set tabOrigin to false
+		
+		for tab in <[role=tab] /> in me
+			if tab == target
+				set tabOrigin to true
+				break
+			end
+		end
+
+		if tabOrigin
+			for tab in <[role=tab] /> in me
+				if tab == target
+					add    [@aria-selected="true"] to   tab
+					add    .text-indigo-600        to   tab
+					add    .border-indigo-500      to   tab
+					remove .text-gray-500          from tab
+					remove .hover:border-gray-300  from tab
+					remove .hover:text-gray-700    from tab
+					remove .border-transparent     from tab
+					call window.history.replaceState(undefined, tab.innerHTML, "#" + target[@aria-controls])
+				else
+					remove [@aria-selected]        from tab
+					remove .text-indigo-600        from tab
+					remove .border-indigo-500      from tab
+					add    .text-gray-500          to   tab
+					add    .hover:border-gray-300  to   tab
+					add    .hover:text-gray-700    to   tab
+					add    .border-transparent     to   tab
+				end
+			end
+
+			for panel in <[role=tabpanel] /> in me
+				set {hidden: (panel[@id] != target[@aria-controls])} on panel
+			end
+		end
+	end
+end
+
+behavior ToggleMenu(svg, list)
+	def collapse(svg, list)
+		setAttribute('aria-expanded', 'false') on me
+		setAttribute('aria-hidden'  , 'true')  on svg
+		remove .rotate-90     from svg
+		remove .text-gray-500 from svg
+		add    .text-gray-400 to svg
+		hide   list
+	end
+
+	def expand(svg, list)
+		setAttribute('aria-expanded', 'true')  on me
+		setAttribute('aria-hidden'  , 'false') on svg
+		add    .rotate-90     to   svg
+		add    .text-gray-500 to   svg
+		remove .text-gray-400 from svg
+		show   list
+	end
+
+	init
+		set :expanded to true
+
+		if :expanded then
+			expand(svg, list)
+		else
+			collapse(svg, list)
+		end
+	end
+
+	on click from me
+		set :expanded to (not :expanded)
+
+		if :expanded then
+			expand(svg, list)
+		else
+			collapse(svg, list)
+		end
+	end
+end

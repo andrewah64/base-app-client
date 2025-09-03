@@ -1,0 +1,96 @@
+{{ define "title" }}
+	{{ $aaukNm := (index .ResultSet.Key 0).AaukNm }}
+
+	{{.T "web-core-auth-rol-key-aur-page.title" "aaukNm" $aaukNm }}
+{{ end }}
+
+{{ define "content" }}
+<div id="content">
+	{{if and (.HasRole "role_web_core_auth_key_aur_mod") (gt (len .ResultSet.Search) 0)}}
+		{{ $aaukId := (index .ResultSet.Key 0).AaukId }}
+		{{ $aaukNm := (index .ResultSet.Key 0).AaukNm }}
+		<div class="grid grid-cols-2 grid-rows-1 mb-8">
+			<div class="col-start-1 row-start-1">
+				<h2 class="text-base font-semibold text-gray-900">
+					{{.T "web-core-auth-rol-key-aur-mod-form.header" "aaukNm" $aaukNm }}
+				</h2>
+			</div>
+			<div class="col-start-1 row-start-2">
+				<p class="mt-2 max-w-4xl text-sm text-gray-500">
+					{{.T "web-core-auth-rol-key-aur-mod-form.descr"}}
+				</p>
+			</div>
+		</div>
+
+		<div>
+			<form hx-patch="/web/core/auth/rol/key/aur/{{ $aaukId }}"
+			      hx-swap="none">
+				<div class="pb-[100px]">
+					<table id="rol-aur-key-inf-res"
+					       class="min-w-full divide-y divide-gray-300">
+						<thead>
+							<tr>
+								<th scope="col"
+								    class="relative px-7 sm:w-12 sm:px-6">
+									<div class="group absolute top-1/2 left-4 -mt-2 grid size-4 grid-cols-1">
+									<input type="checkbox"
+									       id="rol-aur-key-inf-dbrl-id"
+									       class="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-indigo-600 checked:bg-indigo-600 indeterminate:border-indigo-600 indeterminate:bg-indigo-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:checked:bg-gray-100 forced-colors:appearance-auto"
+									       _="install CbdgSelectAll(tb : #rol-aur-key-inf-res, rcb : 'rol-aur-key-inf-dbrl-id', btn : #rol-aur-key-inf-dgd-btn-txt, btntmptxt : #rol-aur-key-inf-dgd-btn-tmp-txt)">
+									<svg class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white group-has-disabled:stroke-gray-950/25" viewBox="0 0 14 14" fill="none">
+										<path class="opacity-0 group-has-checked:opacity-100" d="M3 8L6 11L11 3.5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+										<path class="opacity-0 group-has-indeterminate:opacity-100" d="M3 7H11" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+									</svg>
+								</div>
+								</th>
+								<th scope="col"
+								    class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+									{{.T "web-core-auth-rol-key-aur-mod-results.header-label-dbrl-ds"}}
+								</th>
+							</tr>
+						</thead>
+						<tbody class="bg-white">
+							{{ range $role := .ResultSet.Search }}
+							<tr class="even:bg-gray-50">
+								<td class="relative px-7 sm:w-12 sm:px-6">
+									<div class="group absolute top-1/2 left-4 -mt-2 grid size-4 grid-cols-1">
+										<input type="checkbox"
+										       name="rol-aur-key-inf-dbrl-id"
+										       value="{{ $role.DbrlId }}"
+										       {{if $role.Assigned}}checked{{end}}
+										       class="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-indigo-600 checked:bg-indigo-600 indeterminate:border-indigo-600 indeterminate:bg-indigo-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:checked:bg-gray-100 forced-colors:appearance-auto"
+										       _="install CbdgSelectRow(tb : #rol-aur-key-inf-res , acb : #rol-aur-key-inf-dbrl-id , btn : #rol-aur-key-inf-dgd-btn-txt , btntmptxt : #rol-aur-key-inf-dgd-btn-tmp-txt)">
+										<svg class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white group-has-disabled:stroke-gray-950/25" viewBox="0 0 14 14" fill="none">
+											<path class="opacity-0 group-has-checked:opacity-100" d="M3 8L6 11L11 3.5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+											<path class="opacity-0 group-has-indeterminate:opacity-100" d="M3 7H11" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+										</svg>
+									</div>
+								</td>
+								<td class="px-3 py-4 text-sm whitespace-nowrap text-gray-500">
+									{{$role.DbrlDs}}
+								</td>
+							</tr>
+							{{ end }}
+						</tbody>
+					</table>
+				</div>
+				<div class="fixed bottom-0 left-0 w-full h-[100px] bg-white flex items-center justify-end pr-4 border-t border-gray-200">
+					<button class="relative flex rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+						<img class="htmx-indicator htmx-spinner absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+						     src="/static/img/spinner-white.svg"
+						     alt="Progress indicator">
+						<span id="rol-aur-key-inf-dgd-btn-txt"
+						      class="htmx-indicator htmx-text">
+							{{.T "web-core-auth-rol-key-aur-mod-form.submit-button-label"}}
+						</span>
+						<span id="rol-aur-key-inf-dgd-btn-tmp-txt"
+						      class="hidden">
+							{{.T "web-core-auth-rol-key-aur-mod-form.submit-button-label"}}
+						</span>
+					</button>
+				</div>
+			</form>
+		</div>
+	{{end}}
+</div>
+{{ end }}

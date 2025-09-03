@@ -1,0 +1,13 @@
+[web-core-unauth-otp-aur-page]
+header                   = "Setup multi-factor authentication"
+header-otp-code          = "Scan the QR code with your authenticator app"
+message-unexpected-error = "An unexpected error occurred"
+title                    = "<Application> : Setup multi-factor authentication"
+
+[web-core-unauth-otp-aur-mod-form]
+
+error-otp-cd             = "The one-time password is incorrect"
+input-label-otp-cd       = "One-time password (required)"
+header                   = "Enter the one-time password below"
+message-otp-cd-success   = "You can login using MFA"
+submit-button-label      = "Verify OTP"

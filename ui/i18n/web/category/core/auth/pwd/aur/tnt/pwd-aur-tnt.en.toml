@@ -1,0 +1,22 @@
+[web-core-auth-pwd-aur-tnt-page]
+
+title                            = "<Application> : Change a user's password : {{.aurNm}}"
+
+[web-core-auth-pwd-aur-tnt-mod-form]
+
+descr                            = "Enter a new password below"
+header                           = "Change the user's password : {{.aurNm}}"
+label-aur-pwd-len                = "Is {{.min}} to {{.max}} characters long"
+label-aur-pwd-num                = "Contains at least 1 number"
+label-aur-pwd-sym                = "Contains at least 1 symbol"
+label-input-aur-pwd              = "Password"
+label-submit-button              = "Submit"
+legend                           = "Change password"
+message-aur-pwd-len-error        = "✗"
+message-aur-pwd-len-success      = "✓"
+message-aur-pwd-inc-num-error    = "✗"
+message-aur-pwd-inc-num-success  = "✓"
+message-aur-pwd-inc-sym-error    = "✗"
+message-aur-pwd-inc-sym-success  = "✓"
+message-error                    = "The password was not changed"
+message-success                  = "The password was changed successfully"

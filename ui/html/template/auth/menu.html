@@ -1,0 +1,292 @@
+{{ define "menu" }}
+<!--
+<div class="relative z-50 lg:hidden" role="dialog" aria-modal="true">
+	<div class="fixed inset-0 bg-gray-900/80" aria-hidden="true"></div>
+
+	<div class="fixed inset-0 flex">
+		<div class="relative mr-16 flex w-full max-w-xs flex-1">
+			<div class="absolute top-0 left-full flex w-16 justify-center pt-5">
+				<button type="button" class="-m-2.5 p-2.5">
+					<span class="sr-only">Close sidebar</span>
+					<svg class="size-6 text-white" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+						<path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+					</svg>
+				</button>
+			</div>
+
+			<div class="flex grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200 bg-white px-6">
+				<div class="flex h-16 shrink-0 items-center">
+					<img class="h-8 w-auto" src="/static/img/logo.svg" alt="Your Company">
+				</div>
+				<nav class="flex flex-1 flex-col">
+					<ul class="flex flex-1 flex-col gap-y-7">
+						<li>
+							<ul class="-mx-2 space-y-1">
+								<li>
+									<a href="/web/core/auth/home"
+									   class="block rounded-md bg-gray-50 py-2 pr-2 pl-10 text-sm/6 font-semibold text-gray-700">
+										{{.T "web-core-auth-menu.home-label"}}
+									</a>
+								</li>
+								<li>
+									<div>
+										<button type="button"
+											class="flex w-full items-center gap-x-3 rounded-md p-2 text-left text-sm/6 font-semibold text-gray-700 hover:bg-gray-50"
+											aria-controls="sub-menu-1" aria-expanded="false">
+											<svg class="size-5 shrink-0 text-gray-400" 
+											     viewBox="0 0 20 20"
+											     fill="currentColor"
+											     aria-hidden="true"
+											     data-slot="icon">
+												<path fill-rule="evenodd"
+												      d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z"
+												      clip-rule="evenodd" />
+											</svg>
+											{{.T "web-core-auth-menu.settings-label"}}
+										</button>
+										<ul class="mt-1 px-2" id="sub-menu-1">
+											{{if .HasRole "role_web_core_auth_key_aur_mod"}}
+											<li>
+												<a href="/web/core/auth/key/aur"
+												   class="block rounded-md py-2 pr-2 pl-9 text-sm/6 text-gray-700 hover:bg-gray-50">
+													{{.T "web-core-auth-menu.key-aur-mod-label"}}
+												</a>
+											</li>
+											{{end}}
+										</ul>
+									</div>
+								</li>
+								<li>
+									<div>
+										<button type="button" class="flex w-full items-center gap-x-3 rounded-md p-2 text-left text-sm/6 font-semibold text-gray-700 hover:bg-gray-50" aria-controls="sub-menu-2" aria-expanded="false">
+											<svg class="size-5 shrink-0 text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
+												<path fill-rule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
+											</svg>
+											{{.T "web-core-auth-menu.user-management-label"}}
+										</button>
+										<ul class="mt-1 px-2" id="sub-menu-2">
+											{{if .HasRole "role_web_core_ssn_tnt_inf"}}
+											<li>
+												<a href="/web/core/auth/ssn/tnt" class="block rounded-md py-2 pr-2 pl-9 text-sm/6 text-gray-700 hover:bg-gray-50">{{.T "web-core-auth-menu.ssn-tnt-inf-label"}}</a>
+											</li>
+											{{end}}
+											{{if .HasRole "role_web_core_auth_log_aur_tnt_inf"}}
+											<li>
+												<a href="/web/core/auth/log/aur/tnt" class="block rounded-md py-2 pr-2 pl-9 text-sm/6 text-gray-700 hover:bg-gray-50">{{.T "web-core-auth-menu.log-aur-tnt-inf-label"}}</a>
+											</li>
+											{{end}}
+											{{if .HasRole "role_web_core_auth_aur_tnt_inf"}}
+											<li>
+												<a href="/web/core/auth/aur/tnt" class="block rounded-md py-2 pr-2 pl-9 text-sm/6 text-gray-700 hover:bg-gray-50">{{.T "web-core-auth-menu.aur-tnt-inf-label"}}</a>
+											</li>
+											{{end}}
+											{{if and (.HasRole "role_web_core_auth_aur_tnt_reg") (not (.HasRole "role_web_core_auth_aur_tnt_inf"))}}
+											<li>
+												<a href="/web/core/auth/aur/tnt" class="block rounded-md py-2 pr-2 pl-9 text-sm/6 text-gray-700 hover:bg-gray-50">{{.T "web-core-auth-menu.aur-tnt-reg-label"}}</a>
+											</li>
+											{{end}}
+										</ul>
+									</div>
+								</li>
+							</ul>
+						</li>
+						<li class="-mx-6 mt-auto">
+							<a class="block rounded-md py-2 pr-2 pl-9 text-sm/6 text-gray-700 hover:bg-gray-50" hx-delete="/web/core/auth/ssn/aur">{{.T "web-core-auth-menu.ssn-aur-end-label"}}</a>
+						</li>
+					</ul>
+				</nav>
+			</div>
+		</div>
+	</div>
+</div>
+-->
+<!-- Static sidebar for desktop -->
+<div hx-target="#main"
+     hx-select="#content"
+     hx-swap="innerHTML show:window:top"
+     class="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
+	<!-- Sidebar component, swap this element with another sidebar if you like -->
+
+	<div class="flex grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200 bg-white px-6">
+		<div class="flex h-16 shrink-0 items-center">
+			<img class="h-8 w-auto" src="/static/img/logo.svg" alt="Your Company">
+		</div>
+		<nav class="flex flex-1 flex-col">
+			<ul class="flex flex-1 flex-col gap-y-7">
+				<li>
+					<ul class="-mx-2 space-y-1">
+						<li>
+							<a href="/web/core/auth/home" class="block rounded-md bg-gray-50 py-2 pr-2 pl-10 text-sm/6 font-semibold text-gray-700">{{.T "web-core-auth-menu.home-label"}}</a>
+						</li>
+						{{if or (.HasRole "role_web_core_auth_atn_tnt_inf") (.HasRole "role_web_core_auth_atn_tnt_mod") (.HasRole "role_web_core_auth_grp_tnt_inf")}}
+						<li>
+							<div>
+								<button _="install ToggleMenu(svg : #auth-menu-security-chevron, list : #auth-menu-security-list)"
+								        type="button"
+								        class="flex w-full items-center gap-x-3 rounded-md p-2 text-left text-sm/6 font-semibold text-gray-700 hover:bg-gray-50"
+								        aria-controls="auth-menu-security-list"
+								        aria-expanded="true">
+									<svg id="auth-menu-security-chevron"
+									     class="size-5 shrink-0 text-gray-400 rotate-90 text-gray-500"
+									     viewBox="0 0 20 20"
+									     fill="currentColor"
+									     aria-hidden="true"
+									     data-slot="icon">
+										<path fill-rule="evenodd"
+										      d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z"
+										      clip-rule="evenodd" />
+									</svg>
+									{{.T "web-core-auth-menu.security-label"}}
+								</button>
+								<ul class="mt-1 px-2"
+								    id="auth-menu-security-list">
+									{{if or (.HasRole "role_web_core_auth_atn_tnt_inf") (.HasRole "role_web_core_auth_atn_tnt_mod")}}
+									<li>
+										<a href="/web/core/auth/atn/tnt"
+										   class="block rounded-md py-2 pr-2 pl-9 text-sm/6 text-gray-700 hover:bg-gray-50">
+											{{.T "web-core-auth-menu.atn-tnt-inf-label"}}
+										</a>
+									</li>
+									{{end}}
+									{{if .HasRole "role_web_core_auth_grp_tnt_inf"}}
+									<li>
+										<a href="/web/core/auth/grp/tnt"
+										   class="block rounded-md py-2 pr-2 pl-9 text-sm/6 text-gray-700 hover:bg-gray-50">
+											{{.T "web-core-auth-menu.grp-tnt-inf-label"}}
+										</a>
+									</li>
+									{{end}}
+								</ul>
+							</div>
+						</li>
+						{{end}}
+						{{if .HasRole "role_web_core_auth_key_aur_mod"}}
+						<li>
+							<div>
+								<button _="install ToggleMenu(svg : #auth-menu-settings-chevron, list : #auth-menu-settings-list)"
+								        type="button"
+								        class="flex w-full items-center gap-x-3 rounded-md p-2 text-left text-sm/6 font-semibold text-gray-700 hover:bg-gray-50"
+								        aria-controls="auth-menu-settings-list"
+								        aria-expanded="true">
+									<svg id="auth-menu-settings-chevron"
+									     class="size-5 shrink-0 text-gray-400 rotate-90 text-gray-500"
+									     viewBox="0 0 20 20"
+									     fill="currentColor"
+									     aria-hidden="true"
+									     data-slot="icon">
+										<path fill-rule="evenodd"
+										      d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z"
+										      clip-rule="evenodd" />
+									</svg>
+									{{.T "web-core-auth-menu.settings-label"}}
+								</button>
+								<ul class="mt-1 px-2"
+								    id="auth-menu-settings-list">
+									{{if .HasRole "role_web_core_auth_key_aur_mod"}}
+									<li>
+										<a href="/web/core/auth/key/aur" class="block rounded-md py-2 pr-2 pl-9 text-sm/6 text-gray-700 hover:bg-gray-50">
+											{{.T "web-core-auth-menu.key-aur-mod-label"}}
+										</a>
+									</li>
+									{{end}}
+								</ul>
+							</div>
+						</li>
+						{{end}}
+						{{ if .HasRole "role_web_core_auth_log_ep_tnt_inf" }}
+						<li>
+							<div>
+								<button _="install ToggleMenu(svg : #auth-menu-tenant-management-chevron, list : #auth-menu-tenant-management-list)"
+								        type="button"
+								        class="flex w-full items-center gap-x-3 rounded-md p-2 text-left text-sm/6 font-semibold text-gray-700 hover:bg-gray-50"
+								        aria-controls="auth-menu-tenant-management-list"
+								        aria-expanded="true">
+									<svg id="auth-menu-tenant-management-chevron"
+									     class="size-5 shrink-0 text-gray-400 rotate-90 text-gray-500"
+									     viewBox="0 0 20 20"
+									     fill="currentColor"
+									     aria-hidden="true"
+									     data-slot="icon">
+										<path fill-rule="evenodd"
+										      d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z"
+										      clip-rule="evenodd" />
+									</svg>
+									{{.T "web-core-auth-menu.tenant-management-label"}}
+								</button>
+								<ul id="auth-menu-tenant-management-list"
+								    class="mt-1 px-2">
+									{{if .HasRole "role_web_core_auth_log_ep_tnt_inf"}}
+									<li>
+										<a href="/web/core/auth/log/ep/tnt" class="block rounded-md py-2 pr-2 pl-9 text-sm/6 text-gray-700 hover:bg-gray-50">
+											{{.T "web-core-auth-menu.log-ep-tnt-inf-label"}}
+										</a>
+									</li>
+									{{end}}
+								</ul>
+							</div>
+						</li>
+						{{ end }}
+						{{if or (.HasRole "role_web_core_auth_ssn_tnt_inf") (.HasRole "role_web_core_auth_log_aur_tnt_inf") (.HasRole "role_web_core_auth_aur_tnt_inf") (and (.HasRole "role_web_core_auth_aur_tnt_reg") (not (.HasRole "role_web_core_auth_aur_tnt_inf")))}}
+						<li>
+							<div>
+								<button _="install ToggleMenu(svg : #auth-menu-user-management-chevron, list : #auth-menu-user-management-list)"
+								        type="button"
+								        class="flex w-full items-center gap-x-3 rounded-md p-2 text-left text-sm/6 font-semibold text-gray-700 hover:bg-gray-50"
+								        aria-controls="auth-menu-user-management-list"
+								        aria-expanded="true">
+									<svg id="auth-menu-user-management-chevron"
+									     class="size-5 shrink-0 text-gray-400 rotate-90 text-gray-500"
+									     viewBox="0 0 20 20"
+									     fill="currentColor"
+									     aria-hidden="true"
+									     data-slot="icon">
+										<path fill-rule="evenodd"
+										      d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z"
+										      clip-rule="evenodd" />
+									</svg>
+									{{.T "web-core-auth-menu.user-management-label"}}
+								</button>
+								<ul id="auth-menu-user-management-list"
+								    class="mt-1 px-2">
+									{{if .HasRole "role_web_core_auth_ssn_tnt_inf"}}
+									<li>
+										<a href="/web/core/auth/ssn/tnt" class="block rounded-md py-2 pr-2 pl-9 text-sm/6 text-gray-700 hover:bg-gray-50">
+											{{.T "web-core-auth-menu.ssn-tnt-inf-label"}}
+										</a>
+									</li>
+									{{end}}
+									{{if .HasRole "role_web_core_auth_log_aur_tnt_inf"}}
+									<li>
+										<a href="/web/core/auth/log/aur/tnt" class="block rounded-md py-2 pr-2 pl-9 text-sm/6 text-gray-700 hover:bg-gray-50">
+											{{.T "web-core-auth-menu.log-aur-tnt-inf-label"}}
+										</a>
+									</li>
+									{{end}}
+									{{if .HasRole "role_web_core_auth_aur_tnt_inf"}}
+									<li>
+										<a href="/web/core/auth/aur/tnt" class="block rounded-md py-2 pr-2 pl-9 text-sm/6 text-gray-700 hover:bg-gray-50">
+											{{.T "web-core-auth-menu.aur-tnt-inf-label"}}
+										</a>
+									</li>
+									{{end}}
+									{{if and (.HasRole "role_web_core_auth_aur_tnt_reg") (not (.HasRole "role_web_core_auth_aur_tnt_inf"))}}
+									<li>
+										<a href="/web/core/auth/aur/tnt" class="block rounded-md py-2 pr-2 pl-9 text-sm/6 text-gray-700 hover:bg-gray-50">
+											{{.T "web-core-auth-menu.aur-tnt-reg-label"}}
+										</a>
+									</li>
+									{{end}}
+								</ul>
+							</div>
+						</li>
+						{{end}}
+					</ul>
+				</li>
+				<li class="-mx-6 mt-auto">
+					<a class="block rounded-md py-2 pr-2 pl-9 text-sm/6 text-gray-700 hover:bg-gray-50" hx-delete="/web/core/auth/ssn/aur">{{.T "web-core-auth-menu.ssn-aur-end-label"}}</a>
+				</li>
+			</ul>
+		</nav>
+	</div>
+</div>
+{{ end }}

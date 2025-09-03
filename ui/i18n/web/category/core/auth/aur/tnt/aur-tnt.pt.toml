@@ -1,0 +1,65 @@
+[web-core-auth-aur-tnt-page]
+
+title                           = "<Application> : Manage users"
+
+[web-core-auth-aur-tnt-del-form]
+
+delete-button-label             = "Delete"
+message-delete-success-plural   = "{{.n}} users were deleted"
+message-delete-success-singular = "{{.n}} user was deleted"
+
+[web-core-auth-aur-tnt-inf-form]
+
+descr                           = "Use the filters to search the users"
+filter-header                   = "Filters"
+header                          = "Search users"
+input-label-aur-enabled         = "Enabled"
+input-label-lng-id              = "Language"
+input-label-dbrl-id             = "Role"
+input-label-aur-nm              = "Username"
+input-option-aur-enabled-all    = "All"
+input-option-aur-enabled-no     = "No"
+input-option-aur-enabled-yes    = "Yes"
+input-option-dbrl-id-all        = "All"
+input-option-lng-id-all         = "All"
+
+[web-core-auth-aur-tnt-inf-results]
+
+edit-button-label               = "Edit"
+edit-grp-link-label             = "Manage groups"
+edit-pw-link-label              = "Change password"
+input-option-pg-none            = "None available"
+header-label-aur-enabled        = "Enabled"
+header-label-pg                 = "Home page"
+header-label-lng                = "Language"
+header-label-dbrl               = "Role"
+header-label-aur-nm             = "Username"
+save-button-label               = "Save"
+
+[web-core-auth-aur-tnt-mod-form]
+
+warning-input-aur-nm-blank      = "Username cannot be blank"
+warning-input-aur-nm-taken      = "'{{.aurNm}}' is taken"
+message-input-success           = "Changes were applied successfully"
+warning-input-log-olock-error   = "Another user has modified this record"
+warning-input-unexpected-error  = "Unexpected error"
+
+[web-core-auth-aur-tnt-reg-form]
+
+descr                           = "Register a user with the system"
+header                          = "Register users"
+input-label-lng                 = "Language"
+input-label-pw                  = "Password"
+input-label-aur-nm              = "Username"
+input-label-grp                 = "Group"
+legend                          = "Register new user"
+message-input-success           = "'{{.aurNm}}' has been registered"
+submit-button-label             = "Register"
+title-warning-plural            = "{{.n}} problems were identified which prevented the user from being registered"
+title-warning-singular          = "{{.n}} problem was identified which prevented the user from being registered"
+warning-input-credentials-taken = "'{{.aurNm}}' is taken"
+warning-input-lng-blank         = "Language cannot be blank"
+warning-input-pw-blank          = "Password cannot be blank"
+warning-input-unexpected-error  = "Unexpected error"
+warning-input-aur-nm-blank      = "Username cannot be blank"
+warning-input-grp-blank         = "User type cannot be blank"

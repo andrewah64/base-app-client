@@ -1,0 +1,36 @@
+[web-core-auth-log-ep-tnt-page]
+
+title                          = "<Application> : Manage the generation of endpoint level log information"
+
+[web-core-auth-log-ep-tnt-inf-form]
+
+descr                          = "Use the filters to find endpoint/logging configuration"
+edit-button-label              = "Edit"
+filter-header                  = "Filters"
+header                         = "Search endpoint-logging configuration"
+input-label-epp-pt             = "Endpoint path"
+input-label-hrm-id             = "Method"
+input-label-lvl-id             = "Log level"
+input-option-hrm-id-all        = "All"
+input-option-lvl-id-all        = "All"
+save-button-label              = "Save"
+
+[web-core-auth-log-ep-tnt-inf-results]
+
+header-label-epp-pt            = "Endpoint path"
+header-label-hrm-id            = "HTTP request method"
+header-label-lvl-id            = "Log level"
+
+[web-core-auth-log-ep-tnt-mod-bulk-form]
+
+descr                          = "Update the logging level of all records found through the search filters"
+header                         = "Bulk update"
+input-label-tgt-lvl-id         = "New log level"
+message-input-success          = "The bulk update was successful"
+save-button-label              = "Update"
+
+[web-core-auth-log-ep-tnt-mod-row-form]
+
+message-input-success          = "Changes were applied successfully"
+warning-input-log-olock-error  = "Another user modified this record"
+warning-input-unexpected-error = "An unexpected error occurred"

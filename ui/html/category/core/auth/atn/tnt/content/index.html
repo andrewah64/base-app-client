@@ -1,0 +1,952 @@
+{{ define "title" }}
+	{{ $hasRoleWebCoreAtnTntMod := .HasRole "role_web_core_auth_atn_tnt_mod" }}
+	{{ if $hasRoleWebCoreAtnTntMod }}
+		{{.T "web-core-auth-atn-tnt-page.title-edit"}}
+	{{ else }}
+		{{.T "web-core-auth-atn-tnt-page.title-view"}}
+	{{ end }}
+{{ end }}
+
+{{ define "content" }}
+	{{ $hasRoleWebCoreAtnTntMod := .HasRole "role_web_core_auth_atn_tnt_mod" }}
+	{{ $tft                     := .TFT }}
+
+	<div id="content">
+		{{if .HasRole "role_web_core_auth_atn_tnt_inf"}}
+		<div class="grid grid-cols-1 grid-rows-2 mb-8">
+			<div class="col-start-1 row-start-1">
+				<h2 class="text-base font-semibold text-gray-900">
+					{{ if $hasRoleWebCoreAtnTntMod }}
+						{{.T "web-core-auth-atn-tnt-page.header-edit"}}
+					{{ else }}
+						{{.T "web-core-auth-atn-tnt-page.header-view"}}
+					{{ end }}
+				</h2>
+			</div>
+			<div class="col-start-1 row-start-2">
+				<p class="mt-2 max-w-4xl text-sm text-gray-500">
+					{{ if $hasRoleWebCoreAtnTntMod }}
+						{{.T "web-core-auth-atn-tnt-page.descr-edit"}}
+					{{ else }}
+						{{.T "web-core-auth-atn-tnt-page.descr-view"}}
+					{{ end }}
+				</p>
+			</div>
+		</div>
+		<div _="install TabContainer">
+			<div role="tablist"
+				class="-mb-px flex pb-10">
+				{{range $ocp := .ResultSet.Ocp}}
+					<button role="tab"
+						id="tab-{{$ocp.OcpNm}}"
+						aria-controls="panel-{{$ocp.OcpNm}}"
+						class="w-1/4 border-b-2 border-transparent px-1 py-4 text-center text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700">
+						OIDC : {{$ocp.OcpNm}}
+					</button>
+				{{end}}
+				<button role="tab"
+					id="tab-2"
+					aria-controls="panel-2"
+					aria-current="page"
+					aria-selected="true"
+					class="w-1/4 border-b-2 border-indigo-500 px-1 py-4 text-center text-sm font-medium text-indigo-600">
+					{{.T "web-core-auth-atn-tnt-aukc-tab.title"}}
+				</button>
+				<button role="tab"
+					id="tab-saml2"
+					aria-controls="panel-saml2"
+					aria-current="page"
+					aria-selected="true"
+					class="w-1/4 border-b-2 border-indigo-500 px-1 py-4 text-center text-sm font-medium text-indigo-600">
+					{{.T "web-core-auth-atn-tnt-saml2-tab.title"}}
+				</button>
+				<button role="tab"
+					id="tab-1"
+					aria-controls="panel-1"
+					aria-current="page"
+					aria-selected="true"
+					class="w-1/4 border-b-2 border-indigo-500 px-1 py-4 text-center text-sm font-medium text-indigo-600">
+					{{.T "web-core-auth-atn-tnt-aupc-tab.title"}}
+				</button>
+			</div>
+
+			{{ $aupc := (index .ResultSet.Aupc 0)}}
+			<div role="tabpanel"
+			     id="panel-1"
+			     aria-labelledby="tab-1">
+				{{ if $hasRoleWebCoreAtnTntMod }}
+				<form hx-patch="/web/core/auth/atn/tnt/aupc"
+				      hx-swap="none">
+				{{ end }}
+
+					<div id="atn-tnt-mod-aupc-uts-ctr">
+						<input id="atn-tnt-mod-aupc-uts"
+						       name="atn-tnt-mod-aupc-uts"
+						       type="hidden"
+						       value="{{ $aupc.Uts.Format $tft }}">
+					</div>
+
+					<div class="pb-2">
+						<div class="mt-5 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+							<div class="sm:col-span-3">
+								<div _="install NumberRange(v1: #atn-tnt-mod-aupc-aur-nm-min-len, v2: #atn-tnt-mod-aupc-aur-nm-max-len)"
+								     class="grid grid-cols-2">
+									<div class="col-start-1">
+										<label for="atn-tnt-mod-aupc-aur-nm-min-len"
+										       class="block text-sm/6 font-medium text-gray-900">
+											{{if $hasRoleWebCoreAtnTntMod}}
+												{{ .T "web-core-auth-atn-tnt-aupc-tab.input-label-edit-aur-nm-min-len" }}
+											{{else}}
+												{{ .T "web-core-auth-atn-tnt-aupc-tab.label-view-aur-nm-min-len" }}
+											{{end}}
+										</label>
+										<div class="mt-2">
+											{{if $hasRoleWebCoreAtnTntMod}}
+											<input id="atn-tnt-mod-aupc-aur-nm-min-len"
+											       name="atn-tnt-mod-aupc-aur-nm-min-len"
+											       type="number"
+											       min="1"
+											       value="{{$aupc.AupcAurNmMinLen}}"
+											       required
+											       class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6">
+											{{else}}
+											<span id="atn-tnt-mod-aur-nm-min-len"
+											      class="sm:text-sm/6">
+												{{$aupc.AupcAurNmMinLen}}
+											</span>
+											{{end}}
+										</div>
+									</div>
+									<div class="col-start-2">
+										<label for="atn-tnt-mod-aupc-aur-nm-max-len"
+										       class="block text-sm/6 font-medium text-gray-900">
+											{{if $hasRoleWebCoreAtnTntMod}}
+												{{ .T "web-core-auth-atn-tnt-aupc-tab.input-label-edit-aur-nm-max-len" }}
+											{{else}}
+												{{ .T "web-core-auth-atn-tnt-aupc-tab.label-view-aur-nm-max-len" }}
+											{{end}}
+										</label>
+										<div class="mt-2">
+											{{if $hasRoleWebCoreAtnTntMod}}
+											<input id="atn-tnt-mod-aupc-aur-nm-max-len"
+											       name="atn-tnt-mod-aupc-aur-nm-max-len"
+											       type="number"
+											       min="1"
+											       required
+											       value="{{$aupc.AupcAurNmMaxLen}}"
+											       class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6">
+											{{else}}
+											<span id="atn-tnt-mod-aur-nm-max-len"
+											      class="sm:text-sm/6">
+												{{$aupc.AupcAurNmMaxLen}}
+											</span>
+											{{end}}
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="pb-2">
+						<div class="mt-5 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+							<div class="sm:col-span-3">
+								<div _="install NumberRange(v1: #atn-tnt-mod-aupc-aur-pwd-min-len, v2: #atn-tnt-mod-aupc-aur-pwd-max-len)"
+								     class="grid grid-cols-2">
+									<div class="col-start-1">
+										<label for="atn-tnt-mod-aupc-aur-pwd-min-len"
+										       class="block text-sm/6 font-medium text-gray-900">
+											{{if $hasRoleWebCoreAtnTntMod}}
+												{{ .T "web-core-auth-atn-tnt-aupc-tab.input-label-edit-aur-pwd-min-len" }}
+											{{else}}
+												{{ .T "web-core-auth-atn-tnt-aupc-tab.label-view-aur-pwd-min-len" }}
+											{{end}}
+										</label>
+										<div class="mt-2">
+											{{if $hasRoleWebCoreAtnTntMod}}
+											<input id="atn-tnt-mod-aupc-aur-pwd-min-len"
+											       name="atn-tnt-mod-aupc-aur-pwd-min-len"
+											       type="number"
+											       min="1"
+											       required
+											       value="{{$aupc.AupcAurPwdMinLen}}"
+											       class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6">
+											{{else}}
+											<span id="atn-tnt-mod-aur-pwd-min-len"
+											      class="sm:text-sm/6">
+												{{$aupc.AupcAurPwdMinLen}}
+											</span>
+											{{end}}
+										</div>
+									</div>
+									<div class="col-start-2">
+										<label for="atn-tnt-mod-aupc-aur-pwd-max-len"
+										       class="block text-sm/6 font-medium text-gray-900">
+											{{if $hasRoleWebCoreAtnTntMod}}
+												{{ .T "web-core-auth-atn-tnt-aupc-tab.input-label-edit-aur-pwd-max-len" }}
+											{{else}}
+												{{ .T "web-core-auth-atn-tnt-aupc-tab.label-view-aur-pwd-max-len" }}
+											{{end}}
+										</label>
+										<div class="mt-2">
+											{{if $hasRoleWebCoreAtnTntMod}}
+											<input id="atn-tnt-mod-aupc-aur-pwd-max-len"
+											       name="atn-tnt-mod-aupc-aur-pwd-max-len"
+											       type="number"
+											       min="1"
+											       required
+											       value="{{$aupc.AupcAurPwdMaxLen}}"
+											       class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6">
+											{{else}}
+											<span id="atn-tnt-mod-aur-pwd-max-len"
+											      class="sm:text-sm/6">
+												{{$aupc.AupcAurPwdMaxLen}}
+											</span>
+											{{end}}
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="pb-2">
+						<div class="mt-5 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+							<div class="sm:col-span-3">
+								<div class="grid grid-cols-2">
+									<div class="col-start-1">
+										<label for="atn-tnt-mod-aupc-aur-pwd-inc-sym"
+										       class="block text-sm/6 font-medium text-gray-900">
+											{{.T "web-core-auth-atn-tnt-aupc-tab.label-aur-pwd-inc-sym"}}
+										</label>
+										<div class="mt-2 flex h-6 shrink-0 items-center">
+											<div class="group grid size-4 grid-cols-1">
+												<input id="atn-tnt-mod-aupc-aur-pwd-inc-sym"
+												       name="atn-tnt-mod-aupc-aur-pwd-inc-sym"
+												       type="checkbox"
+												       value="true"
+												       {{if $aupc.AupcAurPwdIncSym}}checked{{end}}
+												       {{ if not $hasRoleWebCoreAtnTntMod }}disabled{{end}}
+												       class="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-indigo-600 checked:bg-indigo-600 indeterminate:border-indigo-600 indeterminate:bg-indigo-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:checked:bg-gray-100 forced-colors:appearance-auto">
+												<svg class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white group-has-disabled:stroke-gray-950/25"
+												     viewBox="0 0 14 14"
+												     fill="none">
+													<path class="opacity-0 group-has-checked:opacity-100"
+													      d="M3 8L6 11L11 3.5"
+													      stroke-width="2"
+													      stroke-linecap="round"
+													      stroke-linejoin="round" />
+													<path class="opacity-0 group-has-indeterminate:opacity-100"
+													      d="M3 7H11"
+													      stroke-width="2"
+													      stroke-linecap="round"
+													      stroke-linejoin="round" />
+												</svg>
+											</div>
+										</div>
+									</div>
+									<div class="col-start-2">
+										<label for="atn-tnt-mod-aupc-aur-pwd-inc-num"
+										       class="block text-sm/6 font-medium text-gray-900">
+											{{.T "web-core-auth-atn-tnt-aupc-tab.label-aur-pwd-inc-num"}}
+										</label>
+										<div class="mt-2 flex h-6 shrink-0 items-center">
+											<div class="group grid size-4 grid-cols-1">
+												<input id="atn-tnt-mod-aupc-aur-pwd-inc-num"
+												       name="atn-tnt-mod-aupc-aur-pwd-inc-num"
+												       type="checkbox"
+												       value="true"
+												       {{if $aupc.AupcAurPwdIncNum}}checked{{end}}
+												       {{ if not $hasRoleWebCoreAtnTntMod }}disabled{{end}}
+												       class="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-indigo-600 checked:bg-indigo-600 indeterminate:border-indigo-600 indeterminate:bg-indigo-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:checked:bg-gray-100 forced-colors:appearance-auto">
+												<svg class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white group-has-disabled:stroke-gray-950/25"
+												     viewBox="0 0 14 14"
+												     fill="none">
+													<path class="opacity-0 group-has-checked:opacity-100"
+													      d="M3 8L6 11L11 3.5"
+													      stroke-width="2"
+													      stroke-linecap="round"
+													      stroke-linejoin="round" />
+													<path class="opacity-0 group-has-indeterminate:opacity-100"
+													      d="M3 7H11"
+													      stroke-width="2"
+													      stroke-linecap="round"
+													      stroke-linejoin="round" />
+												</svg>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="pb-10">
+						<div class="mt-5 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+							<div class="sm:col-span-3">
+								<div class="grid grid-cols-2">
+									<div class="col-start-1">
+										<label for="atn-tnt-mod-aupc-aur-pwd-enabled"
+										       class="block text-sm/6 font-medium text-gray-900">
+											{{.T "web-core-auth-atn-tnt-aupc-tab.label-aur-pwd-enabled"}}
+										</label>
+										<div class="mt-2 flex h-6 shrink-0 items-center">
+											<div class="group grid size-4 grid-cols-1">
+												<input id="atn-tnt-mod-aupc-aur-pwd-enabled"
+												       name="atn-tnt-mod-aupc-aur-pwd-enabled"
+												       type="checkbox"
+												       value="true"
+												       {{if $aupc.AupcEnabled}}checked{{end}}
+												       {{ if not $hasRoleWebCoreAtnTntMod }}disabled{{end}}
+												       class="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-indigo-600 checked:bg-indigo-600 indeterminate:border-indigo-600 indeterminate:bg-indigo-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:checked:bg-gray-100 forced-colors:appearance-auto">
+												<svg class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white group-has-disabled:stroke-gray-950/25"
+												     viewBox="0 0 14 14"
+												     fill="none">
+													<path class="opacity-0 group-has-checked:opacity-100"
+													      d="M3 8L6 11L11 3.5"
+													      stroke-width="2"
+													      stroke-linecap="round"
+													      stroke-linejoin="round" />
+													<path class="opacity-0 group-has-indeterminate:opacity-100"
+													      d="M3 7H11"
+													      stroke-width="2"
+													      stroke-linecap="round"
+													      stroke-linejoin="round" />
+												</svg>
+											</div>
+										</div>
+									</div>
+									<div class="col-start-2">
+										<label for="atn-tnt-mod-aupc-aur-pwd-mfa-enabled"
+										       class="block text-sm/6 font-medium text-gray-900">
+											{{.T "web-core-auth-atn-tnt-aupc-tab.label-aur-pwd-mfa-enabled"}}
+										</label>
+										<div class="mt-2 flex h-6 shrink-0 items-center">
+											<div class="group grid size-4 grid-cols-1">
+												<input id="atn-tnt-mod-aupc-aur-pwd-mfa-enabled"
+												       name="atn-tnt-mod-aupc-aur-pwd-mfa-enabled"
+												       type="checkbox"
+												       value="true"
+												       {{if $aupc.AupcMfaEnabled}}checked{{end}}
+												       {{ if not $hasRoleWebCoreAtnTntMod }}disabled{{end}}
+												       class="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-indigo-600 checked:bg-indigo-600 indeterminate:border-indigo-600 indeterminate:bg-indigo-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:checked:bg-gray-100 forced-colors:appearance-auto">
+												<svg class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white group-has-disabled:stroke-gray-950/25"
+												     viewBox="0 0 14 14"
+												     fill="none">
+													<path class="opacity-0 group-has-checked:opacity-100"
+													      d="M3 8L6 11L11 3.5"
+													      stroke-width="2"
+													      stroke-linecap="round"
+													      stroke-linejoin="round" />
+													<path class="opacity-0 group-has-indeterminate:opacity-100"
+													      d="M3 7H11"
+													      stroke-width="2"
+													      stroke-linecap="round"
+													      stroke-linejoin="round" />
+												</svg>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				{{ if $hasRoleWebCoreAtnTntMod }}
+					<div class="fixed bottom-0 left-0 w-full h-[100px] bg-white flex items-center justify-end pr-4 border-t border-gray-200">
+						<button type="submit"
+						        class="relative flex rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+							<img class="htmx-indicator htmx-spinner absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+							     src="/static/img/spinner-white.svg">
+							<span class="htmx-indicator htmx-text">
+								{{.T "web-core-auth-atn-tnt-aupc-tab.submit-button-label"}}
+							</span>
+						</button>
+					</div>
+				</form>
+				{{ end }}
+			</div>
+
+			{{ $aukc := (index .ResultSet.Aukc 0)}}
+			<div role="tabpanel"
+			     id="panel-2"
+			     aria-labelledby="tab-2">
+				{{ if $hasRoleWebCoreAtnTntMod }}
+				<form hx-patch="/web/core/auth/atn/tnt/aukc"
+				      hx-swap="none">
+				{{ end }}
+
+					<div id="atn-tnt-mod-aukc-uts-ctr">
+						<input id="atn-tnt-mod-aukc-uts"
+						       name="atn-tnt-mod-aukc-uts"
+						       type="hidden"
+						       value="{{ $aukc.Uts.Format $tft }}">
+					</div>
+
+					<div class="grid sm:grid-cols-6 pb-[100px]">
+						<div class="sm:col-span-3">
+
+							<div class="mt-5  gap-y-8 pb-2 grid grid-cols-2"
+							     _="install NumberRange(v1: #atn-tnt-mod-aukc-aur-nm-min-len, v2: #atn-tnt-mod-aukc-aur-nm-max-len)">
+								<div class="sm:col-start-1">
+									<label for="atn-tnt-mod-aukc-aur-nm-min-len"
+									       class="block text-sm/6 font-medium text-gray-900">
+										{{if $hasRoleWebCoreAtnTntMod}}
+											{{ .T "web-core-auth-atn-tnt-aukc-tab.input-label-edit-aur-nm-min-len" }}
+										{{else}}
+											{{ .T "web-core-auth-atn-tnt-aukc-tab.label-view-aur-nm-min-len" }}
+										{{end}}
+									</label>
+									<div class="mt-2">
+										{{if $hasRoleWebCoreAtnTntMod}}
+										<input id="atn-tnt-mod-aukc-aur-nm-min-len"
+										       name="atn-tnt-mod-aukc-aur-nm-min-len"
+										       type="number"
+										       min="1"
+										       value="{{$aukc.AukcAurNmMinLen}}"
+										       required
+										       class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6">
+										{{else}}
+										<span id="atn-tnt-mod-aukc-aur-nm-min-len"
+										      class="sm:text-sm/6">
+											{{$aukc.AukcAurNmMinLen}}
+										</span>
+										{{end}}
+									</div>
+								</div>
+								<div class="sm:col-start-2">
+									<label for="atn-tnt-mod-aukc-aur-nm-max-len"
+									       class="block text-sm/6 font-medium text-gray-900">
+										{{if $hasRoleWebCoreAtnTntMod}}
+											{{ .T "web-core-auth-atn-tnt-aukc-tab.input-label-edit-aur-nm-max-len" }}
+										{{else}}
+											{{ .T "web-core-auth-atn-tnt-aukc-tab.label-view-aur-nm-max-len" }}
+										{{end}}
+									</label>
+									<div class="mt-2">
+										{{if $hasRoleWebCoreAtnTntMod}}
+										<input id="atn-tnt-mod-aukc-aur-nm-max-len"
+										       name="atn-tnt-mod-aukc-aur-nm-max-len"
+										       type="number"
+										       min="1"
+										       required
+										       value="{{$aukc.AukcAurNmMaxLen}}"
+										       class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6">
+										{{else}}
+										<span id="atn-tnt-mod-aukc-aur-nm-max-len"
+										      class="sm:text-sm/6">
+											{{$aukc.AukcAurNmMaxLen}}
+										</span>
+										{{end}}
+									</div>
+								</div>
+							</div>
+
+
+							<div class="mt-5 gap-x-6 gap-y-8 pb-2">
+								<label for="atn-tnt-mod-aukc-pkt-id"
+								       class="block text-sm/6 font-medium text-gray-900">
+									{{ .T "web-core-auth-atn-tnt-aukc-tab.label-aur-pky-enabled"}}
+								</label>
+								<div class="mt-2 flex h-6 shrink-0 items-center">
+									<div class="group grid size-4 grid-cols-1">
+										<input id="atn-tnt-mod-aukc-aur-pky-enabled"
+										       name="atn-tnt-mod-aukc-aur-pky-enabled"
+										       type="checkbox"
+										       value="true"
+										       {{if $aukc.AukcEnabled}}checked{{end}}
+										       {{ if not $hasRoleWebCoreAtnTntMod }}disabled{{end}}
+										       class="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-indigo-600 checked:bg-indigo-600 indeterminate:border-indigo-600 indeterminate:bg-indigo-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:checked:bg-gray-100 forced-colors:appearance-auto">
+										<svg class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white group-has-disabled:stroke-gray-950/25"
+										     viewBox="0 0 14 14"
+										     fill="none">
+											<path class="opacity-0 group-has-checked:opacity-100"
+											      d="M3 8L6 11L11 3.5"
+											      stroke-width="2"
+											      stroke-linecap="round"
+											      stroke-linejoin="round" />
+											<path class="opacity-0 group-has-indeterminate:opacity-100"
+											      d="M3 7H11"
+											      stroke-width="2"
+											      stroke-linecap="round"
+											      stroke-linejoin="round" />
+										</svg>
+									</div>
+								</div>
+							</div>
+
+							<div class="mt-5 gap-x-6 gap-y-8 pb-2">
+								<label for="atn-tnt-mod-aukc-pkt-id"
+								       class="block text-sm/6 font-medium text-gray-900">
+									{{if $hasRoleWebCoreAtnTntMod}}
+										{{ .T "web-core-auth-atn-tnt-aukc-tab.input-label-edit-pkt-id" }}
+									{{else}}
+										{{ .T "web-core-auth-atn-tnt-aukc-tab.label-view-pkt-id" }}
+									{{end}}
+								</label>
+								<div class="mt-2">
+									{{if $hasRoleWebCoreAtnTntMod}}
+									<select name="atn-tnt-mod-aukc-pkt-id"
+										id="atn-tnt-mod-aukc-pkt-id"
+										class="w-full appearance-none rounded-md bg-white py-1.5 pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6">
+										{{ range $pkt := .FormOpts.Opts.pkt }}
+										<option value="{{$pkt.Id}}" {{if eq $pkt.Id $aukc.PktId}}selected{{end}}>{{ $pkt.Value }}</option>
+										{{ end }}
+									</select>
+									{{else}}
+									<span id="atn-tnt-mod-aukc-pkt-nm"
+									      class="sm:text-sm/6">
+										{{ range $pkt := .FormOpts.Opts.pkt }}
+											{{if eq $pkt.Id $aukc.PktId}}
+												{{$pkt.Value}}
+											{{end}}
+										{{ end }}
+									</span>
+									{{end}}
+								</div>
+							</div>
+
+							<div class="mt-5 gap-x-6 gap-y-8 pb-2">
+								<label for="atn-tnt-mod-aukc-pka-id"
+								       class="block text-sm/6 font-medium text-gray-900">
+									{{if $hasRoleWebCoreAtnTntMod}}
+										{{ .T "web-core-auth-atn-tnt-aukc-tab.input-label-edit-pka-id" }}
+									{{else}}
+										{{ .T "web-core-auth-atn-tnt-aukc-tab.label-view-pka-id" }}
+									{{end}}
+								</label>
+								<div class="mt-2">
+									{{if $hasRoleWebCoreAtnTntMod}}
+									<select name="atn-tnt-mod-aukc-pka-id"
+										id="atn-tnt-mod-aukc-pka-id"
+										class="w-full appearance-none rounded-md bg-white py-1.5 pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6">
+										{{ range $pka := .FormOpts.Opts.pka }}
+										<option value="{{$pka.Id}}" {{if eq $pka.Id $aukc.PkaId}}selected{{end}}>{{ $pka.Value }}</option>
+										{{ end }}
+									</select>
+									{{else}}
+									<span id="atn-tnt-mod-aukc-pka-nm"
+									      class="sm:text-sm/6">
+										{{ range $pka := .FormOpts.Opts.pka }}
+											{{if eq $pka.Id $aukc.PkaId}}
+												{{$pka.Value}}
+											{{end}}
+										{{ end }}
+									</span>
+									{{end}}
+								</div>
+							</div>
+
+							<div class="mt-5 gap-x-6 gap-y-8 pb-2">
+								<label for="atn-tnt-mod-aukc-pdc-id"
+								       class="block text-sm/6 font-medium text-gray-900">
+									{{if $hasRoleWebCoreAtnTntMod}}
+										{{ .T "web-core-auth-atn-tnt-aukc-tab.input-label-edit-pdc-id" }}
+									{{else}}
+										{{ .T "web-core-auth-atn-tnt-aukc-tab.label-view-pdc-id" }}
+									{{end}}
+								</label>
+								<div class="mt-2">
+									{{if $hasRoleWebCoreAtnTntMod}}
+									<select name="atn-tnt-mod-aukc-pdc-id"
+										id="atn-tnt-mod-aukc-pdc-id"
+										class="w-full appearance-none rounded-md bg-white py-1.5 pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6">
+										{{ range $pdc := .FormOpts.Opts.pdc }}
+										<option value="{{$pdc.Id}}" {{if eq $pdc.Id $aukc.PdcId}}selected{{end}}>{{ $pdc.Value }}</option>
+										{{ end }}
+									</select>
+									{{else}}
+									<span id="atn-tnt-mod-aukc-pdc-nm"
+									      class="sm:text-sm/6">
+										{{ range $pdc := .FormOpts.Opts.pdc }}
+											{{if eq $pdc.Id $aukc.PdcId}}
+												{{$pdc.Value}}
+											{{end}}
+										{{ end }}
+									</span>
+									{{end}}
+								</div>
+							</div>
+
+							<div class="mt-5 gap-x-6 gap-y-8 pb-2">
+								<label for="atn-tnt-mod-aukc-puv-reg-id"
+								       class="block text-sm/6 font-medium text-gray-900">
+									{{if $hasRoleWebCoreAtnTntMod}}
+										{{ .T "web-core-auth-atn-tnt-aukc-tab.input-label-edit-puv-reg-id" }}
+									{{else}}
+										{{ .T "web-core-auth-atn-tnt-aukc-tab.label-view-puv-reg-id" }}
+									{{end}}
+								</label>
+								<div class="mt-2">
+									{{if $hasRoleWebCoreAtnTntMod}}
+									<select name="atn-tnt-mod-aukc-puv-reg-id"
+										id="atn-tnt-mod-aukc-puv-reg-id"
+										class="w-full appearance-none rounded-md bg-white py-1.5 pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6">
+										{{ range $puv := .FormOpts.Opts.puv }}
+										<option value="{{$puv.Id}}" {{if eq $puv.Id $aukc.PuvRegId}}selected{{end}}>{{ $puv.Value }}</option>
+										{{ end }}
+									</select>
+									{{else}}
+									<span id="atn-tnt-mod-aukc-puv-reg-nm"
+									      class="sm:text-sm/6">
+										{{ range $puv := .FormOpts.Opts.puv }}
+											{{if eq $puv.Id $aukc.PuvRegId}}
+												{{$puv.Value}}
+											{{end}}
+										{{ end }}
+									</span>
+									{{end}}
+								</div>
+							</div>
+
+							<div class="mt-5 gap-x-6 gap-y-8 pb-2">
+								<label class="block text-sm/6 font-medium text-gray-900">
+									{{if $hasRoleWebCoreAtnTntMod}}
+										{{ .T "web-core-auth-atn-tnt-aukc-tab.input-label-edit-pkg-id" }}
+									{{else}}
+										{{ .T "web-core-auth-atn-tnt-aukc-tab.label-view-pkg-id" }}
+									{{end}}
+								</label>
+								<div class="multiselect flex flex-row flex-nowrap mt-2">
+									<div class="options flex-1 h-auto mr-2.5 overflow-y-auto overflow-x-hidden">
+										{{ range $pkg := .ResultSet.Pkg}}
+										<label for="atn-tnt-mod-aukc-pkg-id-{{$pkg.PkgId}}"
+										       class="text-sm text-gray-500 block p-1.5 my-1.5 bg-gray-50 cursor-pointer border-t border-transparent transition-colors duration-100 grid grid-cols-8">
+											<span class="relative px-7 sm:w-12 sm:px-6 col-start-1 col-end-1">
+												<span class="group absolute top-1/2 left-4 -mt-2 grid size-4 grid-cols-1">
+													<input type="checkbox"
+													       name="atn-tnt-mod-aukc-pkg-id"
+													       id="atn-tnt-mod-aukc-pkg-id-{{$pkg.PkgId}}"
+													       value="{{ $pkg.PkgId }}"
+													       {{if $pkg.Assigned}}checked{{end}}
+													       {{ if not $hasRoleWebCoreAtnTntMod }}disabled{{end}}
+													       class="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-indigo-600 checked:bg-indigo-600 indeterminate:border-indigo-600 indeterminate:bg-indigo-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:checked:bg-gray-100 forced-colors:appearance-auto">
+													<svg class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white group-has-disabled:stroke-gray-950/25" viewBox="0 0 14 14" fill="none">
+														<path class="opacity-0 group-has-checked:opacity-100" d="M3 8L6 11L11 3.5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+														<path class="opacity-0 group-has-indeterminate:opacity-100" d="M3 7H11" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+													</svg>
+												</span>
+											</span>
+											<span class="col-start-2 col-end-8">
+												{{$pkg.PkgNm}}
+											</span>
+										</label>
+										{{ end }}
+									</div>
+								</div>
+							</div>
+
+							<div class="mt-5 gap-x-6 gap-y-8 pb-2">
+								<label class="block text-sm/6 font-medium text-gray-900">
+									{{if $hasRoleWebCoreAtnTntMod}}
+										{{ .T "web-core-auth-atn-tnt-aukc-tab.input-label-edit-prh-id" }}
+									{{else}}
+										{{ .T "web-core-auth-atn-tnt-aukc-tab.label-view-prh-id" }}
+									{{end}}
+								</label>
+								<div class="multiselect flex flex-row flex-nowrap mt-2"
+								     {{ if $hasRoleWebCoreAtnTntMod }}_="install MultiSelect"{{end}}>
+									<div class="options flex-1 h-auto mr-2.5 overflow-y-auto overflow-x-hidden">
+										{{ range $prh := .ResultSet.Prh}}
+										<label for="atn-tnt-mod-aukc-prh-id-{{$prh.PkhId}}"
+										       class="text-sm text-gray-500 block p-1.5 my-1.5 bg-gray-50 cursor-pointer border-t border-transparent transition-colors duration-100 focus-within:bg-blue-500 focus-within:text-white focus-within:border-t focus-within:border-b focus-within:border-blue-400 focus-within:outline-none grid grid-cols-8">
+											<span class="relative px-7 sm:w-12 sm:px-6 col-start-1 col-end-1">
+												<span class="group absolute top-1/2 left-4 -mt-2 grid size-4 grid-cols-1">
+													<input type="checkbox"
+													       name="atn-tnt-mod-aukc-prh-id"
+													       id="atn-tnt-mod-aukc-prh-id-{{$prh.PkhId}}"
+													       value="{{ $prh.PkhId }}"
+													       {{if $prh.Assigned}}checked{{end}}
+													       {{ if not $hasRoleWebCoreAtnTntMod }}disabled{{end}}
+													       class="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-indigo-600 checked:bg-indigo-600 indeterminate:border-indigo-600 indeterminate:bg-indigo-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:checked:bg-gray-100 forced-colors:appearance-auto">
+													<svg class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white group-has-disabled:stroke-gray-950/25" viewBox="0 0 14 14" fill="none">
+														<path class="opacity-0 group-has-checked:opacity-100" d="M3 8L6 11L11 3.5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+														<path class="opacity-0 group-has-indeterminate:opacity-100" d="M3 7H11" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+													</svg>
+												</span>
+											</span>
+											<span class="col-start-2 col-end-8">
+												{{$prh.PkhNm}}
+											</span>
+										</label>
+										{{ end }}
+									</div>
+								</div>
+							</div>
+
+							<div class="mt-5 gap-x-6 gap-y-8 pb-2">
+								<label for="atn-tnt-mod-aukc-puv-atn-id"
+								       class="block text-sm/6 font-medium text-gray-900">
+									{{if $hasRoleWebCoreAtnTntMod}}
+										{{ .T "web-core-auth-atn-tnt-aukc-tab.input-label-edit-puv-atn-id" }}
+									{{else}}
+										{{ .T "web-core-auth-atn-tnt-aukc-tab.label-view-puv-atn-id" }}
+									{{end}}
+								</label>
+								<div class="mt-2">
+									{{if $hasRoleWebCoreAtnTntMod}}
+									<select name="atn-tnt-mod-aukc-puv-atn-id"
+										id="atn-tnt-mod-aukc-puv-atn-id"
+										class="w-full appearance-none rounded-md bg-white py-1.5 pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6">
+										{{ range $puv := .FormOpts.Opts.puv }}
+										<option value="{{$puv.Id}}" {{if eq $puv.Id $aukc.PuvAtnId}}selected{{end}}>{{ $puv.Value }}</option>
+										{{ end }}
+									</select>
+									{{else}}
+									<span id="atn-tnt-mod-aukc-puv-atn-nm"
+									      class="sm:text-sm/6">
+										{{ range $puv := .FormOpts.Opts.puv }}
+											{{if eq $puv.Id $aukc.PuvAtnId}}
+												{{$puv.Value}}
+											{{end}}
+										{{ end }}
+									</span>
+									{{end}}
+								</div>
+							</div>
+
+							<div class="mt-5 gap-x-6 gap-y-8 pb-2">
+								<label class="block text-sm/6 font-medium text-gray-900">
+									{{if $hasRoleWebCoreAtnTntMod}}
+										{{ .T "web-core-auth-atn-tnt-aukc-tab.input-label-edit-pah-id" }}
+									{{else}}
+										{{ .T "web-core-auth-atn-tnt-aukc-tab.label-view-pah-id" }}
+									{{end}}
+								</label>
+								<div class="multiselect flex flex-row flex-nowrap mt-2"
+								     {{ if $hasRoleWebCoreAtnTntMod }}_="install MultiSelect"{{end}}>
+									<div class="options flex-1 h-auto mr-2.5 overflow-y-auto overflow-x-hidden">
+										{{ range $pah := .ResultSet.Pah}}
+										<label for="atn-tnt-mod-aukc-pah-id-{{$pah.PkhId}}"
+										       class="text-sm text-gray-500 block p-1.5 my-1.5 bg-gray-50 cursor-pointer border-t border-transparent transition-colors duration-100 focus-within:bg-blue-500 focus-within:text-white focus-within:border-t focus-within:border-b focus-within:border-blue-400 focus-within:outline-none grid grid-cols-8">
+											<span class="relative px-7 sm:w-12 sm:px-6 col-start-1 col-end-1">
+												<span class="group absolute top-1/2 left-4 -mt-2 grid size-4 grid-cols-1">
+													<input type="checkbox"
+													       name="atn-tnt-mod-aukc-pah-id"
+													       id="atn-tnt-mod-aukc-pah-id-{{$pah.PkhId}}"
+													       value="{{ $pah.PkhId }}"
+													       {{if $pah.Assigned}}checked{{end}}
+													       {{ if not $hasRoleWebCoreAtnTntMod }}disabled{{end}}
+													       class="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-indigo-600 checked:bg-indigo-600 indeterminate:border-indigo-600 indeterminate:bg-indigo-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:checked:bg-gray-100 forced-colors:appearance-auto">
+													<svg class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white group-has-disabled:stroke-gray-950/25" viewBox="0 0 14 14" fill="none">
+														<path class="opacity-0 group-has-checked:opacity-100" d="M3 8L6 11L11 3.5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+														<path class="opacity-0 group-has-indeterminate:opacity-100" d="M3 7H11" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+													</svg>
+												</span>
+											</span>
+											<span class="col-start-2 col-end-8">
+												{{$pah.PkhNm}}
+											</span>
+										</label>
+										{{ end }}
+									</div>
+								</div>
+							</div>
+
+						</div>
+					</div>
+
+				{{ if $hasRoleWebCoreAtnTntMod }}
+					<div class="fixed bottom-0 left-0 w-full h-[100px] bg-white flex items-center justify-end pr-4 border-t border-gray-200">
+						<button type="submit"
+						        class="relative flex rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+							<img class="htmx-indicator htmx-spinner absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+							     src="/static/img/spinner-white.svg"/>
+							<span class="htmx-indicator htmx-text">
+								{{.T "web-core-auth-atn-tnt-aukc-tab.submit-button-label"}}
+							</span>
+						</button>
+					</div>
+				</form>
+				{{ end }}
+			</div>
+
+			{{ $clientEnabledLabel    := .T "web-core-auth-atn-tnt-oidc-tab.input-label-client-enabled"     }}
+			{{ $editClientIdLabel     := .T "web-core-auth-atn-tnt-oidc-tab.input-label-edit-client-id"     }}
+			{{ $editClientSecretLabel := .T "web-core-auth-atn-tnt-oidc-tab.input-label-edit-client-secret" }}
+			{{ $editClientUrlLabel    := .T "web-core-auth-atn-tnt-oidc-tab.input-label-edit-client-url"    }}
+			{{ $clientCallbackLabel   := .T "web-core-auth-atn-tnt-oidc-tab.label-client-callback-url"      }}
+			{{ $viewClientIdLabel     := .T "web-core-auth-atn-tnt-oidc-tab.label-view-client-id"           }}
+			{{ $viewClientSecretLabel := .T "web-core-auth-atn-tnt-oidc-tab.label-view-client-secret"       }}
+			{{ $viewClientUrlLabel    := .T "web-core-auth-atn-tnt-oidc-tab.label-view-client-url"          }}
+			{{ $submitButtonLabel     := .T "web-core-auth-atn-tnt-oidc-tab.submit-button-label"            }}
+
+			{{range $occ := .ResultSet.Occ}}
+				<div role="tabpanel"
+				     id="panel-{{$occ.OcpNm}}"
+				     aria-labelledby="tab-{{$occ.OcpNm}}"
+				     hidden>
+					{{ if $hasRoleWebCoreAtnTntMod }}
+					<form hx-patch="/web/core/auth/atn/tnt/oidc/{{$occ.OccId}}"
+					      hx-swap="none">
+					{{ end }}
+
+						<div id="atn-tnt-mod-occ-uts-ctr-{{$occ.OccId}}">
+							<input id="atn-tnt-mod-occ-uts-{{$occ.OccId}}"
+							       name="atn-tnt-mod-occ-uts-{{$occ.OccId}}"
+							       type="hidden"
+							       value="{{ $occ.Uts.Format $tft }}">
+						</div>
+
+						<div class="pb-[100px]">
+							<div class="pb-2">
+								<div class="mt-5 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+									<div class="sm:col-span-3">
+										<label for="atn-tnt-mod-occ-client-id-{{$occ.OccId}}"
+										       class="block text-sm/6 font-medium text-gray-900">
+											{{if $hasRoleWebCoreAtnTntMod}}
+												{{ $editClientIdLabel }}
+											{{else}}
+												{{ $viewClientIdLabel }}
+											{{end}}
+										</label>
+										<div class="mt-2">
+											{{ if $hasRoleWebCoreAtnTntMod }}
+												<input type="text"
+												       name="atn-tnt-mod-occ-client-id-{{$occ.OccId}}"
+												       id="atn-tnt-mod-occ-client-id-{{$occ.OccId}}"
+												       value="{{$occ.OccClientId}}"
+												       required
+												       class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6">
+											{{ else }}
+												<span id="atn-tnt-mod-occ-client-id-{{$occ.OccId}}"
+												      class="sm:text-sm/6">
+													{{$occ.OccClientId}}
+												</span>
+											{{ end }}
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div class="pb-2">
+								<div class="mt-5 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+									<div class="sm:col-span-3">
+										<label for="atn-tnt-mod-occ-client-secret-{{$occ.OccId}}"
+										       class="block text-sm/6 font-medium text-gray-900">
+											{{if $hasRoleWebCoreAtnTntMod}}
+												{{ $editClientSecretLabel }}
+											{{else}}
+												{{ $viewClientSecretLabel }}
+											{{end}}
+										</label>
+										<div class="mt-2">
+											{{ if $hasRoleWebCoreAtnTntMod }}
+												<input type="text"
+												       name="atn-tnt-mod-occ-client-secret-{{$occ.OccId}}"
+												       id="atn-tnt-mod-occ-client-secret-{{$occ.OccId}}"
+												       value="{{$occ.OccClientSecret}}"
+												       required
+												       class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6">
+											{{ else }}
+												<span id="atn-tnt-mod-occ-client-secret-{{$occ.OccId}}"
+												      class="sm:text-sm/6">
+													{{$occ.OccClientSecret}}
+												</span>
+											{{ end }}
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div class="pb-2">
+								<div class="mt-5 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+									<div class="sm:col-span-3">
+										<label for="atn-tnt-mod-occ-url-{{$occ.OccId}}"
+										       class="block text-sm/6 font-medium text-gray-900">
+											{{if $hasRoleWebCoreAtnTntMod}}
+												{{ $editClientUrlLabel }}
+											{{else}}
+												{{ $viewClientUrlLabel }}
+											{{end}}
+										</label>
+										<div class="mt-2">
+											{{ if $hasRoleWebCoreAtnTntMod }}
+												<input type="url"
+												       name="atn-tnt-mod-occ-url-{{$occ.OccId}}"
+												       id="atn-tnt-mod-occ-url-{{$occ.OccId}}"
+												       value="{{$occ.OccUrl}}"
+												       required
+												       class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6">
+											{{ else }}
+												<span id="atn-tnt-mod-occ-url-{{$occ.OccId}}"
+												      class="sm:text-sm/6">
+													{{$occ.OccUrl}}
+												</span>
+											{{ end }}
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div class="pb-2">
+								<div class="mt-5 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+									<div class="sm:col-span-3">
+										<label for="atn-tnt-mod-occ-enabled-{{$occ.OccId}}"
+										       class="block text-sm/6 font-medium text-gray-900">
+											{{ $clientEnabledLabel }}
+										</label>
+										<div class="mt-2 flex h-6 shrink-0 items-center">
+											<div class="group grid size-4 grid-cols-1">
+												<input id="atn-tnt-mod-occ-enabled-{{$occ.OccId}}"
+												       name="atn-tnt-mod-occ-enabled-{{$occ.OccId}}"
+												       type="checkbox"
+												       value="true"
+												       {{if $occ.OccEnabled}}checked{{end}}
+												       {{ if not $hasRoleWebCoreAtnTntMod }}disabled{{end}}
+												       class="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-indigo-600 checked:bg-indigo-600 indeterminate:border-indigo-600 indeterminate:bg-indigo-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:checked:bg-gray-100 forced-colors:appearance-auto">
+												<svg class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white group-has-disabled:stroke-gray-950/25"
+												     viewBox="0 0 14 14"
+												     fill="none">
+													<path class="opacity-0 group-has-checked:opacity-100"
+													      d="M3 8L6 11L11 3.5"
+													      stroke-width="2"
+													      stroke-linecap="round"
+													      stroke-linejoin="round" />
+													<path class="opacity-0 group-has-indeterminate:opacity-100"
+													      d="M3 7H11"
+													      stroke-width="2"
+													      stroke-linecap="round"
+													      stroke-linejoin="round" />
+												</svg>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div class="pb-10">
+								<div class="mt-5 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+									<div class="sm:col-span-3">
+										<label class="block text-sm/6 font-medium text-gray-900">
+											{{$clientCallbackLabel}}
+										</label>
+										<div class="mt-2">
+											<span id="atn-tnt-mod-occ-cb-url-{{$occ.OccId}}"
+											      class="sm:text-sm/6">
+												{{$occ.OccCbUrl}}
+											</span>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+					{{ if $hasRoleWebCoreAtnTntMod }}
+						<div class="fixed bottom-0 left-0 w-full h-[100px] bg-white flex items-center justify-end pr-4 border-t border-gray-200">
+							<button type="submit"
+							        class="relative flex rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+								<img class="htmx-indicator htmx-spinner absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+								     src="/static/img/spinner-white.svg">
+								<span>
+									{{ $submitButtonLabel }}
+								</span>
+							</button>
+						</div>
+					</form>
+					{{ end }}
+				</div>
+			{{end}}
+		</div>
+		{{ end }}
+	</div>
+{{ end }}
