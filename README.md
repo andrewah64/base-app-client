@@ -1,6 +1,6 @@
 # base-app-client
 
-GO, HTMX & postgreSQL starter web application.
+GO, HTMX, Tailwind & postgreSQL starter web application.
 Implemented functionality:
 - Authentication with: username/password/TOTP, passkeys, OIDC
 - Logging configurable at runtime, at endpoint & user/endpoint levels
