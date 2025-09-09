@@ -65,7 +65,7 @@ func Authorise(next http.Handler) http.Handler {
 							panic(idErr)
 						}
 
-						rs, rsErr := key.UserInfo(&ctx, slog.Default(), ssd.Conn, ssd.TntId, ck.Hash(authToken), *epp, *hrm)
+						rs, rsErr := key.UserInfo(&ctx, slog.Default(), ssd.Conn, ssd.TntId, ck.Hash(authToken), *eppPt, *hrmNm)
 						if rsErr != nil{
 							error.IntSrv(ctx, rw, rsErr)
 							return

@@ -33,7 +33,7 @@ func Mux(ctx *context.Context, handlers map[string]http.HandlerFunc) (http.Handl
 }
 
 func InitCache(ctx *context.Context, conn *pgxpool.Conn) error {
-	slog.LogAttrs(*ctx, slog.LevelInfo, "initialise web application routes cache")
+	slog.LogAttrs(*ctx, slog.LevelInfo, "initialise api routes cache")
 
 	const (
 		dbSchema = "api_core_rts_api_inf"

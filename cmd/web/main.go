@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"crypto/tls"
-	"flag"
 	"fmt"
 	"log/slog"
 	"os"
@@ -14,9 +13,8 @@ import (
 
 import (
 	"github.com/andrewah64/base-app-client/internal/common/core/db"
-	"github.com/andrewah64/base-app-client/internal/common/core/log"
 	"github.com/andrewah64/base-app-client/internal/common/core/session"
-	"github.com/andrewah64/base-app-client/internal/common/core/tenant"
+	"github.com/andrewah64/base-app-client/internal/common/core/startup"
 	"github.com/andrewah64/base-app-client/internal/web/core/passkey"
 	"github.com/andrewah64/base-app-client/internal/web/core/route"
 	"github.com/andrewah64/base-app-client/internal/web/core/ui/html"
@@ -61,69 +59,20 @@ import (
 )
 
 func main() {
-	/* capture values passed via flags */
-	port        := flag.Int   ("port"        , 8080                        , "Port")
-	loglvl      := flag.String("loglvl"      , "info"                      , "Level of default logger (debug|info|error)")
-	pghost      := flag.String("pghost"      , "localhost"                 , "Host of PostgreSQL")
-	pgport      := flag.Int   ("pgport"      , 5432                        , "Port of PostgreSQL")
-	pguser      := flag.String("pguser"      , "postgres"                  , "Name of PostgreSQL user")
-	pgpw        := flag.String("pgpw"        , "secret"                    , "Password for 'pguser'")
-	pgdb        := flag.String("pgdb"        , "gopgtest"                  , "Database name")
-	pgsslmode   := flag.String("pgsslmode"   , "disable"                   , "Secure connections to PG with SSL (enable|disable")
-	pgcachesize := flag.Int   ("pgcachesize" , 0                           , "Size of the PG statement cache")
-	pgapp       := flag.String("pgapp"       , "myapp"                     , "Name of the application")
+	rtp := startup.GetRuntimeParams()
 
-	flag.Parse()
-
-	/* set up a request Id so we can track startup activity */
 	ctx := session.NewContext(context.Background(), &session.CtxData{
 		RequestId: uuid.NewString(),
 	})
 
-	/* set up the default logger. this will log things that happen at startup and all errors*/
-	llvl := slog.LevelInfo
+	startup.SetupDefaultLogger(*rtp.LogLvl)
 
-	switch *loglvl {
-		case "debug": llvl = slog.LevelDebug
-		case "info" : llvl = slog.LevelInfo
-		case "error": llvl = slog.LevelError
-		default     : panic(fmt.Sprintf("'loglvl' can be (debug|info|error). '%v' is an invalid choice", *loglvl))
-	}
-
-	slog.SetDefault(log.Setup(slog.Level(llvl)))
-
-	slog.LogAttrs(ctx, slog.LevelInfo, "start")
-
-	/* get  & validate a connection pool to the postgres DB */
-	pool, cpErr := db.ConnPool(&ctx, slog.Default(), pghost, pgport, pgdb, pguser, pgpw, pgsslmode, pgcachesize, pgapp)
-	if cpErr != nil {
-		slog.LogAttrs(ctx, slog.LevelError, "get pool",
-			slog.String("error", cpErr.Error()),
-		)
-
-		panic(cpErr)
-	}
-
-	if pingErr := pool.Ping(ctx); pingErr != nil {
-		slog.LogAttrs(ctx, slog.LevelError, "ping pool",
-			slog.String("error", pingErr.Error()),
-		)
-
-		panic(pingErr)
-	}
-
-	slog.LogAttrs(ctx, slog.LevelInfo, "acquired connection pool")
+	pool := startup.SetupPGConnectionPool(ctx, rtp)
 
 	defer pool.Close()
 
-	slog.LogAttrs(ctx, slog.LevelInfo, "deferred close of connection pool")
-
-	/* populate our template cache */
 	html.InitCache(ctx)
 
-	slog.LogAttrs(ctx, slog.LevelInfo, "initialised template cache")
-
-	/* populate our i18n bundle cache */
 	i18nCacheErr := i18n.InitCache(ctx, language.English)
 	if i18nCacheErr != nil {
 		slog.LogAttrs(ctx, slog.LevelError, "initialise the bundle cache",
@@ -133,9 +82,6 @@ func main() {
 		panic(i18nCacheErr)
 	}
 
-	slog.LogAttrs(ctx, slog.LevelInfo, "initialised bundle cache")
-
-	/* populate our tenant and route caches*/
 	conn, connErr := db.Conn(&ctx, slog.Default(), pool)
 	if connErr != nil {
 		slog.LogAttrs(ctx, slog.LevelError, "initialise the tenant cache",
@@ -145,26 +91,9 @@ func main() {
 		panic(connErr)
 	}
 
-	/* tenant and passkey cache */
-	idErr := session.Identity(&ctx, slog.Default(), conn, "role_all_core_unauth_tnt_all_inf")
-	if idErr != nil {
-		slog.LogAttrs(ctx, slog.LevelError, "initialise the tenant cache",
-			slog.String("error", idErr.Error()),
-		)
+	defer conn.Release()
 
-		panic(connErr)
-	}
-
-	tntCacheErr := tenant.InitCache(&ctx, conn)
-	if tntCacheErr != nil {
-		slog.LogAttrs(ctx, slog.LevelError, "initialise the tenant cache",
-			slog.String("error", tntCacheErr.Error()),
-		)
-
-		defer conn.Release()
-
-		panic(tntCacheErr)
-	}
+	startup.SetupTenantCache(ctx, conn)
 
 	pkeyCacheErr := passkey.InitCache(&ctx, conn)
 	if pkeyCacheErr != nil {
@@ -172,12 +101,9 @@ func main() {
 			slog.String("error", pkeyCacheErr.Error()),
 		)
 
-		defer conn.Release()
-
 		panic(pkeyCacheErr)
 	}
 
-	/*route cache*/
 	rtsIdErr := session.Identity(&ctx, slog.Default(), conn, "role_web_core_unauth_rts_web_inf")
 	if rtsIdErr != nil {
 		slog.LogAttrs(ctx, slog.LevelError, "initialise the route cache",
@@ -193,21 +119,13 @@ func main() {
 			slog.String("error", rtsCacheErr.Error()),
 		)
 
-		defer conn.Release()
-
 		panic(rtsCacheErr)
 	}
 
-	/*end db-related initialisation*/
-	conn.Release()
-
-	/* TLS preferences */
 	tlsConfig := &tls.Config{
 		CurvePreferences: []tls.CurveID{tls.X25519, tls.CurveP256},
 		MinVersion      : tls.VersionTLS13,
 	}
-
-	/* start the server */
 
 	var (
 		handlers = map[string]http.HandlerFunc{
@@ -269,7 +187,7 @@ func main() {
 	)
 
 	server := &http.Server{
-		Addr        :	fmt.Sprintf(":%d", *port),
+		Addr        :	fmt.Sprintf(":%d", *rtp.HttpPort),
 		Handler     :	route.Mux(&ctx, handlers),
 		BaseContext :	func(_ net.Listener) context.Context {
 					return db.NewContext(
@@ -285,11 +203,6 @@ func main() {
 		WriteTimeout:	10 * time.Second,
 	}
 
-	slog.LogAttrs(ctx, slog.LevelInfo, "start server",
-		slog.Int("port", *port),
-	)
-
-	/* if the server falls over capture errors from it & quit  */
 	srvErr := server.ListenAndServeTLS("cert.pem", "key.pem")
 
 	slog.LogAttrs(ctx, slog.LevelError, "server error",
