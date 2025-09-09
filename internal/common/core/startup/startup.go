@@ -116,7 +116,6 @@ func SetupTenantCache (ctx context.Context, conn *pgxpool.Conn) {
 			slog.String("error", tntCacheErr.Error()),
 		)
 
-
 		panic(tntCacheErr)
 	}
 }
