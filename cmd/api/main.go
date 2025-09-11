@@ -29,8 +29,6 @@ import (
 	"golang.org/x/text/language"
 )
 
-const version = "1.0.0"
-
 func main(){
 	rtp := startup.GetRuntimeParams()
 
@@ -75,8 +73,6 @@ func main(){
 		panic(connErr)
 	}
 
-	fmt.Printf("\n\n got here \n\n")
-
 	rtsCacheErr := route.InitCache(&ctx, conn)
 	if rtsCacheErr != nil {
 		slog.LogAttrs(ctx, slog.LevelError, "initialise the route cache",
@@ -86,8 +82,6 @@ func main(){
 		panic(rtsCacheErr)
 	}
 
-	fmt.Printf("\n\n got here 2 \n\n")
-
 	tlsConfig := &tls.Config{
 		CurvePreferences: []tls.CurveID{tls.X25519, tls.CurveP256},
 		MinVersion      : tls.VersionTLS13,
@@ -96,7 +90,7 @@ func main(){
 	var (
 		handlers = map[string]http.HandlerFunc{
 			"api.core.auth.aur.tnt.reg.Register" : register.Register,
-			"api.core.unauth.health.Check"          : health.Check,
+			"api.core.unauth.health.Check"       : health.Check,
 		}
 	)
 

@@ -43,7 +43,6 @@ func GetRuntimeParams () *RuntimeParams {
 	pgCacheSize := flag.Int   ("pgcachesize" , 0           , "Size of the PG statement cache")
 	pgApp       := flag.String("pgapp"       , "myapp"     , "Name of the application")
 
-
 	p := &RuntimeParams {
 		HttpPort    : httpPort,
 		LogLvl      : logLvl,
