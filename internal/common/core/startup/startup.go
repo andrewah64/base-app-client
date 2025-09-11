@@ -62,12 +62,12 @@ func GenSAML2ServiceProviderCerts (ctx *context.Context, conn *pgxpool.Conn) (er
 	sprocCall := fmt.Sprintf("call %v.reg_spc(@p_tnt_id, @p_spc_cn_nm, @p_spc_org_nm, @p_spc_enc_crt, @p_spc_enc_pvk, @p_spc_sgn_crt, @p_spc_sgn_pvk, @p_spc_exp_ts, @p_spc_enabled)", dbSchema)
 
 	now       := time.Now()
-	spcFromTs := now.Add(time.Second)
+	spcFromTs := now.Add(-time.Hour)
 
 	for _, v := range s2cRs {
 		spcExpTs := now.Add(v.S2cCrtDn);
 
-		spcEncCrt, spcEncPvk, spcEncCrtErr := saml2.GenCert(v.S2cCrtCnNm, []string{v.S2cCrtOrgNm}, x509.KeyUsageDataEncipherment, spcFromTs, spcExpTs)
+		spcEncCrt, spcEncPvk, spcEncCrtErr := saml2.GenCert(v.S2cCrtCnNm, []string{v.S2cCrtOrgNm}, x509.KeyUsageDataEncipherment | x509.KeyUsageKeyEncipherment, spcFromTs, spcExpTs)
 		if spcEncCrtErr != nil {
 			panic(spcEncCrtErr)
 		}

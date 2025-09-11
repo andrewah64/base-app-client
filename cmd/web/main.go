@@ -50,6 +50,7 @@ import (
 	unauthaurtntval  "github.com/andrewah64/base-app-client/cmd/web/core/unauth/aur/tnt/val"
 	unauthotpaur     "github.com/andrewah64/base-app-client/cmd/web/core/unauth/otp/aur"
 	unauthotpssnaur  "github.com/andrewah64/base-app-client/cmd/web/core/unauth/otp/ssn/aur"
+	unauthspctnt     "github.com/andrewah64/base-app-client/cmd/web/core/unauth/spc/tnt"
 	unauthssnaur     "github.com/andrewah64/base-app-client/cmd/web/core/unauth/ssn/aur"
 )
 
@@ -190,6 +191,7 @@ func main() {
 			"web.core.unauth.otp.aur.Post"      : unauthotpaur.Post,
 			"web.core.unauth.otp.ssn.aur.Get"   : unauthotpssnaur.Get,
 			"web.core.unauth.otp.ssn.aur.Post"  : unauthotpssnaur.Post,
+			"web.core.unauth.spc.tnt.Get"       : unauthspctnt.Get,
 			"web.core.unauth.ssn.aur.Get"       : unauthssnaur.Get,
 			"web.core.unauth.ssn.aur.Post"      : unauthssnaur.Post,
 		}
