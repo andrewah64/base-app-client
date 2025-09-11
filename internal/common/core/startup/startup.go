@@ -2,21 +2,103 @@ package startup
 
 import (
 	"context"
+	"crypto/x509"
 	"flag"
 	"fmt"
 	"log/slog"
+	"time"
 )
 
 import (
 	"github.com/andrewah64/base-app-client/internal/common/core/db"
 	"github.com/andrewah64/base-app-client/internal/common/core/log"
+	"github.com/andrewah64/base-app-client/internal/common/core/saml2"
 	"github.com/andrewah64/base-app-client/internal/common/core/session"
 	"github.com/andrewah64/base-app-client/internal/common/core/tenant"
 )
 
 import (
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
+
+func GenSAML2ServiceProviderCerts (ctx *context.Context, conn *pgxpool.Conn) (error){
+	s2cErr := session.Identity(ctx, slog.Default(), conn, "role_all_core_unauth_spc_all_reg")
+	if s2cErr != nil {
+		panic(s2cErr)
+	}
+
+	const (
+		dbSchema = "all_core_unauth_spc_all_reg"
+		dbFunc   = "s2c_inf"
+	)
+
+	type s2c struct {
+		TntId       int
+		S2cCrtCnNm  string
+		S2cCrtDn    time.Duration
+		S2cCrtOrgNm string
+	}
+
+	s2cRs, s2cRsErr := db.DataSet[s2c](ctx, slog.Default(), conn, func(ctx *context.Context, tx *pgx.Tx)(string, string, *pgx.Rows, error){
+		qry := fmt.Sprintf("select %v.%v($1)", dbSchema, dbFunc)
+
+		call, err := (*tx).Query(*ctx, qry, dbFunc)
+		if err != nil {
+			slog.LogAttrs(*ctx, slog.LevelError, "get tenant data",
+				slog.String("error", err.Error()),
+			)
+
+			return qry, dbFunc, nil, fmt.Errorf("call database function: %w", err)
+		}
+
+		return qry, dbFunc, &call, nil
+	})
+
+	if s2cRsErr != nil {
+		return s2cRsErr
+	}
+
+	sprocCall := fmt.Sprintf("call %v.reg_spc(@p_tnt_id, @p_spc_cn_nm, @p_spc_org_nm, @p_spc_enc_crt, @p_spc_enc_pvk, @p_spc_sgn_crt, @p_spc_sgn_pvk, @p_spc_exp_ts, @p_spc_enabled)", dbSchema)
+
+	now       := time.Now()
+	spcFromTs := now.Add(time.Second)
+
+	for _, v := range s2cRs {
+		spcExpTs := now.Add(v.S2cCrtDn);
+
+		spcEncCrt, spcEncPvk, spcEncCrtErr := saml2.GenCert(v.S2cCrtCnNm, []string{v.S2cCrtOrgNm}, x509.KeyUsageDataEncipherment, spcFromTs, spcExpTs)
+		if spcEncCrtErr != nil {
+			panic(spcEncCrtErr)
+		}
+
+		spcSgnCrt, spcSgnPvk, spcSgnCrtErr := saml2.GenCert(v.S2cCrtCnNm, []string{v.S2cCrtOrgNm}, x509.KeyUsageDigitalSignature, spcFromTs, spcExpTs)
+		if spcSgnCrtErr != nil {
+			panic(spcSgnCrtErr)
+		}
+
+		var (
+			sprocParams = pgx.NamedArgs{
+				"p_tnt_id"      : v.TntId,
+				"p_spc_cn_nm"   : v.S2cCrtCnNm,
+				"p_spc_org_nm"  : v.S2cCrtOrgNm,
+				"p_spc_enc_crt" : spcEncCrt,
+				"p_spc_enc_pvk" : spcEncPvk,
+				"p_spc_sgn_crt" : spcSgnCrt,
+				"p_spc_sgn_pvk" : spcSgnPvk,
+				"p_spc_exp_ts"  : spcExpTs,
+				"p_spc_enabled" : true,
+			}
+		)
+
+		sprocErr := db.Sproc(ctx, slog.Default(), conn, sprocCall, sprocParams, nil)
+		if sprocErr != nil {
+			panic(sprocErr)
+		}
+	}
+
+	return nil
+}
 
 type RuntimeParams struct {
 	HttpPort    *int

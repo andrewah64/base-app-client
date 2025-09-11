@@ -70,7 +70,16 @@ func main(){
 			slog.String("error", rtsIdErr.Error()),
 		)
 
-		panic(connErr)
+		panic(rtsIdErr)
+	}
+
+	s2cErr := startup.GenSAML2ServiceProviderCerts(&ctx, conn)
+	if s2cErr != nil {
+		slog.LogAttrs(ctx, slog.LevelError, "generate SAML2 SP certs if necessary",
+			slog.String("error", s2cErr.Error()),
+		)
+
+		panic(s2cErr)
 	}
 
 	rtsCacheErr := route.InitCache(&ctx, conn)

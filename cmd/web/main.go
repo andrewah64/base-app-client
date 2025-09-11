@@ -13,7 +13,6 @@ import (
 
 import (
 	"github.com/andrewah64/base-app-client/internal/common/core/db"
-//	"github.com/andrewah64/base-app-client/internal/common/core/saml2"
 	"github.com/andrewah64/base-app-client/internal/common/core/session"
 	"github.com/andrewah64/base-app-client/internal/common/core/startup"
 	"github.com/andrewah64/base-app-client/internal/web/core/passkey"
@@ -105,13 +104,22 @@ func main() {
 		panic(pkeyCacheErr)
 	}
 
+	s2cErr := startup.GenSAML2ServiceProviderCerts(&ctx, conn)
+	if s2cErr != nil {
+		slog.LogAttrs(ctx, slog.LevelError, "generate SAML2 SP certs if necessary",
+			slog.String("error", s2cErr.Error()),
+		)
+
+		panic(s2cErr)
+	}
+
 	rtsIdErr := session.Identity(&ctx, slog.Default(), conn, "role_web_core_unauth_rts_web_inf")
 	if rtsIdErr != nil {
 		slog.LogAttrs(ctx, slog.LevelError, "initialise the route cache",
 			slog.String("error", rtsIdErr.Error()),
 		)
 
-		panic(connErr)
+		panic(rtsIdErr)
 	}
 
 	rtsCacheErr := route.InitCache(&ctx, conn)

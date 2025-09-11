@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-func GenCert(cn string, org [] string, ku x509.KeyUsage, from time.Time, to time.Time) ([] byte, [] byte, error) {
+func GenCert(spcCnNm string, spcOrgNm [] string, ku x509.KeyUsage, fromTs time.Time, spcExpTs time.Time) ([] byte, [] byte, error) {
 	rsaKey, rsaKeyErr := rsa.GenerateKey(rand.Reader, 2048)
 	if rsaKeyErr != nil {
 		return nil, nil, rsaKeyErr
@@ -17,11 +17,11 @@ func GenCert(cn string, org [] string, ku x509.KeyUsage, from time.Time, to time
 
 	tmpl := &x509.Certificate {
 		Subject : pkix.Name {
-			CommonName   : cn,
-			Organization : org,
+			CommonName   : spcCnNm,
+			Organization : spcOrgNm,
         	},
-		NotBefore : from,
-		NotAfter  : to,
+		NotBefore : fromTs,
+		NotAfter  : spcExpTs,
 		KeyUsage  : ku,
 		ExtKeyUsage: []x509.ExtKeyUsage {
 			x509.ExtKeyUsageServerAuth,
