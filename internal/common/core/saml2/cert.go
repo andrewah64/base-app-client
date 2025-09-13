@@ -10,7 +10,7 @@ import (
 )
 
 func GenCert(spcCnNm string, spcOrgNm [] string, ku x509.KeyUsage, fromTs time.Time, spcExpTs time.Time) ([] byte, [] byte, error) {
-	rsaKey, rsaKeyErr := rsa.GenerateKey(rand.Reader, 2048)
+	rsaKey, rsaKeyErr := rsa.GenerateKey(rand.Reader, 4096)
 	if rsaKeyErr != nil {
 		return nil, nil, rsaKeyErr
 	}
