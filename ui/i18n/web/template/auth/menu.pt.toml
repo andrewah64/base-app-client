@@ -1,6 +1,8 @@
 [web-core-auth-menu]
 
 atn-tnt-inf-label       = "Authentication"
+aukc-tnt-inf-label      = "Passkeys"
+aupc-tnt-inf-label      = "Username/password"
 aur-tnt-inf-label       = "Manage"
 aur-tnt-reg-label       = "Register"
 grp-tnt-inf-label       = "Groups"
@@ -8,6 +10,8 @@ home-label              = "Dashboard"
 key-aur-mod-label       = "API keys"
 log-aur-tnt-inf-label   = "Logging"
 log-ep-tnt-inf-label    = "Logging"
+occ-tnt-inf-label       = "OIDC"
+s2c-tnt-inf-label       = "SAML2"
 security-label          = "Security"
 settings-label          = "Settings"
 ssn-tnt-inf-label       = "HTTP sessions"

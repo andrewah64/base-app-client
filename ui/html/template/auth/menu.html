@@ -167,7 +167,7 @@
 													<li>
 														<a href="/web/core/auth/occ/tnt"
 														   class="block rounded-md py-2 pr-2 pl-9 text-sm/6 text-gray-700 hover:bg-gray-50">
-															OIDC
+															{{.T "web-core-auth-menu.occ-tnt-inf-label"}}
 														</a>
 													</li>
 													{{ end }}
@@ -175,7 +175,15 @@
 													<li>
 														<a href="/web/core/auth/aukc/tnt"
 														   class="block rounded-md py-2 pr-2 pl-9 text-sm/6 text-gray-700 hover:bg-gray-50">
-															Passkeys
+															{{.T "web-core-auth-menu.aukc-tnt-inf-label"}}
+														</a>
+													</li>
+													{{ end }}
+													{{if (.HasRole "role_web_core_auth_s2c_tnt_inf")}}
+													<li>
+														<a href="/web/core/auth/s2c/tnt"
+														   class="block rounded-md py-2 pr-2 pl-9 text-sm/6 text-gray-700 hover:bg-gray-50">
+															{{.T "web-core-auth-menu.s2c-tnt-inf-label"}}
 														</a>
 													</li>
 													{{ end }}
@@ -183,7 +191,7 @@
 													<li>
 														<a href="/web/core/auth/aupc/tnt"
 														   class="block rounded-md py-2 pr-2 pl-9 text-sm/6 text-gray-700 hover:bg-gray-50">
-															Username/Password
+															{{.T "web-core-auth-menu.aupc-tnt-inf-label"}}
 														</a>
 													</li>
 													{{end}}
