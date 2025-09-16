@@ -23,8 +23,12 @@ import (
 
 import (
 	authhome         "github.com/andrewah64/base-app-client/cmd/web/core/auth/home"
-	authatntnt       "github.com/andrewah64/base-app-client/cmd/web/core/auth/atn/tnt"
+	authaukctnt      "github.com/andrewah64/base-app-client/cmd/web/core/auth/aukc/tnt"
+	authaupctnt      "github.com/andrewah64/base-app-client/cmd/web/core/auth/aupc/tnt"
 	authaurgrptnt    "github.com/andrewah64/base-app-client/cmd/web/core/auth/aur/grp/tnt"
+	authaurtnt       "github.com/andrewah64/base-app-client/cmd/web/core/auth/aur/tnt"
+	authaurtntid     "github.com/andrewah64/base-app-client/cmd/web/core/auth/aur/tnt/id"
+	authaurtntval    "github.com/andrewah64/base-app-client/cmd/web/core/auth/aur/tnt/val"
 	authgrpaurtnt    "github.com/andrewah64/base-app-client/cmd/web/core/auth/grp/aur/tnt"
 	authgrptnt       "github.com/andrewah64/base-app-client/cmd/web/core/auth/grp/tnt"
 	authgrptntid     "github.com/andrewah64/base-app-client/cmd/web/core/auth/grp/tnt/id"
@@ -36,15 +40,14 @@ import (
 	authlogaurtntid  "github.com/andrewah64/base-app-client/cmd/web/core/auth/log/aur/tnt/id"
 	authlogeptnt     "github.com/andrewah64/base-app-client/cmd/web/core/auth/log/ep/tnt"
 	authlogeptntid   "github.com/andrewah64/base-app-client/cmd/web/core/auth/log/ep/tnt/id"
+	authocctnt       "github.com/andrewah64/base-app-client/cmd/web/core/auth/occ/tnt"
 	authpwdaurtnt    "github.com/andrewah64/base-app-client/cmd/web/core/auth/pwd/aur/tnt"
 	authpwdaurtntval "github.com/andrewah64/base-app-client/cmd/web/core/auth/pwd/aur/tnt/val"
 	authrolgrptnt    "github.com/andrewah64/base-app-client/cmd/web/core/auth/rol/grp/tnt"
 	authrolkeyaur    "github.com/andrewah64/base-app-client/cmd/web/core/auth/rol/key/aur"
+	auths2ctnt       "github.com/andrewah64/base-app-client/cmd/web/core/auth/s2c/tnt"
 	authssntnt       "github.com/andrewah64/base-app-client/cmd/web/core/auth/ssn/tnt"
 	authssnaur       "github.com/andrewah64/base-app-client/cmd/web/core/auth/ssn/aur"
-	authaurtnt       "github.com/andrewah64/base-app-client/cmd/web/core/auth/aur/tnt"
-	authaurtntid     "github.com/andrewah64/base-app-client/cmd/web/core/auth/aur/tnt/id"
-	authaurtntval    "github.com/andrewah64/base-app-client/cmd/web/core/auth/aur/tnt/val"
 	oidc             "github.com/andrewah64/base-app-client/cmd/web/core/oidc"
 	unauthaurtnt     "github.com/andrewah64/base-app-client/cmd/web/core/unauth/aur/tnt"
 	unauthaurtntval  "github.com/andrewah64/base-app-client/cmd/web/core/unauth/aur/tnt/val"
@@ -139,8 +142,10 @@ func main() {
 
 	var (
 		handlers = map[string]http.HandlerFunc{
-			"web.core.auth.atn.tnt.Get"         : authatntnt.Get,
-			"web.core.auth.atn.tnt.Patch"       : authatntnt.Patch,
+			"web.core.auth.aukc.tnt.Get"        : authaukctnt.Get,
+			"web.core.auth.aukc.tnt.Patch"      : authaukctnt.Patch,
+			"web.core.auth.aupc.tnt.Get"        : authaupctnt.Get,
+			"web.core.auth.aupc.tnt.Patch"      : authaupctnt.Patch,
 			"web.core.auth.aur.grp.tnt.Get"     : authaurgrptnt.Get,
 			"web.core.auth.aur.grp.tnt.Patch"   : authaurgrptnt.Patch,
 			"web.core.auth.aur.tnt.Delete"      : authaurtnt.Delete,
@@ -172,6 +177,8 @@ func main() {
 			"web.core.auth.key.aur.id.Get"      : authkeyaurid.Get,
 			"web.core.auth.key.aur.id.Patch"    : authkeyaurid.Patch,
 			"web.core.auth.key.aur.val.Get"     : authkeyaurval.Get,
+			"web.core.auth.occ.tnt.Get"         : authocctnt.Get,
+			"web.core.auth.occ.tnt.Patch"       : authocctnt.Patch,
 			"web.core.auth.pwd.aur.tnt.Get"     : authpwdaurtnt.Get,
 			"web.core.auth.pwd.aur.tnt.Patch"   : authpwdaurtnt.Patch,
 			"web.core.auth.pwd.aur.tnt.val.Get" : authpwdaurtntval.Get,
@@ -179,6 +186,8 @@ func main() {
 			"web.core.auth.rol.grp.tnt.Patch"   : authrolgrptnt.Patch,
 			"web.core.auth.rol.key.aur.Get"     : authrolkeyaur.Get,
 			"web.core.auth.rol.key.aur.Patch"   : authrolkeyaur.Patch,
+			"web.core.auth.s2c.tnt.Get"         : auths2ctnt.Get,
+			"web.core.auth.s2c.tnt.Patch"       : auths2ctnt.Patch,
 			"web.core.auth.ssn.tnt.Get"         : authssntnt.Get,
 			"web.core.auth.ssn.tnt.Delete"      : authssntnt.Delete,
 			"web.core.auth.ssn.aur.Delete"      : authssnaur.Delete,

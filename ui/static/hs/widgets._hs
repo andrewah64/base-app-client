@@ -306,7 +306,7 @@ behavior ToggleMenu(svg, list)
 	end
 
 	init
-		set :expanded to true
+		set :expanded to false
 
 		if :expanded then
 			expand(svg, list)
