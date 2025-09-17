@@ -40,272 +40,273 @@
 			<form hx-patch="/web/core/auth/aupc/tnt"
 			      hx-swap="none">
 			{{ end }}
-
-				<div id="aupc-tnt-mod-uts-ctr">
-					<input id="aupc-tnt-mod-uts"
-					       name="aupc-tnt-mod-uts"
-					       type="hidden"
-					       value="{{ $aupc.Uts.Format $tft }}">
-				</div>
-
-				<div class="pb-2">
-					<div class="mt-5 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-						<div class="sm:col-span-3">
-							<div _="install NumberRange(v1: #aupc-tnt-mod-aur-nm-min-len, v2: #aupc-tnt-mod-aur-nm-max-len)"
-							     class="grid grid-cols-2">
-								<div class="col-start-1">
-									<label for="aupc-tnt-mod-aur-nm-min-len"
-									       class="block text-sm/6 font-medium text-gray-900">
-										{{if $hasRoleWebCoreAupcTntMod}}
-											{{ .T "web-core-auth-aupc-tnt-mod-form.input-label-edit-aur-nm-min-len" }}
-										{{else}}
-											{{ .T "web-core-auth-aupc-tnt-mod-form.label-view-aur-nm-min-len" }}
-										{{end}}
-									</label>
-									<div class="mt-2">
-										{{if $hasRoleWebCoreAupcTntMod}}
-										<input id="aupc-tnt-mod-aur-nm-min-len"
-										       name="aupc-tnt-mod-aur-nm-min-len"
-										       type="number"
-										       min="1"
-										       value="{{$aupc.AupcAurNmMinLen}}"
-										       required
-										       class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6">
-										{{else}}
-										<span id="aupc-tnt-mod-aur-nm-min-len"
-										      class="sm:text-sm/6">
-											{{$aupc.AupcAurNmMinLen}}
-										</span>
-										{{end}}
-									</div>
-								</div>
-								<div class="col-start-2">
-									<label for="aupc-tnt-mod-aur-nm-max-len"
-									       class="block text-sm/6 font-medium text-gray-900">
-										{{if $hasRoleWebCoreAupcTntMod}}
-											{{ .T "web-core-auth-aupc-tnt-mod-form.input-label-edit-aur-nm-max-len" }}
-										{{else}}
-											{{ .T "web-core-auth-aupc-tnt-mod-form.label-view-aur-nm-max-len" }}
-										{{end}}
-									</label>
-									<div class="mt-2">
-										{{if $hasRoleWebCoreAupcTntMod}}
-										<input id="aupc-tnt-mod-aur-nm-max-len"
-										       name="aupc-tnt-mod-aur-nm-max-len"
-										       type="number"
-										       min="1"
-										       required
-										       value="{{$aupc.AupcAurNmMaxLen}}"
-										       class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6">
-										{{else}}
-										<span id="aupc-tnt-mod-aur-nm-max-len"
-										      class="sm:text-sm/6">
-											{{$aupc.AupcAurNmMaxLen}}
-										</span>
-										{{end}}
-									</div>
-								</div>
-							</div>
-						</div>
+				<div class="pb-[100px]">
+					<div id="aupc-tnt-mod-uts-ctr">
+						<input id="aupc-tnt-mod-uts"
+						       name="aupc-tnt-mod-uts"
+						       type="hidden"
+						       value="{{ $aupc.Uts.Format $tft }}">
 					</div>
-				</div>
 
-				<div class="pb-2">
-					<div class="mt-5 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-						<div class="sm:col-span-3">
-							<div _="install NumberRange(v1: #aupc-tnt-mod-aur-pwd-min-len, v2: #aupc-tnt-mod-aur-pwd-max-len)"
-							     class="grid grid-cols-2">
-								<div class="col-start-1">
-									<label for="aupc-tnt-mod-aur-pwd-min-len"
-									       class="block text-sm/6 font-medium text-gray-900">
-										{{if $hasRoleWebCoreAupcTntMod}}
-											{{ .T "web-core-auth-aupc-tnt-mod-form.input-label-edit-aur-pwd-min-len" }}
-										{{else}}
-											{{ .T "web-core-auth-aupc-tnt-mod-form.label-view-aur-pwd-min-len" }}
-										{{end}}
-									</label>
-									<div class="mt-2">
-										{{if $hasRoleWebCoreAupcTntMod}}
-										<input id="aupc-tnt-mod-aur-pwd-min-len"
-										       name="aupc-tnt-mod-aur-pwd-min-len"
-										       type="number"
-										       min="1"
-										       required
-										       value="{{$aupc.AupcAurPwdMinLen}}"
-										       class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6">
-										{{else}}
-										<span id="aupc-tnt-mod-aur-pwd-min-len"
-										      class="sm:text-sm/6">
-											{{$aupc.AupcAurPwdMinLen}}
-										</span>
-										{{end}}
-									</div>
-								</div>
-								<div class="col-start-2">
-									<label for="aupc-tnt-mod-aur-pwd-max-len"
-									       class="block text-sm/6 font-medium text-gray-900">
-										{{if $hasRoleWebCoreAupcTntMod}}
-											{{ .T "web-core-auth-aupc-tnt-mod-form.input-label-edit-aur-pwd-max-len" }}
-										{{else}}
-											{{ .T "web-core-auth-aupc-tnt-mod-form.label-view-aur-pwd-max-len" }}
-										{{end}}
-									</label>
-									<div class="mt-2">
-										{{if $hasRoleWebCoreAupcTntMod}}
-										<input id="aupc-tnt-mod-aur-pwd-max-len"
-										       name="aupc-tnt-mod-aur-pwd-max-len"
-										       type="number"
-										       min="1"
-										       required
-										       value="{{$aupc.AupcAurPwdMaxLen}}"
-										       class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6">
-										{{else}}
-										<span id="aupc-tnt-mod-aur-pwd-max-len"
-										      class="sm:text-sm/6">
-											{{$aupc.AupcAurPwdMaxLen}}
-										</span>
-										{{end}}
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-
-				<div class="pb-2">
-					<div class="mt-5 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-						<div class="sm:col-span-3">
-							<div class="grid grid-cols-2">
-								<div class="col-start-1">
-									<label for="aupc-tnt-mod-aur-pwd-inc-sym"
-									       class="block text-sm/6 font-medium text-gray-900">
-										{{.T "web-core-auth-aupc-tnt-mod-form.label-aur-pwd-inc-sym"}}
-									</label>
-									<div class="mt-2 flex h-6 shrink-0 items-center">
-										<div class="group grid size-4 grid-cols-1">
-											<input id="aupc-tnt-mod-aur-pwd-inc-sym"
-											       name="aupc-tnt-mod-aur-pwd-inc-sym"
-											       type="checkbox"
-											       value="true"
-											       {{if $aupc.AupcAurPwdIncSym}}checked{{end}}
-											       {{ if not $hasRoleWebCoreAupcTntMod }}disabled{{end}}
-											       class="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-indigo-600 checked:bg-indigo-600 indeterminate:border-indigo-600 indeterminate:bg-indigo-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:checked:bg-gray-100 forced-colors:appearance-auto">
-											<svg class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white group-has-disabled:stroke-gray-950/25"
-											     viewBox="0 0 14 14"
-											     fill="none">
-												<path class="opacity-0 group-has-checked:opacity-100"
-												      d="M3 8L6 11L11 3.5"
-												      stroke-width="2"
-												      stroke-linecap="round"
-												      stroke-linejoin="round" />
-												<path class="opacity-0 group-has-indeterminate:opacity-100"
-												      d="M3 7H11"
-												      stroke-width="2"
-												      stroke-linecap="round"
-												      stroke-linejoin="round" />
-											</svg>
+					<div class="pb-2">
+						<div class="mt-5 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+							<div class="sm:col-span-3">
+								<div _="install NumberRange(v1: #aupc-tnt-mod-aur-nm-min-len, v2: #aupc-tnt-mod-aur-nm-max-len)"
+								     class="grid grid-cols-2">
+									<div class="col-start-1">
+										<label for="aupc-tnt-mod-aur-nm-min-len"
+										       class="block text-sm/6 font-medium text-gray-900">
+											{{if $hasRoleWebCoreAupcTntMod}}
+												{{ .T "web-core-auth-aupc-tnt-mod-form.input-label-edit-aur-nm-min-len" }}
+											{{else}}
+												{{ .T "web-core-auth-aupc-tnt-mod-form.label-view-aur-nm-min-len" }}
+											{{end}}
+										</label>
+										<div class="mt-2">
+											{{if $hasRoleWebCoreAupcTntMod}}
+											<input id="aupc-tnt-mod-aur-nm-min-len"
+											       name="aupc-tnt-mod-aur-nm-min-len"
+											       type="number"
+											       min="1"
+											       value="{{$aupc.AupcAurNmMinLen}}"
+											       required
+											       class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6">
+											{{else}}
+											<span id="aupc-tnt-mod-aur-nm-min-len"
+											      class="sm:text-sm/6">
+												{{$aupc.AupcAurNmMinLen}}
+											</span>
+											{{end}}
 										</div>
 									</div>
-								</div>
-								<div class="col-start-2">
-									<label for="aupc-tnt-mod-aur-pwd-inc-num"
-									       class="block text-sm/6 font-medium text-gray-900">
-										{{.T "web-core-auth-aupc-tnt-mod-form.label-aur-pwd-inc-num"}}
-									</label>
-									<div class="mt-2 flex h-6 shrink-0 items-center">
-										<div class="group grid size-4 grid-cols-1">
-											<input id="aupc-tnt-mod-aur-pwd-inc-num"
-											       name="aupc-tnt-mod-aur-pwd-inc-num"
-											       type="checkbox"
-											       value="true"
-											       {{if $aupc.AupcAurPwdIncNum}}checked{{end}}
-											       {{ if not $hasRoleWebCoreAupcTntMod }}disabled{{end}}
-											       class="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-indigo-600 checked:bg-indigo-600 indeterminate:border-indigo-600 indeterminate:bg-indigo-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:checked:bg-gray-100 forced-colors:appearance-auto">
-											<svg class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white group-has-disabled:stroke-gray-950/25"
-											     viewBox="0 0 14 14"
-											     fill="none">
-												<path class="opacity-0 group-has-checked:opacity-100"
-												      d="M3 8L6 11L11 3.5"
-												      stroke-width="2"
-												      stroke-linecap="round"
-												      stroke-linejoin="round" />
-												<path class="opacity-0 group-has-indeterminate:opacity-100"
-												      d="M3 7H11"
-												      stroke-width="2"
-												      stroke-linecap="round"
-												      stroke-linejoin="round" />
-											</svg>
+									<div class="col-start-2">
+										<label for="aupc-tnt-mod-aur-nm-max-len"
+										       class="block text-sm/6 font-medium text-gray-900">
+											{{if $hasRoleWebCoreAupcTntMod}}
+												{{ .T "web-core-auth-aupc-tnt-mod-form.input-label-edit-aur-nm-max-len" }}
+											{{else}}
+												{{ .T "web-core-auth-aupc-tnt-mod-form.label-view-aur-nm-max-len" }}
+											{{end}}
+										</label>
+										<div class="mt-2">
+											{{if $hasRoleWebCoreAupcTntMod}}
+											<input id="aupc-tnt-mod-aur-nm-max-len"
+											       name="aupc-tnt-mod-aur-nm-max-len"
+											       type="number"
+											       min="1"
+											       required
+											       value="{{$aupc.AupcAurNmMaxLen}}"
+											       class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6">
+											{{else}}
+											<span id="aupc-tnt-mod-aur-nm-max-len"
+											      class="sm:text-sm/6">
+												{{$aupc.AupcAurNmMaxLen}}
+											</span>
+											{{end}}
 										</div>
 									</div>
 								</div>
 							</div>
 						</div>
 					</div>
-				</div>
 
-				<div class="pb-10">
-					<div class="mt-5 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-						<div class="sm:col-span-3">
-							<div class="grid grid-cols-2">
-								<div class="col-start-1">
-									<label for="aupc-tnt-mod-aur-pwd-enabled"
-									       class="block text-sm/6 font-medium text-gray-900">
-										{{.T "web-core-auth-aupc-tnt-mod-form.label-aur-pwd-enabled"}}
-									</label>
-									<div class="mt-2 flex h-6 shrink-0 items-center">
-										<div class="group grid size-4 grid-cols-1">
-											<input id="aupc-tnt-mod-aur-pwd-enabled"
-											       name="aupc-tnt-mod-aur-pwd-enabled"
-											       type="checkbox"
-											       value="true"
-											       {{if $aupc.AupcEnabled}}checked{{end}}
-											       {{ if not $hasRoleWebCoreAupcTntMod }}disabled{{end}}
-											       class="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-indigo-600 checked:bg-indigo-600 indeterminate:border-indigo-600 indeterminate:bg-indigo-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:checked:bg-gray-100 forced-colors:appearance-auto">
-											<svg class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white group-has-disabled:stroke-gray-950/25"
-											     viewBox="0 0 14 14"
-											     fill="none">
-												<path class="opacity-0 group-has-checked:opacity-100"
-												      d="M3 8L6 11L11 3.5"
-												      stroke-width="2"
-												      stroke-linecap="round"
-												      stroke-linejoin="round" />
-												<path class="opacity-0 group-has-indeterminate:opacity-100"
-												      d="M3 7H11"
-												      stroke-width="2"
-												      stroke-linecap="round"
-												      stroke-linejoin="round" />
-											</svg>
+					<div class="pb-2">
+						<div class="mt-5 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+							<div class="sm:col-span-3">
+								<div _="install NumberRange(v1: #aupc-tnt-mod-aur-pwd-min-len, v2: #aupc-tnt-mod-aur-pwd-max-len)"
+								     class="grid grid-cols-2">
+									<div class="col-start-1">
+										<label for="aupc-tnt-mod-aur-pwd-min-len"
+										       class="block text-sm/6 font-medium text-gray-900">
+											{{if $hasRoleWebCoreAupcTntMod}}
+												{{ .T "web-core-auth-aupc-tnt-mod-form.input-label-edit-aur-pwd-min-len" }}
+											{{else}}
+												{{ .T "web-core-auth-aupc-tnt-mod-form.label-view-aur-pwd-min-len" }}
+											{{end}}
+										</label>
+										<div class="mt-2">
+											{{if $hasRoleWebCoreAupcTntMod}}
+											<input id="aupc-tnt-mod-aur-pwd-min-len"
+											       name="aupc-tnt-mod-aur-pwd-min-len"
+											       type="number"
+											       min="1"
+											       required
+											       value="{{$aupc.AupcAurPwdMinLen}}"
+											       class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6">
+											{{else}}
+											<span id="aupc-tnt-mod-aur-pwd-min-len"
+											      class="sm:text-sm/6">
+												{{$aupc.AupcAurPwdMinLen}}
+											</span>
+											{{end}}
+										</div>
+									</div>
+									<div class="col-start-2">
+										<label for="aupc-tnt-mod-aur-pwd-max-len"
+										       class="block text-sm/6 font-medium text-gray-900">
+											{{if $hasRoleWebCoreAupcTntMod}}
+												{{ .T "web-core-auth-aupc-tnt-mod-form.input-label-edit-aur-pwd-max-len" }}
+											{{else}}
+												{{ .T "web-core-auth-aupc-tnt-mod-form.label-view-aur-pwd-max-len" }}
+											{{end}}
+										</label>
+										<div class="mt-2">
+											{{if $hasRoleWebCoreAupcTntMod}}
+											<input id="aupc-tnt-mod-aur-pwd-max-len"
+											       name="aupc-tnt-mod-aur-pwd-max-len"
+											       type="number"
+											       min="1"
+											       required
+											       value="{{$aupc.AupcAurPwdMaxLen}}"
+											       class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6">
+											{{else}}
+											<span id="aupc-tnt-mod-aur-pwd-max-len"
+											      class="sm:text-sm/6">
+												{{$aupc.AupcAurPwdMaxLen}}
+											</span>
+											{{end}}
 										</div>
 									</div>
 								</div>
-								<div class="col-start-2">
-									<label for="aupc-tnt-mod-aur-pwd-mfa-enabled"
-									       class="block text-sm/6 font-medium text-gray-900">
-										{{.T "web-core-auth-aupc-tnt-mod-form.label-aur-pwd-mfa-enabled"}}
-									</label>
-									<div class="mt-2 flex h-6 shrink-0 items-center">
-										<div class="group grid size-4 grid-cols-1">
-											<input id="aupc-tnt-mod-aur-pwd-mfa-enabled"
-											       name="aupc-tnt-mod-aur-pwd-mfa-enabled"
-											       type="checkbox"
-											       value="true"
-											       {{if $aupc.AupcMfaEnabled}}checked{{end}}
-											       {{ if not $hasRoleWebCoreAupcTntMod }}disabled{{end}}
-											       class="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-indigo-600 checked:bg-indigo-600 indeterminate:border-indigo-600 indeterminate:bg-indigo-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:checked:bg-gray-100 forced-colors:appearance-auto">
-											<svg class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white group-has-disabled:stroke-gray-950/25"
-											     viewBox="0 0 14 14"
-											     fill="none">
-												<path class="opacity-0 group-has-checked:opacity-100"
-												      d="M3 8L6 11L11 3.5"
-												      stroke-width="2"
-												      stroke-linecap="round"
-												      stroke-linejoin="round" />
-												<path class="opacity-0 group-has-indeterminate:opacity-100"
-												      d="M3 7H11"
-												      stroke-width="2"
-												      stroke-linecap="round"
-												      stroke-linejoin="round" />
-											</svg>
+							</div>
+						</div>
+					</div>
+
+					<div class="pb-2">
+						<div class="mt-5 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+							<div class="sm:col-span-3">
+								<div class="grid grid-cols-2">
+									<div class="col-start-1">
+										<label for="aupc-tnt-mod-aur-pwd-inc-sym"
+										       class="block text-sm/6 font-medium text-gray-900">
+											{{.T "web-core-auth-aupc-tnt-mod-form.label-aur-pwd-inc-sym"}}
+										</label>
+										<div class="mt-2 flex h-6 shrink-0 items-center">
+											<div class="group grid size-4 grid-cols-1">
+												<input id="aupc-tnt-mod-aur-pwd-inc-sym"
+												       name="aupc-tnt-mod-aur-pwd-inc-sym"
+												       type="checkbox"
+												       value="true"
+												       {{if $aupc.AupcAurPwdIncSym}}checked{{end}}
+												       {{ if not $hasRoleWebCoreAupcTntMod }}disabled{{end}}
+												       class="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-indigo-600 checked:bg-indigo-600 indeterminate:border-indigo-600 indeterminate:bg-indigo-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:checked:bg-gray-100 forced-colors:appearance-auto">
+												<svg class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white group-has-disabled:stroke-gray-950/25"
+												     viewBox="0 0 14 14"
+												     fill="none">
+													<path class="opacity-0 group-has-checked:opacity-100"
+													      d="M3 8L6 11L11 3.5"
+													      stroke-width="2"
+													      stroke-linecap="round"
+													      stroke-linejoin="round" />
+													<path class="opacity-0 group-has-indeterminate:opacity-100"
+													      d="M3 7H11"
+													      stroke-width="2"
+													      stroke-linecap="round"
+													      stroke-linejoin="round" />
+												</svg>
+											</div>
+										</div>
+									</div>
+									<div class="col-start-2">
+										<label for="aupc-tnt-mod-aur-pwd-inc-num"
+										       class="block text-sm/6 font-medium text-gray-900">
+											{{.T "web-core-auth-aupc-tnt-mod-form.label-aur-pwd-inc-num"}}
+										</label>
+										<div class="mt-2 flex h-6 shrink-0 items-center">
+											<div class="group grid size-4 grid-cols-1">
+												<input id="aupc-tnt-mod-aur-pwd-inc-num"
+												       name="aupc-tnt-mod-aur-pwd-inc-num"
+												       type="checkbox"
+												       value="true"
+												       {{if $aupc.AupcAurPwdIncNum}}checked{{end}}
+												       {{ if not $hasRoleWebCoreAupcTntMod }}disabled{{end}}
+												       class="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-indigo-600 checked:bg-indigo-600 indeterminate:border-indigo-600 indeterminate:bg-indigo-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:checked:bg-gray-100 forced-colors:appearance-auto">
+												<svg class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white group-has-disabled:stroke-gray-950/25"
+												     viewBox="0 0 14 14"
+												     fill="none">
+													<path class="opacity-0 group-has-checked:opacity-100"
+													      d="M3 8L6 11L11 3.5"
+													      stroke-width="2"
+													      stroke-linecap="round"
+													      stroke-linejoin="round" />
+													<path class="opacity-0 group-has-indeterminate:opacity-100"
+													      d="M3 7H11"
+													      stroke-width="2"
+													      stroke-linecap="round"
+													      stroke-linejoin="round" />
+												</svg>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="pb-10">
+						<div class="mt-5 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+							<div class="sm:col-span-3">
+								<div class="grid grid-cols-2">
+									<div class="col-start-1">
+										<label for="aupc-tnt-mod-aur-pwd-enabled"
+										       class="block text-sm/6 font-medium text-gray-900">
+											{{.T "web-core-auth-aupc-tnt-mod-form.label-aur-pwd-enabled"}}
+										</label>
+										<div class="mt-2 flex h-6 shrink-0 items-center">
+											<div class="group grid size-4 grid-cols-1">
+												<input id="aupc-tnt-mod-aur-pwd-enabled"
+												       name="aupc-tnt-mod-aur-pwd-enabled"
+												       type="checkbox"
+												       value="true"
+												       {{if $aupc.AupcEnabled}}checked{{end}}
+												       {{ if not $hasRoleWebCoreAupcTntMod }}disabled{{end}}
+												       class="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-indigo-600 checked:bg-indigo-600 indeterminate:border-indigo-600 indeterminate:bg-indigo-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:checked:bg-gray-100 forced-colors:appearance-auto">
+												<svg class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white group-has-disabled:stroke-gray-950/25"
+												     viewBox="0 0 14 14"
+												     fill="none">
+													<path class="opacity-0 group-has-checked:opacity-100"
+													      d="M3 8L6 11L11 3.5"
+													      stroke-width="2"
+													      stroke-linecap="round"
+													      stroke-linejoin="round" />
+													<path class="opacity-0 group-has-indeterminate:opacity-100"
+													      d="M3 7H11"
+													      stroke-width="2"
+													      stroke-linecap="round"
+													      stroke-linejoin="round" />
+												</svg>
+											</div>
+										</div>
+									</div>
+									<div class="col-start-2">
+										<label for="aupc-tnt-mod-aur-pwd-mfa-enabled"
+										       class="block text-sm/6 font-medium text-gray-900">
+											{{.T "web-core-auth-aupc-tnt-mod-form.label-aur-pwd-mfa-enabled"}}
+										</label>
+										<div class="mt-2 flex h-6 shrink-0 items-center">
+											<div class="group grid size-4 grid-cols-1">
+												<input id="aupc-tnt-mod-aur-pwd-mfa-enabled"
+												       name="aupc-tnt-mod-aur-pwd-mfa-enabled"
+												       type="checkbox"
+												       value="true"
+												       {{if $aupc.AupcMfaEnabled}}checked{{end}}
+												       {{ if not $hasRoleWebCoreAupcTntMod }}disabled{{end}}
+												       class="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-indigo-600 checked:bg-indigo-600 indeterminate:border-indigo-600 indeterminate:bg-indigo-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:checked:bg-gray-100 forced-colors:appearance-auto">
+												<svg class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white group-has-disabled:stroke-gray-950/25"
+												     viewBox="0 0 14 14"
+												     fill="none">
+													<path class="opacity-0 group-has-checked:opacity-100"
+													      d="M3 8L6 11L11 3.5"
+													      stroke-width="2"
+													      stroke-linecap="round"
+													      stroke-linejoin="round" />
+													<path class="opacity-0 group-has-indeterminate:opacity-100"
+													      d="M3 7H11"
+													      stroke-width="2"
+													      stroke-linecap="round"
+													      stroke-linejoin="round" />
+												</svg>
+											</div>
 										</div>
 									</div>
 								</div>

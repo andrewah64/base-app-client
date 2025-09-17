@@ -1,0 +1,19 @@
+[web-core-auth-s2c-tnt-page]
+
+descr-edit                            = "Change the way users are authenticated through SAML2"
+descr-view                            = "Review SAML2 configuration"
+header-edit                           = "Configure SAML2-based authentication"
+header-view                           = "View SAML2-based authentication configuration"
+title-edit                            = "<Application> : Configure SAML2-based authentication"
+title-view                            = "<Application> : View SAML2-based authentication configuration"
+
+[web-core-auth-s2c-tnt-mod-gen-form]
+
+input-label-edit-aum-id               = "Authentication method"
+label-view-acs-url                    = "Assertion Consumer Service URL"
+label-view-mtd-url                    = "Service Provider metadata URL"
+label-view-aum-id                     = "Authentication method"
+message-input-success                 = "Changes were applied successfully"
+submit-button-label                   = "Save"
+warning-input-olock-error             = "Another user modified the record"
+warning-input-unexpected-error        = "Unexpected error"
