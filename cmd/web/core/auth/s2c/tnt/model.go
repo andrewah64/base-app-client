@@ -87,10 +87,12 @@ func GetS2cUtsInf (ctx *context.Context, logger *slog.Logger, conn *pgxpool.Conn
 }
 
 type S2cInf struct {
-	AumId    int
-	EppAcsPt string
-	EppMtdPt string
-	Uts      time.Time
+	S2cEntityId string
+	S2cEnabled  bool
+	AumId       int
+	EppAcsPt    string
+	EppMtdPt    string
+	Uts         time.Time
 }
 
 func GetS2cInf (ctx *context.Context, logger *slog.Logger, conn *pgxpool.Conn, tntId int) ([]S2cInf, error) {
@@ -116,27 +118,31 @@ func GetS2cInf (ctx *context.Context, logger *slog.Logger, conn *pgxpool.Conn, t
 	return rs, rErr
 }
 
-func PatchS2c (ctx *context.Context, logger *slog.Logger, conn *pgxpool.Conn, tntId int, aumId int, by string, uts time.Time, exptErrs []string) error {
+func PatchS2c (ctx *context.Context, logger *slog.Logger, conn *pgxpool.Conn, tntId int, s2cEnabled bool, s2cEntityId string, aumId int, by string, uts time.Time, exptErrs []string) error {
 	var (
-		sprocCall   = "call web_core_auth_s2c_tnt_mod.mod_s2c(@p_tnt_id, @p_aum_id, @p_by, @p_uts)"
+		sprocCall   = "call web_core_auth_s2c_tnt_mod.mod_s2c(@p_tnt_id, @p_s2c_enabled, @p_s2c_entity_id, @p_aum_id, @p_by, @p_uts)"
 		sprocParams = pgx.NamedArgs{
-			"p_tnt_id" : tntId,
-			"p_aum_id" : aumId,
-			"p_by"     : by,
-			"p_uts"    : uts,
+			"p_tnt_id"        : tntId,
+			"p_s2c_enabled"   : s2cEnabled,
+			"p_s2c_entity_id" : s2cEntityId,
+			"p_aum_id"        : aumId,
+			"p_by"            : by,
+			"p_uts"           : uts,
 		}
 	)
 
 	sprocErr := db.Sproc(ctx, logger, conn, sprocCall, sprocParams, exptErrs)
 	if sprocErr != nil {
 		logger.LogAttrs(*ctx, slog.LevelDebug, "call sproc",
-			slog.String("sprocCall" , sprocCall),
-			slog.String("error"     , sprocErr.Error()),
-			slog.Int   ("tntId"     , tntId),
-			slog.Int   ("aumId"     , aumId),
-			slog.String("by"        , by),
-			slog.Any   ("uts"       , uts),
-			slog.Any   ("exptErrs"  , exptErrs),
+			slog.String("sprocCall"   , sprocCall),
+			slog.String("error"       , sprocErr.Error()),
+			slog.Int   ("tntId"       , tntId),
+			slog.Bool  ("s2cEnabled"  , s2cEnabled),
+			slog.String("s2cEntityId" , s2cEntityId),
+			slog.Int   ("aumId"       , aumId),
+			slog.String("by"          , by),
+			slog.Any   ("uts"         , uts),
+			slog.Any   ("exptErrs"    , exptErrs),
 		)
 
 		return sprocErr

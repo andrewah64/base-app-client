@@ -88,11 +88,7 @@
 											<div class="col-start-1">
 												<label for="s2c-tnt-mod-gen-aum-id"
 												       class="block text-sm/6 font-medium text-gray-900">
-													{{if $hasRoleWebCoreS2cTntMod}}
-														{{ .T "web-core-auth-s2c-tnt-mod-gen-form.input-label-edit-aum-id" }}
-													{{else}}
-														{{ .T "web-core-auth-s2c-tnt-mod-gen-form.label-view-aum-id" }}
-													{{end}}
+													{{ .T "web-core-auth-s2c-tnt-mod-gen-form.label-aum-id" }}
 												</label>
 												<div class="mt-2">
 													{{if $hasRoleWebCoreS2cTntMod}}
@@ -120,6 +116,77 @@
 								</div>
 							</div>
 
+							<div class="pb-2">
+								<div class="mt-5 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+									<div class="sm:col-span-3">
+										<div class="grid grid-cols-1">
+											<div class="col-start-1">
+												<label for="s2c-tnt-mod-gen-entity-id"
+												       class="block text-sm/6 font-medium text-gray-900">
+													{{if $hasRoleWebCoreS2cTntMod}}
+														{{ .T "web-core-auth-s2c-tnt-mod-gen-form.label-entity-id" }}
+													{{end}}
+												</label>
+												<div class="mt-2">
+													{{if $hasRoleWebCoreS2cTntMod}}
+														<input type="text"
+														       name="s2c-tnt-mod-gen-entity-id"
+														       id="s2c-tnt-mod-gen-entity-id"
+														       value="{{$s2c.S2cEntityId}}"
+														       required
+														       class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6">
+													{{else}}
+														<span id="s2c-tnt-mod-gen-entity-id"
+														      class="sm:text-sm/6">
+															{{$s2c.S2cEntityId}}
+														</span>
+													{{end}}
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div class="pb-2">
+								<div class="mt-5 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+									<div class="sm:col-span-3">
+										<div class="grid grid-cols-1">
+											<div class="col-start-1">
+												<label for="s2c-tnt-mod-gen-enabled"
+												       class="block text-sm/6 font-medium text-gray-900">
+													{{ .T "web-core-auth-s2c-tnt-mod-gen-form.label-enabled" }}
+												</label>
+												<div class="mt-2 flex h-6 shrink-0 items-center">
+													<div class="group grid size-4 grid-cols-1">
+														<input id="s2c-tnt-mod-gen-enabled"
+														       name="s2c-tnt-mod-gen-enabled"
+														       type="checkbox"
+														       value="true"
+														       {{if $s2c.S2cEnabled}}checked{{end}}
+														       {{if not $hasRoleWebCoreS2cTntMod}}disabled{{end}}
+														       class="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-indigo-600 checked:bg-indigo-600 indeterminate:border-indigo-600 indeterminate:bg-indigo-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:checked:bg-gray-100 forced-colors:appearance-auto">
+														<svg class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white group-has-disabled:stroke-gray-950/25"
+														     viewBox="0 0 14 14"
+														     fill="none">
+															<path class="opacity-0 group-has-checked:opacity-100"
+															      d="M3 8L6 11L11 3.5"
+															      stroke-width="2"
+															      stroke-linecap="round"
+															      stroke-linejoin="round" />
+															<path class="opacity-0 group-has-indeterminate:opacity-100"
+															      d="M3 7H11"
+															      stroke-width="2"
+															      stroke-linecap="round"
+															      stroke-linejoin="round" />
+														</svg>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
 
 							<div class="pb-2">
 								<div class="mt-5 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
@@ -127,7 +194,7 @@
 										<div class="grid grid-cols-1">
 											<div class="col-start-1">
 												<label class="block text-sm/6 font-medium text-gray-900">
-													{{.T "web-core-auth-s2c-tnt-mod-gen-form.label-view-acs-url"}}
+													{{.T "web-core-auth-s2c-tnt-mod-gen-form.label-acs-url"}}
 												</label>
 												<div class="mt-2">
 													<span id="s2c-tnt-mod-epp-acs-pt"
@@ -147,7 +214,7 @@
 										<div class="grid grid-cols-1">
 											<div class="col-start-1">
 												<label class="block text-sm/6 font-medium text-gray-900">
-													{{.T "web-core-auth-s2c-tnt-mod-gen-form.label-view-mtd-url"}}
+													{{.T "web-core-auth-s2c-tnt-mod-gen-form.label-mtd-url"}}
 												</label>
 												<div class="mt-2">
 													<span id="s2c-tnt-mod-epp-mtd-pt"

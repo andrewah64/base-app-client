@@ -9,10 +9,12 @@ title-view                            = "<Application> : View SAML2-based authen
 
 [web-core-auth-s2c-tnt-mod-gen-form]
 
-input-label-edit-aum-id               = "Authentication method"
-label-view-acs-url                    = "Assertion Consumer Service URL"
-label-view-mtd-url                    = "Service Provider metadata URL"
-label-view-aum-id                     = "Authentication method"
+
+label-acs-url                         = "Assertion Consumer Service URL"
+label-aum-id                          = "Authentication method"
+label-enabled                         = "Enable SAML2 authentication"
+label-entity-id                       = "Entity ID"
+label-mtd-url                         = "Service Provider metadata URL"
 message-input-success                 = "Changes were applied successfully"
 submit-button-label                   = "Save"
 warning-input-olock-error             = "Another user modified the record"

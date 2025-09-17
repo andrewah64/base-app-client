@@ -95,19 +95,23 @@ func Patch(rw http.ResponseWriter, r *http.Request){
 				return
 			}
 
-			aumId := form.VInt  (r, "s2c-tnt-mod-gen-aum-id")
-			uts   := form.VTime (r, "s2c-tnt-mod-gen-uts")
+			s2cEnabled  := form.VBool (r, "s2c-tnt-mod-gen-enabled")
+			s2cEntityId := form.VText (r, "s2c-tnt-mod-gen-entity-id")
+			aumId       := form.VInt  (r, "s2c-tnt-mod-gen-aum-id")
+			uts         := form.VTime (r, "s2c-tnt-mod-gen-uts")
 
 			ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Patch::get data from aupc form",
-				slog.Int  ("aumId" , aumId),
-				slog.Any  ("uts"   , uts),
+				slog.Bool  ("s2cEnabled" , s2cEnabled),
+				slog.String("s2cEntityId", s2cEntityId),
+				slog.Int   ("aumId"      , aumId),
+				slog.Any   ("uts"        , uts),
 			)
 
 			exptErrs := []string{
 				"OLOCK",
 			}
 
-			patchErr := PatchS2c(&ctx, ssd.Logger, ssd.Conn, ssd.TntId, aumId, data.User.AurNm, uts, exptErrs)
+			patchErr := PatchS2c(&ctx, ssd.Logger, ssd.Conn, ssd.TntId, s2cEnabled, s2cEntityId, aumId, data.User.AurNm, uts, exptErrs)
 			if patchErr != nil {
 				var pgErr *pgconn.PgError
 
@@ -118,8 +122,10 @@ func Patch(rw http.ResponseWriter, r *http.Request){
 
 						default:
 							slog.LogAttrs(ctx, slog.LevelError, "Patch::unexpected error",
-								slog.Int  ("aumId" , aumId),
-								slog.Any  ("uts"   , uts),
+								slog.String("s2cEntityId", s2cEntityId),
+								slog.Bool  ("s2cEnabled" , s2cEnabled),
+								slog.Int   ("aumId"      , aumId),
+								slog.Any   ("uts"        , uts),
 							)
 
 							notification.Show(ctx, slog.Default(), rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-mod-gen-form.warning-input-unexpected-error")}, data)
