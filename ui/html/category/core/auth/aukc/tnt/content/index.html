@@ -293,7 +293,7 @@
 											<span id="aukc-tnt-mod-puv-reg-nm"
 											      class="sm:text-sm/6">
 												{{ range $puv := .FormOpts.Opts.puv }}
-													{{if eq $puv.Id $aukc.PuvId}}
+													{{if eq $puv.Id $aukc.PuvRegId}}
 														{{$puv.Value}}
 													{{end}}
 												{{ end }}
@@ -423,7 +423,7 @@
 											<span id="aukc-tnt-mod-puv-atn-nm"
 											      class="sm:text-sm/6">
 												{{ range $puv := .FormOpts.Opts.puv }}
-													{{if eq $puv.Id $aukc.PuvId}}
+													{{if eq $puv.Id $aukc.PuvAtnId}}
 														{{$puv.Value}}
 													{{end}}
 												{{ end }}
