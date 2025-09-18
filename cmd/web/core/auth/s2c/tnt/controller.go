@@ -55,12 +55,19 @@ func Get(rw http.ResponseWriter, r *http.Request){
 		return
 	}
 
+	s2gInfRs, s2gInfRsErr := GetS2gInf(&ctx, ssd.Logger, ssd.Conn, ssd.TntId)
+	if s2gInfRsErr != nil {
+		error.IntSrv(ctx, rw, s2gInfRsErr)
+		return
+	}
+
 	data.FormOpts  = &map[string]any{
 		"Opts" : &optsRs,
 	}
 
 	data.ResultSet = &map[string]any{
 		"S2c" : &s2cInfRs,
+		"S2g" : &s2gInfRs,
 	}
 
 	html.Tmpl(ctx, ssd.Logger, rw, r, "core/auth/s2c/tnt/content", http.StatusOK, data)
@@ -100,7 +107,7 @@ func Patch(rw http.ResponseWriter, r *http.Request){
 			aumId       := form.VInt  (r, "s2c-tnt-mod-gen-aum-id")
 			uts         := form.VTime (r, "s2c-tnt-mod-gen-uts")
 
-			ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Patch::get data from aupc form",
+			ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Patch::get data from gen form",
 				slog.Bool  ("s2cEnabled" , s2cEnabled),
 				slog.String("s2cEntityId", s2cEntityId),
 				slog.Int   ("aumId"      , aumId),
@@ -142,7 +149,6 @@ func Patch(rw http.ResponseWriter, r *http.Request){
 			html.HiddenUtsFragment(rw, "s2c-tnt-mod-gen-uts-ctr", "s2c-tnt-mod-gen-uts", "s2c-tnt-mod-gen-uts", s2cUtsInfRs[0].Uts, data.TFT())
 
 			notification.Show(ctx, slog.Default(), rw, r, "success", &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-mod-gen-form.message-input-success")} , data)
-	/*
 		case "cdf":
 			pfErr := r.ParseForm()
 			if pfErr != nil {
@@ -150,17 +156,50 @@ func Patch(rw http.ResponseWriter, r *http.Request){
 				return
 			}
 
-			s2cCrtCn := form.VText (r, "s2c-tnt_mod-cdf-crt-cn")
-			s2cCrtDn := form.VText (r, "s2c-tnt_mod-cdf-crt-dn")
-			uts      := form.VTime (r, "s2c-tnt-mod-cdf-uts")
+			s2gCrtCn  := form.VText (r, "s2g-tnt-mod-cdf-crt-cn")
+			s2gCrtOrg := form.VText (r, "s2g-tnt-mod-cdf-crt-org")
+			uts       := form.VTime (r, "s2g-tnt-mod-cdf-uts")
 
-			ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Patch::get data from aupc form",
-				slog.Bool  ("s2cEnabled" , s2cEnabled),
-				slog.String("s2cEntityId", s2cEntityId),
-				slog.Int   ("aumId"      , aumId),
-				slog.Any   ("uts"        , uts),
+			ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Patch::get data from cdf form",
+				slog.String("s2gCrtCn"  , s2gCrtCn),
+				slog.String("s2gCrtOrg" , s2gCrtOrg),
+				slog.Any   ("uts"       , uts),
 			)
-	*/
+
+			exptErrs := []string{
+				"OLOCK",
+			}
+
+			patchErr := PatchS2g(&ctx, ssd.Logger, ssd.Conn, ssd.TntId, s2gCrtCn, s2gCrtOrg, data.User.AurNm, uts, exptErrs)
+			if patchErr != nil {
+				var pgErr *pgconn.PgError
+
+				if errors.As(patchErr, &pgErr) {
+					switch pgErr.Code {
+						case "OLOCK":
+							rw.Header().Set("HX-Location", fmt.Sprintf(`{"path":"%v", "target":"#main", "select":"#content", "swap" : "innerHTML show:window:top", "values":{"ntf": "web-core-auth-s2c-tnt-mod-cdf-form.warning-input-olock-error", "lvl": "error"}}`, currentUrl))
+
+						default:
+							slog.LogAttrs(ctx, slog.LevelError, "Patch::unexpected error",
+								slog.String("s2gCrtCn"  , s2gCrtCn),
+								slog.String("s2gCrtOrg" , s2gCrtOrg),
+								slog.Any   ("uts"       , uts),
+							)
+
+							notification.Show(ctx, slog.Default(), rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-mod-cdf-form.warning-input-unexpected-error")}, data)
+					}
+				}
+			}
+
+			s2gUtsInfRs, s2gUtsInfRsErr := GetS2gUtsInf(&ctx, ssd.Logger, ssd.Conn, ssd.TntId)
+			if s2gUtsInfRsErr != nil {
+				error.IntSrv(ctx, rw, s2gUtsInfRsErr)
+				return
+			}
+
+			html.HiddenUtsFragment(rw, "s2g-tnt-mod-cdf-uts-ctr", "s2g-tnt-mod-cdf-uts", "s2g-tnt-mod-cdf-uts", s2gUtsInfRs[0].Uts, data.TFT())
+
+			notification.Show(ctx, slog.Default(), rw, r, "success", &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-mod-cdf-form.message-input-success")} , data)
 	}
 
 	ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Patch::end")

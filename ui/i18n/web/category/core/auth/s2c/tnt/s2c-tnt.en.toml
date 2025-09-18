@@ -7,6 +7,15 @@ header-view                           = "View SAML2-based authentication configu
 title-edit                            = "<Application> : Configure SAML2-based authentication"
 title-view                            = "<Application> : View SAML2-based authentication configuration"
 
+[web-core-auth-s2c-tnt-mod-cdf-form]
+
+label-crt-cn                          = "Common name"
+label-crt-org                         = "Organisation name"
+message-input-success                 = "Changes were applied successfully"
+submit-button-label                   = "Save"
+warning-input-olock-error             = "Another user modified the record"
+warning-input-unexpected-error        = "Unexpected error"
+
 [web-core-auth-s2c-tnt-mod-gen-form]
 
 label-acs-url                         = "Assertion Consumer Service URL"
