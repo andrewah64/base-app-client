@@ -142,6 +142,25 @@ func Patch(rw http.ResponseWriter, r *http.Request){
 			html.HiddenUtsFragment(rw, "s2c-tnt-mod-gen-uts-ctr", "s2c-tnt-mod-gen-uts", "s2c-tnt-mod-gen-uts", s2cUtsInfRs[0].Uts, data.TFT())
 
 			notification.Show(ctx, slog.Default(), rw, r, "success", &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-mod-gen-form.message-input-success")} , data)
+	/*
+		case "cdf":
+			pfErr := r.ParseForm()
+			if pfErr != nil {
+				error.IntSrv(ctx, rw, pfErr)
+				return
+			}
+
+			s2cCrtCn := form.VText (r, "s2c-tnt_mod-cdf-crt-cn")
+			s2cCrtDn := form.VText (r, "s2c-tnt_mod-cdf-crt-dn")
+			uts      := form.VTime (r, "s2c-tnt-mod-cdf-uts")
+
+			ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Patch::get data from aupc form",
+				slog.Bool  ("s2cEnabled" , s2cEnabled),
+				slog.String("s2cEntityId", s2cEntityId),
+				slog.Int   ("aumId"      , aumId),
+				slog.Any   ("uts"        , uts),
+			)
+	*/
 	}
 
 	ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Patch::end")

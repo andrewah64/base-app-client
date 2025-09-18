@@ -9,10 +9,9 @@ title-view                            = "<Application> : View SAML2-based authen
 
 [web-core-auth-s2c-tnt-mod-gen-form]
 
-
 label-acs-url                         = "Assertion Consumer Service URL"
 label-aum-id                          = "Authentication method"
-label-enabled                         = "Enable SAML2 authentication"
+label-enabled                         = "Enabled"
 label-entity-id                       = "Entity ID"
 label-mtd-url                         = "Service Provider metadata URL"
 message-input-success                 = "Changes were applied successfully"

@@ -30,17 +30,17 @@ func GenSAML2ServiceProviderCerts (ctx *context.Context, conn *pgxpool.Conn) (er
 
 	const (
 		dbSchema = "all_core_unauth_spc_all_reg"
-		dbFunc   = "s2c_inf"
+		dbFunc   = "s2g_inf"
 	)
 
-	type s2c struct {
+	type s2g struct {
 		TntId       int
-		S2cCrtCnNm  string
-		S2cCrtDn    time.Duration
-		S2cCrtOrgNm string
+		S2gCrtCnNm  string
+		S2gCrtDn    time.Duration
+		S2gCrtOrgNm string
 	}
 
-	s2cRs, s2cRsErr := db.DataSet[s2c](ctx, slog.Default(), conn, func(ctx *context.Context, tx *pgx.Tx)(string, string, *pgx.Rows, error){
+	s2gRs, s2gRsErr := db.DataSet[s2g](ctx, slog.Default(), conn, func(ctx *context.Context, tx *pgx.Tx)(string, string, *pgx.Rows, error){
 		qry := fmt.Sprintf("select %v.%v($1)", dbSchema, dbFunc)
 
 		call, err := (*tx).Query(*ctx, qry, dbFunc)
@@ -55,8 +55,8 @@ func GenSAML2ServiceProviderCerts (ctx *context.Context, conn *pgxpool.Conn) (er
 		return qry, dbFunc, &call, nil
 	})
 
-	if s2cRsErr != nil {
-		return s2cRsErr
+	if s2gRsErr != nil {
+		return s2gRsErr
 	}
 
 	sprocCall := fmt.Sprintf("call %v.reg_spc(@p_tnt_id, @p_spc_cn_nm, @p_spc_org_nm, @p_spc_enc_crt, @p_spc_enc_pvk, @p_spc_sgn_crt, @p_spc_sgn_pvk, @p_spc_exp_ts, @p_spc_enabled)", dbSchema)
@@ -66,15 +66,15 @@ func GenSAML2ServiceProviderCerts (ctx *context.Context, conn *pgxpool.Conn) (er
 	now         := time.Now()
 	spcFromTs   := now.Add(-time.Hour)
 
-	for _, v := range s2cRs {
-		spcExpTs := now.Add(v.S2cCrtDn);
+	for _, v := range s2gRs {
+		spcExpTs := now.Add(v.S2gCrtDn);
 
-		spcEncCrt, spcEncPvk, spcEncCrtErr := saml2.GenCert(v.S2cCrtCnNm, []string{v.S2cCrtOrgNm}, encKeyUsage, spcFromTs, spcExpTs)
+		spcEncCrt, spcEncPvk, spcEncCrtErr := saml2.GenCert(v.S2gCrtCnNm, []string{v.S2gCrtOrgNm}, encKeyUsage, spcFromTs, spcExpTs)
 		if spcEncCrtErr != nil {
 			panic(spcEncCrtErr)
 		}
 
-		spcSgnCrt, spcSgnPvk, spcSgnCrtErr := saml2.GenCert(v.S2cCrtCnNm, []string{v.S2cCrtOrgNm}, sgnKeyUsage, spcFromTs, spcExpTs)
+		spcSgnCrt, spcSgnPvk, spcSgnCrtErr := saml2.GenCert(v.S2gCrtCnNm, []string{v.S2gCrtOrgNm}, sgnKeyUsage, spcFromTs, spcExpTs)
 		if spcSgnCrtErr != nil {
 			panic(spcSgnCrtErr)
 		}
@@ -82,8 +82,8 @@ func GenSAML2ServiceProviderCerts (ctx *context.Context, conn *pgxpool.Conn) (er
 		var (
 			sprocParams = pgx.NamedArgs{
 				"p_tnt_id"      : v.TntId,
-				"p_spc_cn_nm"   : v.S2cCrtCnNm,
-				"p_spc_org_nm"  : v.S2cCrtOrgNm,
+				"p_spc_cn_nm"   : v.S2gCrtCnNm,
+				"p_spc_org_nm"  : v.S2gCrtOrgNm,
 				"p_spc_enc_crt" : spcEncCrt,
 				"p_spc_enc_pvk" : spcEncPvk,
 				"p_spc_sgn_crt" : spcSgnCrt,
