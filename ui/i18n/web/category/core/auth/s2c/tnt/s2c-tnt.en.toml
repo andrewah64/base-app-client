@@ -9,21 +9,39 @@ title-view                            = "<Application> : View SAML2-based authen
 
 [web-core-auth-s2c-tnt-mod-cdf-form]
 
+descr                                 = "Define the values to be embedded into new X509 encryption and signing certificates"
+header                                = "Configure certificate pairs"
 label-crt-cn                          = "Common name"
 label-crt-org                         = "Organisation name"
 message-input-success                 = "Changes were applied successfully"
 submit-button-label                   = "Save"
+tab                                   = "Certificate configuration"
 warning-input-olock-error             = "Another user modified the record"
 warning-input-unexpected-error        = "Unexpected error"
 
 [web-core-auth-s2c-tnt-mod-gen-form]
 
-label-acs-url                         = "Assertion Consumer Service URL"
-label-aum-id                          = "Authentication method"
-label-enabled                         = "Enabled"
-label-entity-id                       = "Entity ID"
-label-mtd-url                         = "Service Provider metadata URL"
+descr                                 = "Enable/disable and configure the mode of SAML2 authentication"
+header                                = "General SAML2 configuration"
+label-acs-url                         = "Service provider: assertion consumer service URL"
+label-aum-id                          = "Service provider: authentication method"
+label-enabled                         = "Service provider: enabled"
+label-entity-id                       = "Service provider: entity ID"
+label-mtd-url                         = "Service provider: metadata URL"
 message-input-success                 = "Changes were applied successfully"
 submit-button-label                   = "Save"
+tab                                   = "General configuration"
 warning-input-olock-error             = "Another user modified the record"
 warning-input-unexpected-error        = "Unexpected error"
+
+[web-core-auth-s2c-tnt-mod-idp-form]
+
+descr                                 = "Manage & register identity provider"
+header                                = "General SAML2 configuration"
+tab                                   = "Manage IDPs"
+
+[web-core-auth-s2c-tnt-mod-spc-form]
+
+descr                                 = "Create new self-signed X509 encryption and signing certificates"
+header                                = "Create certicate pairs"
+tab                                   = "Manage SP certificates"
