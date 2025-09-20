@@ -34,10 +34,15 @@ tab                                   = "General configuration"
 warning-input-olock-error             = "Another user modified the record"
 warning-input-unexpected-error        = "Unexpected error"
 
+[web-core-auth-s2c-tnt-reg-idp-form]
+
+descr                                 = "Supply the URL from which an IDP's metadata can be retrieved"
+header                                = "Register identity providers"
+
 [web-core-auth-s2c-tnt-mod-idp-form]
 
-descr                                 = "Manage & register identity provider"
-header                                = "General SAML2 configuration"
+descr                                 = "Create new self-signed X509 encryption and signing certificates"
+header                                = "Create certicate pairs"
 tab                                   = "Manage IDPs"
 
 [web-core-auth-s2c-tnt-mod-spc-form]

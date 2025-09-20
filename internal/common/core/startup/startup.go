@@ -6,6 +6,7 @@ import (
 	"flag"
 	"fmt"
 	"log/slog"
+	"strings"
 	"time"
 )
 
@@ -59,35 +60,39 @@ func GenSAML2ServiceProviderCerts (ctx *context.Context, conn *pgxpool.Conn) (er
 		return s2gRsErr
 	}
 
-	sprocCall := fmt.Sprintf("call %v.reg_spc(@p_tnt_id, @p_spc_cn_nm, @p_spc_org_nm, @p_spc_enc_crt, @p_spc_enc_pvk, @p_spc_sgn_crt, @p_spc_sgn_pvk, @p_spc_exp_ts, @p_spc_enabled)", dbSchema)
+	sprocCall := fmt.Sprintf("call %v.reg_spc(@p_tnt_id, @p_spc_nm, @p_spc_cn_nm, @p_spc_org_nm, @p_spc_enc_crt, @p_spc_enc_pvk, @p_spc_sgn_crt, @p_spc_sgn_pvk, @p_spc_inc_ts, @p_spc_exp_ts, @p_spc_enabled)", dbSchema)
 
 	encKeyUsage := x509.KeyUsageDataEncipherment | x509.KeyUsageKeyEncipherment
 	sgnKeyUsage := x509.KeyUsageDigitalSignature
 	now         := time.Now()
-	spcFromTs   := now.Add(-time.Hour)
+	spcIncTs    := now.Add(-time.Hour)
 
 	for _, v := range s2gRs {
 		spcExpTs := now.Add(v.S2gCrtDn);
 
-		spcEncCrt, spcEncPvk, spcEncCrtErr := saml2.GenCert(v.S2gCrtCnNm, []string{v.S2gCrtOrgNm}, encKeyUsage, spcFromTs, spcExpTs)
+		spcEncCrt, spcEncPvk, spcEncCrtErr := saml2.GenCert(v.S2gCrtCnNm, []string{v.S2gCrtOrgNm}, encKeyUsage, spcIncTs, spcExpTs)
 		if spcEncCrtErr != nil {
 			panic(spcEncCrtErr)
 		}
 
-		spcSgnCrt, spcSgnPvk, spcSgnCrtErr := saml2.GenCert(v.S2gCrtCnNm, []string{v.S2gCrtOrgNm}, sgnKeyUsage, spcFromTs, spcExpTs)
+		spcSgnCrt, spcSgnPvk, spcSgnCrtErr := saml2.GenCert(v.S2gCrtCnNm, []string{v.S2gCrtOrgNm}, sgnKeyUsage, spcIncTs, spcExpTs)
 		if spcSgnCrtErr != nil {
 			panic(spcSgnCrtErr)
 		}
 
+		spcNm := strings.Trim(strings.ToLower(fmt.Sprintf("Auto generated : %s", now.Format("2006-01-02 15:04:05"))), " ")
+
 		var (
 			sprocParams = pgx.NamedArgs{
 				"p_tnt_id"      : v.TntId,
+				"p_spc_nm"      : spcNm,
 				"p_spc_cn_nm"   : v.S2gCrtCnNm,
 				"p_spc_org_nm"  : v.S2gCrtOrgNm,
 				"p_spc_enc_crt" : spcEncCrt,
 				"p_spc_enc_pvk" : spcEncPvk,
 				"p_spc_sgn_crt" : spcSgnCrt,
 				"p_spc_sgn_pvk" : spcSgnPvk,
+				"p_spc_inc_ts"  : spcIncTs,
 				"p_spc_exp_ts"  : spcExpTs,
 				"p_spc_enabled" : true,
 			}
