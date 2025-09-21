@@ -57,6 +57,16 @@ func VBool(r *http.Request, fv string) bool {
 	return b
 }
 
+func VDate(r *http.Request, fv string) time.Time {
+	var t time.Time
+
+	if v, err := time.Parse(time.DateOnly, VText(r, fv)); err == nil {
+		t = v
+	}
+
+	return t
+}
+
 func VInt(r *http.Request, fv string) int {
 	var i int
 

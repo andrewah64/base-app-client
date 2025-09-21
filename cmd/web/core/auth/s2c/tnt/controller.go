@@ -1,6 +1,7 @@
 package tnt
 
 import (
+	"crypto/x509"
 	"errors"
 	"fmt"
 	"log/slog"
@@ -8,6 +9,7 @@ import (
 )
 
 import (
+	"github.com/andrewah64/base-app-client/internal/common/core/saml2"
 	"github.com/andrewah64/base-app-client/internal/common/core/session"
 	"github.com/andrewah64/base-app-client/internal/web/core/error"
 	"github.com/andrewah64/base-app-client/internal/web/core/ui/data/form"
@@ -136,6 +138,8 @@ func Patch(rw http.ResponseWriter, r *http.Request){
 							)
 
 							notification.Show(ctx, slog.Default(), rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-mod-gen-form.warning-input-unexpected-error")}, data)
+
+							return
 					}
 				}
 			}
@@ -181,12 +185,15 @@ func Patch(rw http.ResponseWriter, r *http.Request){
 
 						default:
 							slog.LogAttrs(ctx, slog.LevelError, "Patch::unexpected error",
+								slog.String("patchErr"  , patchErr.Error()),
 								slog.String("s2gCrtCn"  , s2gCrtCn),
 								slog.String("s2gCrtOrg" , s2gCrtOrg),
 								slog.Any   ("uts"       , uts),
 							)
 
 							notification.Show(ctx, slog.Default(), rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-mod-cdf-form.warning-input-unexpected-error")}, data)
+
+							return
 					}
 				}
 			}
@@ -205,3 +212,70 @@ func Patch(rw http.ResponseWriter, r *http.Request){
 	ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Patch::end")
 }
 
+func Post(rw http.ResponseWriter, r *http.Request){
+	ctx := r.Context()
+
+	ssd, ok := session.FromContext(ctx)
+	if ! ok {
+		error.IntSrv(ctx, rw, fmt.Errorf("Patch::get request info"))
+		return
+	}
+
+	ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Patch::start")
+
+	data, ok := page.FromContext(ctx)
+	if ! ok {
+		error.IntSrv(ctx, rw, fmt.Errorf("Get::get request data"))
+		return
+	}
+
+	switch r.PathValue("nm") {
+		case "spc":
+			pfErr := r.ParseForm()
+			if pfErr != nil {
+				error.IntSrv(ctx, rw, pfErr)
+				return
+			}
+
+			spcNm    := form.VText (r, "s2c-tnt-reg-spc-nm")
+			spcIncTs := form.VDate (r, "s2c-tnt-reg-spc-inc-ts")
+			spcExpTs := form.VDate (r, "s2c-tnt-reg-spc-exp-ts")
+
+			ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Post::get data from spc form",
+				slog.String("spcNm"    , spcNm),
+				slog.Any   ("spcIncTs" , spcIncTs),
+				slog.Any   ("spcExpTs" , spcExpTs),
+			)
+
+			s2gInfRs, s2gInfRsErr := GetS2gInf(&ctx, ssd.Logger, ssd.Conn, ssd.TntId)
+			if s2gInfRsErr != nil {
+				error.IntSrv(ctx, rw, s2gInfRsErr)
+				return
+			}
+
+			encKeyUsage := x509.KeyUsageDataEncipherment | x509.KeyUsageKeyEncipherment
+			sgnKeyUsage := x509.KeyUsageDigitalSignature
+
+			spcEncCrt, spcEncPvk, spcEncCrtErr := saml2.GenCert(s2gInfRs[0].S2gCrtCn, []string{s2gInfRs[0].S2gCrtOrg}, encKeyUsage, spcIncTs, spcExpTs)
+			if spcEncCrtErr != nil {
+				error.IntSrv(ctx, rw, s2gInfRsErr)
+				return
+			}
+
+			spcSgnCrt, spcSgnPvk, spcSgnCrtErr := saml2.GenCert(s2gInfRs[0].S2gCrtCn, []string{s2gInfRs[0].S2gCrtOrg}, sgnKeyUsage, spcIncTs, spcExpTs)
+			if spcSgnCrtErr != nil {
+				error.IntSrv(ctx, rw, s2gInfRsErr)
+				return
+			}
+
+			postErr := PostSpc(&ctx, ssd.Logger, ssd.Conn, ssd.TntId, spcNm, s2gInfRs[0].S2gCrtCn, s2gInfRs[0].S2gCrtOrg, spcEncCrt, spcEncPvk, spcSgnCrt, spcSgnPvk, spcIncTs, spcExpTs, data.User.AurNm, nil)
+			if postErr != nil {
+				error.IntSrv(ctx, rw, s2gInfRsErr)
+				return
+			}
+
+			notification.Show(ctx, slog.Default(), rw, r, "success", &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-reg-spc-form.message-input-success")} , data)
+	}
+
+	ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Patch::end")
+}

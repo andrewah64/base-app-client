@@ -73,6 +73,20 @@ behavior CbdgSelectRow(tb, acb, btn, btntmptxt)
 	end
 end
 
+behavior DateRange (v1, v2)
+	on input from v1
+		if v1.value as Date > v2.value as Date
+			set v1.value to v2.value
+		end
+	end
+
+	on input from v2
+		if v2.value as Date < v1.value as Date
+			set v2.value to v1.value
+		end
+	end
+end
+
 behavior MultiSelect
 	def getSelectedLabel(container)
 		-- try the .selected label

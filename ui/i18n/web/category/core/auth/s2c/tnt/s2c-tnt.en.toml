@@ -4,6 +4,10 @@ descr-edit                            = "Change the way users are authenticated 
 descr-view                            = "Review SAML2 configuration"
 header-edit                           = "Configure SAML2-based authentication"
 header-view                           = "View SAML2-based authentication configuration"
+tab-cdf                               = "Certificate configuration"
+tab-gen                               = "General configuration"
+tab-idp                               = "Manage IDPs"
+tab-spc                               = "Manage SP certificates"
 title-edit                            = "<Application> : Configure SAML2-based authentication"
 title-view                            = "<Application> : View SAML2-based authentication configuration"
 
@@ -15,7 +19,6 @@ label-crt-cn                          = "Common name"
 label-crt-org                         = "Organisation name"
 message-input-success                 = "Changes were applied successfully"
 submit-button-label                   = "Save"
-tab                                   = "Certificate configuration"
 warning-input-olock-error             = "Another user modified the record"
 warning-input-unexpected-error        = "Unexpected error"
 
@@ -30,7 +33,6 @@ label-entity-id                       = "Service provider: entity ID"
 label-mtd-url                         = "Service provider: metadata URL"
 message-input-success                 = "Changes were applied successfully"
 submit-button-label                   = "Save"
-tab                                   = "General configuration"
 warning-input-olock-error             = "Another user modified the record"
 warning-input-unexpected-error        = "Unexpected error"
 
@@ -43,10 +45,14 @@ header                                = "Register identity providers"
 
 descr                                 = "Create new self-signed X509 encryption and signing certificates"
 header                                = "Create certicate pairs"
-tab                                   = "Manage IDPs"
 
-[web-core-auth-s2c-tnt-mod-spc-form]
+[web-core-auth-s2c-tnt-reg-spc-form]
 
 descr                                 = "Create new self-signed X509 encryption and signing certificates"
 header                                = "Create certicate pairs"
-tab                                   = "Manage SP certificates"
+label-exp-ts                          = "Valid to"
+label-inc-ts                          = "Valid from"
+label-nm                              = "Name"
+message-input-success                 = "New certificates were created"
+submit-button-label                   = "Create"
+warning-input-unexpected-error        = "Unexpected error"

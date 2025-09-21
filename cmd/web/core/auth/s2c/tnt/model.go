@@ -295,11 +295,12 @@ func PatchS2g (ctx *context.Context, logger *slog.Logger, conn *pgxpool.Conn, tn
 	return nil
 }
 
-func PostSpc (ctx *context.Context, logger *slog.Logger, conn *pgxpool.Conn, tntId int, spcCnNm string, spcOrgNm string, spcEncCrt []byte, spcEncPvk []byte, spcSgnCrt []byte, spcSgnPvk []byte, spcIncTs time.Time, spcExpTs time.Time, by string, exptErrs []string) error {
+func PostSpc (ctx *context.Context, logger *slog.Logger, conn *pgxpool.Conn, tntId int, spcNm string, spcCnNm string, spcOrgNm string, spcEncCrt []byte, spcEncPvk []byte, spcSgnCrt []byte, spcSgnPvk []byte, spcIncTs time.Time, spcExpTs time.Time, by string, exptErrs []string) error {
 	var (
-		sprocCall   = "call web_core_auth_s2c_tnt_mod.reg_spc(@p_tnt_id, @p_spc_cn_nm, @p_spc_org_nm, @p_spc_enc_crt, @p_spc_enc_pvk, @p_spc_sgn_crt, @p_spc_sgn_pvk, @p_spc_inc_ts, @p_spc_exp_ts, @p_by)"
+		sprocCall   = "call web_core_auth_s2c_tnt_mod.reg_spc(@p_tnt_id, @p_spc_nm, @p_spc_cn_nm, @p_spc_org_nm, @p_spc_enc_crt, @p_spc_enc_pvk, @p_spc_sgn_crt, @p_spc_sgn_pvk, @p_spc_inc_ts, @p_spc_exp_ts, @p_by)"
 		sprocParams = pgx.NamedArgs{
 			"p_tnt_id"      : tntId,
+			"p_spc_nm"      : spcNm,
 			"p_spc_cn_nm"   : spcCnNm,
 			"p_spc_org_nm"  : spcOrgNm,
 			"p_spc_enc_crt" : spcEncCrt,
@@ -318,6 +319,7 @@ func PostSpc (ctx *context.Context, logger *slog.Logger, conn *pgxpool.Conn, tnt
 			slog.String("sprocCall" , sprocCall),
 			slog.String("error"     , sprocErr.Error()),
 			slog.Int   ("tntId"     , tntId),
+			slog.String("spcNm"     , spcNm),
 			slog.String("spcCnNm"   , spcCnNm),
 			slog.String("spcOrgNm"  , spcOrgNm),
 			slog.String("by"        , by),

@@ -108,15 +108,6 @@ func main() {
 		panic(pkeyCacheErr)
 	}
 
-	s2cErr := startup.GenSAML2ServiceProviderCerts(&ctx, conn)
-	if s2cErr != nil {
-		slog.LogAttrs(ctx, slog.LevelError, "generate SAML2 SP certs if necessary",
-			slog.String("error", s2cErr.Error()),
-		)
-
-		panic(s2cErr)
-	}
-
 	rtsIdErr := session.Identity(&ctx, slog.Default(), conn, "role_web_core_unauth_rts_web_inf")
 	if rtsIdErr != nil {
 		slog.LogAttrs(ctx, slog.LevelError, "initialise the route cache",
@@ -188,6 +179,7 @@ func main() {
 			"web.core.auth.rol.key.aur.Patch"   : authrolkeyaur.Patch,
 			"web.core.auth.s2c.tnt.Get"         : auths2ctnt.Get,
 			"web.core.auth.s2c.tnt.Patch"       : auths2ctnt.Patch,
+			"web.core.auth.s2c.tnt.Post"        : auths2ctnt.Post,
 			"web.core.auth.ssn.tnt.Get"         : authssntnt.Get,
 			"web.core.auth.ssn.tnt.Delete"      : authssntnt.Delete,
 			"web.core.auth.ssn.aur.Delete"      : authssnaur.Delete,
