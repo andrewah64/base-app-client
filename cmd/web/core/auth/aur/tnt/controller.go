@@ -229,7 +229,7 @@ func Get (rw http.ResponseWriter, r *http.Request) {
 
 			html.Tmpl(ctx, ssd.Logger, rw, r, "core/auth/aur/tnt/template/res", http.StatusOK, &data)
 
-			ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Get::end [default]")
+			ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Get::end [infinite scroll]")
 
 		case "aur-tnt-inf-form": // search
 			pfErr := r.ParseForm()

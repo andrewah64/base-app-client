@@ -15,8 +15,8 @@ title-view                            = "<Application> : View SAML2-based authen
 
 descr                                 = "Define the values to be embedded into new X509 encryption and signing certificates"
 header                                = "Configure certificate pairs"
-label-crt-cn                          = "Common name"
-label-crt-org                         = "Organisation name"
+label-crt-cn                          = "Common name (required)"
+label-crt-org                         = "Organisation name (required)"
 message-input-success                 = "Changes were applied successfully"
 submit-button-label                   = "Save"
 warning-input-olock-error             = "Another user modified the record"
@@ -27,9 +27,9 @@ warning-input-unexpected-error        = "Unexpected error"
 descr                                 = "Enable/disable and configure the mode of SAML2 authentication"
 header                                = "General SAML2 configuration"
 label-acs-url                         = "Service provider: assertion consumer service URL"
-label-aum-id                          = "Service provider: authentication method"
+label-aum-id                          = "Service provider: authentication method (required)"
 label-enabled                         = "Service provider: enabled"
-label-entity-id                       = "Service provider: entity ID"
+label-entity-id                       = "Service provider: entity ID (required)"
 label-mtd-url                         = "Service provider: metadata URL"
 message-input-success                 = "Changes were applied successfully"
 submit-button-label                   = "Save"
@@ -45,6 +45,28 @@ header                                = "Register identity providers"
 
 descr                                 = "Create new self-signed X509 encryption and signing certificates"
 header                                = "Create certicate pairs"
+
+[web-core-auth-s2c-tnt-inf-spc-form]
+
+descr                                 = "Search for & manage self-signed X509 encryption and signing certificates"
+filter-header                         = "Filters"
+header                                = "Search certificate pairs"
+input-option-spc-enabled-all          = "All"
+input-option-spc-enabled-no           = "No"
+input-option-spc-enabled-yes          = "Yes"
+label-enabled                         = "Enabled"
+label-exp-ts                          = "Valid to"
+label-inc-ts                          = "Valid from"
+label-nm                              = "Name"
+
+[web-core-auth-s2c-tnt-inf-spc-results]
+
+edit-button-label                     = "Edit"
+header-label-cn-nm                    = "Common name"
+header-label-enabled                  = "Enabled"
+header-label-exp-ts                   = "Valid to"
+header-label-inc-ts                   = "Valid from"
+header-label-spc-nm                   = "Cert pair name"
 
 [web-core-auth-s2c-tnt-reg-spc-form]
 

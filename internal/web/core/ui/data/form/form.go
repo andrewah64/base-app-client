@@ -23,6 +23,16 @@ func PBool(r *http.Request, fv string) *bool {
 	return b
 }
 
+func PDate(r *http.Request, fv string) *time.Time {
+	var t *time.Time
+
+	if v, err := time.Parse(time.DateOnly, VText(r, fv)); err == nil {
+		t = &v
+	}
+
+	return t
+}
+
 func PInt64(r *http.Request, fv string) *int64 {
 	var i *int64
 

@@ -6,6 +6,9 @@ import (
 	"fmt"
 	"log/slog"
 	"net/http"
+	"net/url"
+	"strconv"
+	"time"
 )
 
 import (
@@ -21,6 +24,37 @@ import (
 import (
 	"github.com/jackc/pgx/v5/pgconn"
 )
+
+func spcParams(spcNm string, spcIncTs *time.Time, spcExpTs *time.Time, spcEnabled *bool, pageNumber int) string {
+	v := url.Values{}
+
+	v.Set("s2c-tnt-inf-spc-nm" , spcNm)
+
+	switch spcIncTs {
+		case nil:
+			v.Set("s2c-tnt-inf-spc-inc-ts" , "")
+		default :
+			v.Set("s2c-tnt-inf-spc-inc-ts" , spcIncTs.Format(time.DateOnly))
+	}
+
+	switch spcExpTs {
+		case nil:
+			v.Set("s2c-tnt-inf-spc-exp-ts" , "")
+		default :
+			v.Set("s2c-tnt-inf-spc-exp-ts" , spcExpTs.Format(time.DateOnly))
+	}
+
+	switch spcEnabled {
+		case nil:
+			v.Set("s2c-tnt-inf-spc-enabled" , "")
+		default :
+			v.Set("s2c-tnt-inf-spc-enabled" , strconv.FormatBool(*spcEnabled))
+	}
+
+	v.Set("s2c-tnt-inf-spc-page-number" , strconv.Itoa(pageNumber))
+
+	return v.Encode()
+}
 
 func Get(rw http.ResponseWriter, r *http.Request){
 	ctx := r.Context()
@@ -45,36 +79,144 @@ func Get(rw http.ResponseWriter, r *http.Request){
 		notification.Show(ctx, slog.Default(), rw, r, p.Get("lvl"), &map[string]string{"Message" : data.T(p.Get("ntf"))} , data)
 	}
 
-	optsRs, optsRsErr := Opts(&ctx, ssd.Logger, ssd.Conn, ssd.TntId)
-	if optsRsErr != nil {
-		error.IntSrv(ctx, rw, optsRsErr)
-		return
+	pageNumber  := 2
+	offset      := 0
+	resultLimit := 50
+	trigger     := r.Header.Get("HX-Trigger")
+
+	ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Get::retrieve datasets",
+		slog.Int   ("pageNumber"  , pageNumber),
+		slog.Int   ("offset"      , offset),
+		slog.Int   ("resultLimit" , resultLimit),
+		slog.String("trigger"     , trigger),
+	)
+
+	switch trigger {
+		case "" : // page load
+			optsRs, optsRsErr := Opts(&ctx, ssd.Logger, ssd.Conn, ssd.TntId)
+			if optsRsErr != nil {
+				error.IntSrv(ctx, rw, optsRsErr)
+				return
+			}
+
+			s2cInfRs, s2cInfRsErr := GetS2cInf(&ctx, ssd.Logger, ssd.Conn, ssd.TntId)
+			if s2cInfRsErr != nil {
+				error.IntSrv(ctx, rw, s2cInfRsErr)
+				return
+			}
+
+			s2gInfRs, s2gInfRsErr := GetS2gInf(&ctx, ssd.Logger, ssd.Conn, ssd.TntId)
+			if s2gInfRsErr != nil {
+				error.IntSrv(ctx, rw, s2gInfRsErr)
+				return
+			}
+
+			spcInfRs, spcInfRsErr := GetSpcInf(&ctx, ssd.Logger, ssd.Conn, ssd.TntId, "", nil, nil, nil, offset, resultLimit)
+			if spcInfRsErr != nil {
+				error.IntSrv(ctx, rw, spcInfRsErr)
+				return
+			}
+
+			data.FormOpts  = &map[string]any{
+				"Opts" : &optsRs,
+			}
+
+			data.ResultSet = &map[string]any{
+				"S2c"         : &s2cInfRs,
+				"S2g"         : &s2gInfRs,
+				"Spc"         : &spcInfRs,
+				"PageNumber"  : pageNumber,
+				"ResultLimit" : resultLimit,
+				"SpcParams"   : spcParams("", nil, nil, nil, pageNumber),
+			}
+
+			html.Tmpl(ctx, ssd.Logger, rw, r, "core/auth/s2c/tnt/content", http.StatusOK, data)
+
+			ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Get::end [page load]")
+		case "s2c-tnt-inf-spc-scr" : // spc infinite scroll
+			pfErr := r.ParseForm()
+			if pfErr != nil {
+				error.IntSrv(ctx, rw, pfErr)
+				return
+			}
+
+			spcNm      := form.VText (r, "s2c-tnt-inf-spc-nm")
+			spcIncTs   := form.PDate (r, "s2c-tnt-inf-spc-inc-ts")
+			spcExpTs   := form.PDate (r, "s2c-tnt-inf-spc-exp-ts")
+			spcEnabled := form.PBool (r, "s2c-tnt-inf-spc-enabled")
+			pageNumber := form.VInt  (r, "s2c-tnt-inf-spc-page-number")
+			offset     := (pageNumber - 1) * resultLimit
+
+			ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Get::get data from form",
+				slog.String("spcNm"      , spcNm),
+				slog.Any   ("spcIncTs"   , spcIncTs),
+				slog.Any   ("spcExpTs"   , spcExpTs),
+				slog.Any   ("spcEnabled" , spcEnabled),
+				slog.Int   ("pageNumber" , pageNumber),
+				slog.Int   ("offset"     , offset),
+			)
+
+			spcInfRs, spcInfRsErr := GetSpcInf(&ctx, ssd.Logger, ssd.Conn, ssd.TntId, spcNm, spcIncTs, spcExpTs, spcEnabled, offset, resultLimit)
+			if spcInfRsErr != nil {
+				error.IntSrv(ctx, rw, spcInfRsErr)
+				return
+			}
+
+			ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Get::retrieve datasets",
+				slog.Int("len(spcInfRs)" , len(spcInfRs)),
+			)
+
+			data.ResultSet = &map[string]any{
+				"Spc"         : &spcInfRs,
+				"SpcParams"   : spcParams(spcNm, spcIncTs, spcExpTs, spcEnabled, pageNumber + 1),
+				"ResultLimit" : resultLimit,
+			}
+
+			rw.Header().Set("HX-Trigger", "inf")
+
+			html.Tmpl(ctx, ssd.Logger, rw, r, "core/auth/s2c/tnt/template/res-spc", http.StatusOK, &data)
+
+			ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Get::end [infinite scroll]")
+
+		case "s2c-tnt-inf-spc-form" : // spc search
+			pfErr := r.ParseForm()
+			if pfErr != nil {
+				error.IntSrv(ctx, rw, pfErr)
+				return
+			}
+
+			spcNm      := form.VText (r, "s2c-tnt-inf-spc-nm")
+			spcIncTs   := form.PDate (r, "s2c-tnt-inf-spc-inc-ts")
+			spcExpTs   := form.PDate (r, "s2c-tnt-inf-spc-exp-ts")
+			spcEnabled := form.PBool (r, "s2c-tnt-inf-spc-enabled")
+			pageNumber := form.VInt  (r, "s2c-tnt-inf-spc-page-number")
+
+			ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Get::get data from spc inf form",
+				slog.String("spcNm"      , spcNm),
+				slog.Any   ("spcIncTs"   , spcIncTs),
+				slog.Any   ("spcExpTs"   , spcExpTs),
+				slog.Any   ("spcEnabled" , spcEnabled),
+				slog.Int   ("pageNumber" , pageNumber),
+			)
+
+			spcInfRs, spcInfRsErr := GetSpcInf(&ctx, ssd.Logger, ssd.Conn, ssd.TntId, spcNm, spcIncTs, spcExpTs, spcEnabled, offset, resultLimit)
+			if spcInfRsErr != nil {
+				error.IntSrv(ctx, rw, spcInfRsErr)
+				return
+			}
+
+			data.ResultSet = &map[string]any{
+				"Spc"         : &spcInfRs,
+				"SpcParams"   : spcParams(spcNm, spcIncTs, spcExpTs, spcEnabled, pageNumber),
+				"ResultLimit" : resultLimit,
+			}
+
+			rw.Header().Set("HX-Trigger", "src")
+
+			html.Tmpl(ctx, ssd.Logger, rw, r, "core/auth/s2c/tnt/template/res-spc", http.StatusOK, &data)
+
+			ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Get::end [search]")
 	}
-
-	s2cInfRs, s2cInfRsErr := GetS2cInf(&ctx, ssd.Logger, ssd.Conn, ssd.TntId)
-	if s2cInfRsErr != nil {
-		error.IntSrv(ctx, rw, s2cInfRsErr)
-		return
-	}
-
-	s2gInfRs, s2gInfRsErr := GetS2gInf(&ctx, ssd.Logger, ssd.Conn, ssd.TntId)
-	if s2gInfRsErr != nil {
-		error.IntSrv(ctx, rw, s2gInfRsErr)
-		return
-	}
-
-	data.FormOpts  = &map[string]any{
-		"Opts" : &optsRs,
-	}
-
-	data.ResultSet = &map[string]any{
-		"S2c" : &s2cInfRs,
-		"S2g" : &s2gInfRs,
-	}
-
-	html.Tmpl(ctx, ssd.Logger, rw, r, "core/auth/s2c/tnt/content", http.StatusOK, data)
-
-	ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Get::end")
 }
 
 func Patch(rw http.ResponseWriter, r *http.Request){
