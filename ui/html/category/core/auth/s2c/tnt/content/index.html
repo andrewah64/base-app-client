@@ -80,12 +80,6 @@
 								{{.T "web-core-auth-s2c-tnt-mod-gen-form.descr"}}
 							</p>
 						</div>
-						<div class="col-start-2 row-start-2">
-							<form id="s2c-tnt-reg-spc-form"
-							      hx-post="/web/core/auth/s2c/tnt">
-								
-							</form>
-						</div>
 					</div>
 
 					{{if $hasRoleWebCoreS2cTntMod}}
@@ -279,12 +273,6 @@
 							<p class="mt-2 max-w-4xl text-sm text-gray-500">
 								{{.T "web-core-auth-s2c-tnt-mod-cdf-form.descr"}}
 							</p>
-						</div>
-						<div class="col-start-2 row-start-2">
-							<form id="s2c-tnt-reg-spc-form"
-							      hx-post="/web/core/auth/s2c/tnt">
-								
-							</form>
 						</div>
 					</div>
 
@@ -569,17 +557,17 @@
 						<div class="fixed bottom-0 left-0 w-full h-[100px] bg-white flex items-center justify-end pr-4 border-t border-gray-200">
 							<button type="submit"
 								class="relative flex rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-								hx-delete="/web/core/auth/key/aur">
+								hx-delete="/web/core/auth/s2c/tnt/spc">
 								<img class="htmx-indicator htmx-spinner absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
 								     src="/static/img/spinner-white.svg"
 								     alt="Progress indicator">
 								<span id="s2c-tnt-inf-spc-dgd-btn-txt"
 								      class="htmx-indicator htmx-text">
-									{{.T "web-core-auth-key-aur-del-form.delete-button-label"}} (0)
+									{{.T "web-core-auth-s2c-tnt-del-spc-form.delete-button-label"}} (0)
 								</span>
 								<span id="s2c-tnt-inf-spc-dgd-btn-tmp-txt"
 								      class="hidden">
-									{{.T "web-core-auth-key-aur-del-form.delete-button-label"}}
+									{{.T "web-core-auth-s2c-tnt-del-spc-form.delete-button-label"}}
 								</span>
 							</button>
 						</div>
@@ -601,12 +589,6 @@
 						<p class="mt-2 max-w-4xl text-sm text-gray-500">
 							{{.T "web-core-auth-s2c-tnt-reg-idp-form.descr"}}
 						</p>
-					</div>
-					<div class="col-start-2 row-start-2">
-						<form id="s2c-tnt-reg-spc-form"
-						      hx-post="/web/core/auth/s2c/tnt">
-							
-						</form>
 					</div>
 					<div class="col-start-2 row-start-2">
 						<form>
@@ -665,12 +647,6 @@
 						<p class="mt-2 max-w-4xl text-sm text-gray-500">
 							{{.T "web-core-auth-s2c-tnt-reg-idp-form.descr"}}
 						</p>
-					</div>
-					<div class="col-start-2 row-start-2">
-						<form id="s2c-tnt-reg-spc-form"
-						      hx-post="/web/core/auth/s2c/tnt">
-							
-						</form>
 					</div>
 					<div class="col-start-2 row-start-2">
 						<form>

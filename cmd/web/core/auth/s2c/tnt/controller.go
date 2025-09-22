@@ -56,6 +56,65 @@ func spcParams(spcNm string, spcIncTs *time.Time, spcExpTs *time.Time, spcEnable
 	return v.Encode()
 }
 
+func Delete (rw http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	ssd, ok := session.FromContext(ctx)
+	if ! ok {
+		error.IntSrv(ctx, rw, fmt.Errorf("Delete::get request info"))
+		return
+	}
+
+	ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Delete::start")
+
+	data, ok := page.FromContext(ctx)
+	if ! ok {
+		error.IntSrv(ctx, rw, fmt.Errorf("Delete::get request data"))
+		return
+	}
+
+	switch r.PathValue("nm") {
+		case "spc" :
+			pfErr := r.ParseForm()
+			if pfErr != nil {
+				error.IntSrv(ctx, rw, pfErr)
+				return
+			}
+
+			spcId, spcIdErr := form.VIntArray(r, "s2c-tnt-inf-spc-id")
+			if spcIdErr != nil {
+				error.IntSrv(ctx, rw, spcIdErr)
+				return
+			}
+
+			if len(spcId) > 0 {
+				delErr := DelSpc(&ctx, ssd.Logger, ssd.Conn, ssd.TntId, spcId, nil)
+				if delErr != nil{
+					error.IntSrv(ctx, rw, delErr)
+					return
+				}
+
+				ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Delete::success")
+
+				rw.Header().Set("HX-Trigger", "mod")
+
+				message := ""
+
+				if len(spcId) == 1 {
+					message = data.T("web-core-auth-s2c-tnt-del-spc-form.message-delete-success-singular", "n", strconv.Itoa(len(spcId)))
+				} else {
+					message = data.T("web-core-auth-s2c-tnt-del-spc-form.message-delete-success-plural"  , "n", strconv.Itoa(len(spcId)))
+				}
+
+				notification.Show(ctx, ssd.Logger, rw, r, "success" , &map[string]string{"Message" : message}, data)
+			}
+	}
+
+	ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Delete::end")
+
+	return
+}
+
 func Get(rw http.ResponseWriter, r *http.Request){
 	ctx := r.Context()
 
@@ -133,6 +192,7 @@ func Get(rw http.ResponseWriter, r *http.Request){
 			html.Tmpl(ctx, ssd.Logger, rw, r, "core/auth/s2c/tnt/content", http.StatusOK, data)
 
 			ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Get::end [page load]")
+
 		case "s2c-tnt-inf-spc-scr" : // spc infinite scroll
 			pfErr := r.ParseForm()
 			if pfErr != nil {
@@ -359,15 +419,15 @@ func Post(rw http.ResponseWriter, r *http.Request){
 
 	ssd, ok := session.FromContext(ctx)
 	if ! ok {
-		error.IntSrv(ctx, rw, fmt.Errorf("Patch::get request info"))
+		error.IntSrv(ctx, rw, fmt.Errorf("Post::get request info"))
 		return
 	}
 
-	ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Patch::start")
+	ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Post::start")
 
 	data, ok := page.FromContext(ctx)
 	if ! ok {
-		error.IntSrv(ctx, rw, fmt.Errorf("Get::get request data"))
+		error.IntSrv(ctx, rw, fmt.Errorf("Post::get request data"))
 		return
 	}
 
@@ -416,8 +476,10 @@ func Post(rw http.ResponseWriter, r *http.Request){
 				return
 			}
 
+			rw.Header().Set("HX-Trigger", "mod")
+
 			notification.Show(ctx, slog.Default(), rw, r, "success", &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-reg-spc-form.message-input-success")} , data)
 	}
 
-	ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Patch::end")
+	ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Post::end")
 }

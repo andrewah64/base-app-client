@@ -177,6 +177,7 @@ func main() {
 			"web.core.auth.rol.grp.tnt.Patch"   : authrolgrptnt.Patch,
 			"web.core.auth.rol.key.aur.Get"     : authrolkeyaur.Get,
 			"web.core.auth.rol.key.aur.Patch"   : authrolkeyaur.Patch,
+			"web.core.auth.s2c.tnt.Delete"      : auths2ctnt.Delete,
 			"web.core.auth.s2c.tnt.Get"         : auths2ctnt.Get,
 			"web.core.auth.s2c.tnt.Patch"       : auths2ctnt.Patch,
 			"web.core.auth.s2c.tnt.Post"        : auths2ctnt.Post,

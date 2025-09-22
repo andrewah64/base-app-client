@@ -46,6 +46,12 @@ header                                = "Register identity providers"
 descr                                 = "Create new self-signed X509 encryption and signing certificates"
 header                                = "Create certicate pairs"
 
+[web-core-auth-s2c-tnt-del-spc-form]
+
+delete-button-label                   = "Delete"
+message-delete-success-plural         = "{{.n}} cert pairs were deleted"
+message-delete-success-singular       = "{{.n}} cert pair was deleted"
+
 [web-core-auth-s2c-tnt-inf-spc-form]
 
 descr                                 = "Search for & manage self-signed X509 encryption and signing certificates"
