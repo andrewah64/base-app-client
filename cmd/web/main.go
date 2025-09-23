@@ -46,6 +46,7 @@ import (
 	authrolgrptnt    "github.com/andrewah64/base-app-client/cmd/web/core/auth/rol/grp/tnt"
 	authrolkeyaur    "github.com/andrewah64/base-app-client/cmd/web/core/auth/rol/key/aur"
 	auths2ctnt       "github.com/andrewah64/base-app-client/cmd/web/core/auth/s2c/tnt"
+	auths2ctntval    "github.com/andrewah64/base-app-client/cmd/web/core/auth/s2c/tnt/val"
 	authssntnt       "github.com/andrewah64/base-app-client/cmd/web/core/auth/ssn/tnt"
 	authssnaur       "github.com/andrewah64/base-app-client/cmd/web/core/auth/ssn/aur"
 	oidc             "github.com/andrewah64/base-app-client/cmd/web/core/oidc"
@@ -179,6 +180,7 @@ func main() {
 			"web.core.auth.rol.key.aur.Patch"   : authrolkeyaur.Patch,
 			"web.core.auth.s2c.tnt.Delete"      : auths2ctnt.Delete,
 			"web.core.auth.s2c.tnt.Get"         : auths2ctnt.Get,
+			"web.core.auth.s2c.tnt.val.Get"     : auths2ctntval.Get,
 			"web.core.auth.s2c.tnt.Patch"       : auths2ctnt.Patch,
 			"web.core.auth.s2c.tnt.Post"        : auths2ctnt.Post,
 			"web.core.auth.ssn.tnt.Get"         : authssntnt.Get,

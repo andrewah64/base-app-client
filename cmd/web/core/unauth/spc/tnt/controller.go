@@ -32,33 +32,39 @@ func Get (rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	s2cEntityId := spcRs[0].S2cEntityId
-	spcSgnCrt   := strings.TrimRight(base64.StdEncoding.EncodeToString(spcRs[0].SpcSgnCrt), "=")
-	spcEncCrt   := strings.TrimRight(base64.StdEncoding.EncodeToString(spcRs[0].SpcEncCrt), "=")
-	s2cAcsUrl   := spcRs[0].S2cAcsUrl
+	ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Get::SPC resultset length",
+		slog.Int("len(spcRs)", len(spcRs)),
+	)
 
-	metadata := `<?xml version="1.0" encoding="UTF-8"?>
-	               <EntityDescriptor xmlns="urn:oasis:names:tc:SAML:2.0:metadata" entityID="%s">
-	                 <SPSSODescriptor protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol" AuthnRequestsSigned="true" WantAssertionsSigned="true">
-	                   <KeyDescriptor use="signing">
-	                     <ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
-	                       <ds:X509Data>
-	                         <ds:X509Certificate>%s</ds:X509Certificate>
-	                       </ds:X509Data>
-	                     </ds:KeyInfo>
-	                   </KeyDescriptor>
-	                   <KeyDescriptor use="encryption">
-	                     <ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
-	                       <ds:X509Data>
-	                         <ds:X509Certificate>%s</ds:X509Certificate>
-	                       </ds:X509Data>
-	                     </ds:KeyInfo>
-	                   </KeyDescriptor>
-	                   <AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="%s" index="0" isDefault="true"/>
-	                 </SPSSODescriptor>
-	               </EntityDescriptor>`
+	if len(spcRs) == 1 {
+		s2cEntityId := spcRs[0].S2cEntityId
+		spcSgnCrt   := strings.TrimRight(base64.StdEncoding.EncodeToString(spcRs[0].SpcSgnCrt), "=")
+		spcEncCrt   := strings.TrimRight(base64.StdEncoding.EncodeToString(spcRs[0].SpcEncCrt), "=")
+		s2cAcsUrl   := spcRs[0].S2cAcsUrl
 
-	rw.Header().Set("Content-Type", "application/samlmetadata+xml")
+		metadata := `<?xml version="1.0" encoding="UTF-8"?>
+			       <EntityDescriptor xmlns="urn:oasis:names:tc:SAML:2.0:metadata" entityID="%s">
+				 <SPSSODescriptor protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol" AuthnRequestsSigned="true" WantAssertionsSigned="true">
+				   <KeyDescriptor use="signing">
+				     <ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+				       <ds:X509Data>
+					 <ds:X509Certificate>%s</ds:X509Certificate>
+				       </ds:X509Data>
+				     </ds:KeyInfo>
+				   </KeyDescriptor>
+				   <KeyDescriptor use="encryption">
+				     <ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+				       <ds:X509Data>
+					 <ds:X509Certificate>%s</ds:X509Certificate>
+				       </ds:X509Data>
+				     </ds:KeyInfo>
+				   </KeyDescriptor>
+				   <AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="%s" index="0" isDefault="true"/>
+				 </SPSSODescriptor>
+			       </EntityDescriptor>`
 
-	rw.Write([]byte(fmt.Sprintf(metadata, s2cEntityId, spcSgnCrt, spcEncCrt, s2cAcsUrl)))
+		rw.Header().Set("Content-Type", "application/samlmetadata+xml")
+
+		rw.Write([]byte(fmt.Sprintf(metadata, s2cEntityId, spcSgnCrt, spcEncCrt, s2cAcsUrl)))
+	}
 }

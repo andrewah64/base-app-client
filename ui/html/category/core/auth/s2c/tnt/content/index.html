@@ -383,10 +383,16 @@
 							{{.T "web-core-auth-s2c-tnt-reg-spc-form.descr"}}
 						</p>
 					</div>
+					<div class="col-start-2 row-start-1">
+						<output id="s2c-tnt-reg-spc-res"
+							role="alert"
+							aria-live="polite"
+							class="mt-2 text-sm/6 font-medium text-red-700">
+						</output>
+					</div>
 					<div class="col-start-2 row-start-2">
 						<form id="s2c-tnt-reg-spc-form"
 						      hx-post="/web/core/auth/s2c/tnt/spc"
-						      hx-swap="none"
 						      _="on submit call (next <button/>).focus()">
 							<fieldset>
 								<div class="grid grid-rows-2 grid-cols-4 w-fit"
@@ -400,6 +406,10 @@
 										<input type="text"
 										       name="s2c-tnt-reg-spc-nm"
 										       id="s2c-tnt-reg-spc-nm"
+										       hx-get="/web/core/auth/s2c/tnt/val/spc"
+										       hx-target="#s2c-tnt-reg-spc-res"
+										       hx-trigger="change, keyup delay:200ms"
+										       hx-push-url="false"
 										       required
 										       class="block min-w-0 grow py-1.5 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6">
 									</div>

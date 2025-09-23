@@ -1,0 +1,18 @@
+{{$numErrs := len .ResultSet.Validator.Errors}}
+
+<title>
+	{{.T "web-core-auth-s2c-tnt-page.title-edit"}}
+	{{if eq $numErrs 0}}
+	{{else if eq $numErrs 1}}
+		: {{.T "web-core-auth-s2c-tnt-reg-spc-form.title-warning-singular" "n" (printf "%d" $numErrs)}}
+	{{else}}
+		: {{.T "web-core-auth-s2c-tnt-reg-spc-form.title-warning-plural"   "n" (printf "%d" $numErrs)}}
+	{{end}}
+</title>
+
+<ul>
+
+	{{ range $k, $v := .ResultSet.Validator.Errors }}
+		<li id="{{$k}}_error">{{$v}}</li>
+	{{ end }}
+</ul>
