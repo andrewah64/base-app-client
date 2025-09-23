@@ -291,7 +291,7 @@ func Post (rw http.ResponseWriter, r *http.Request) {
 
 	regErr := PostGrp(&ctx, ssd.Logger, ssd.Conn, ssd.TntId, grpNm, data.User.AurNm, nil)
 	if regErr != nil {
-		ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Post::save group",
+		slog.LogAttrs(ctx, slog.LevelError, "Post::save group",
 			slog.String("regErr.Error()" , regErr.Error()),
 			slog.String("grpNm"          , grpNm),
 		)
