@@ -1,7 +1,6 @@
 package tnt
 
 import (
-	"errors"
 	"fmt"
 	"log/slog"
 	"net/http"
@@ -11,7 +10,6 @@ import (
 
 import (
 	"github.com/andrewah64/base-app-client/internal/common/core/session"
-	"github.com/andrewah64/base-app-client/internal/common/core/validator"
 	"github.com/andrewah64/base-app-client/internal/web/core/error"
 	"github.com/andrewah64/base-app-client/internal/web/core/ui/data/form"
 	"github.com/andrewah64/base-app-client/internal/web/core/ui/data/page"
@@ -20,8 +18,7 @@ import (
 )
 
 import (
-	"github.com/jackc/pgerrcode"
-	"github.com/jackc/pgx/v5/pgconn"
+	"github.com/andrewah64/base-app-client/cmd/web/core/auth/grp/tnt/val"
 )
 
 func Delete (rw http.ResponseWriter, r *http.Request) {
@@ -252,10 +249,6 @@ func Get (rw http.ResponseWriter, r *http.Request) {
 }
 
 func Post (rw http.ResponseWriter, r *http.Request) {
-	const (
-		valTmpl = "core/auth/grp/tnt/fragment/val"
-	)
-
 	ctx := r.Context()
 
 	ssd, ok := session.FromContext(ctx)
@@ -278,69 +271,39 @@ func Post (rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	v     := validator.New()
 	grpNm := form.VText (r, "grp-tnt-reg-grp-nm")
 
 	ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Post::get data from form",
 		slog.String("grpNm", grpNm),
 	)
 
-	v.Check(validator.NotBlank(grpNm), "grp-tnt-reg-grp-nm-blank", data.T("web-core-auth-grp-tnt-reg-form.warning-input-grp-nm-blank"))
+	valRs, valRsErr := val.GetInf(&ctx, ssd.Logger, ssd.Conn, ssd.TntId, grpNm)
+	if valRsErr != nil {
+		error.IntSrv(ctx, rw, valRsErr)
+		return
+	}
 
-	ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Post::validate data retrieved from form",
-		slog.Int("len(v.Errors)", len(v.Errors)),
-	)
-
-	if !v.Valid() {
-		data.ResultSet = &map[string]any{"Validator" : &v}
-
-		html.Fragment(ctx, ssd.Logger, rw, r, valTmpl, http.StatusUnprocessableEntity, &data)
+	if ! valRs[0].GrpNmOk {
+		notification.Show(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-grp-tnt-reg-form.warning-input-grp-nm-taken", "grpNm", grpNm)}, data)
 
 		return
 	}
 
-	exptErrs := []string{
-		pgerrcode.UniqueViolation,
-	}
-
-	regErr := PostGrp(&ctx, ssd.Logger, ssd.Conn, ssd.TntId, grpNm, data.User.AurNm, exptErrs)
+	regErr := PostGrp(&ctx, ssd.Logger, ssd.Conn, ssd.TntId, grpNm, data.User.AurNm, nil)
 	if regErr != nil {
-		var pgErr *pgconn.PgError
+		ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Post::save group",
+			slog.String("regErr.Error()" , regErr.Error()),
+			slog.String("grpNm"          , grpNm),
+		)
 
-		if errors.As(regErr, &pgErr) {
-			switch pgErr.Code {
-				case pgerrcode.UniqueViolation:
-					ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "group already exists",
-						slog.String("grpNm"  , grpNm),
-						slog.String("regErr" , regErr.Error()),
-					)
+		notification.Show(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-grp-tnt-reg-form.warning-input-unexpected-error")}, data)
 
-					v.AddError("grp-tnt-reg-grp-nm-taken", data.T("web-core-auth-grp-tnt-reg-form.warning-input-grp-nm-taken", "grpNm", grpNm))
-				default:
-					slog.LogAttrs(ctx, slog.LevelError, "unexpected error",
-						slog.String("regErr"    , regErr.Error()),
-						slog.String("pgErr.code", pgErr.Code),
-					)
-
-					v.AddError("grp-tnt-reg-unexpected", data.T("web-core-auth-grp-tnt-reg-form.warning-input-unexpected-error"))
-			}
-
-			data.ResultSet = &map[string]any{"Validator" : &v}
-
-			html.Fragment(ctx, ssd.Logger, rw, r, valTmpl, http.StatusUnprocessableEntity, &data)
-
-			return
-		} else {
-			error.IntSrv(ctx, rw, regErr)
-			return
-		}
+		return
 	}
-
-	data.ResultSet = &map[string]any{"GrpNm": &grpNm}
 
 	rw.Header().Set("HX-Trigger", "mod")
-	
-	html.Fragment(ctx, ssd.Logger, rw, r, "core/auth/grp/tnt/fragment/res", http.StatusCreated, &data)
+
+	notification.Show(ctx, ssd.Logger, rw, r, "success" , &map[string]string{"Message" : data.T("web-core-auth-grp-tnt-reg-form.message-input-success", "grpNm", grpNm)}, data)
 
 	ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Post::end")
 
