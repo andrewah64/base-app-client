@@ -22,6 +22,10 @@ import (
 )
 
 import (
+	"github.com/andrewah64/base-app-client/cmd/web/core/auth/s2c/tnt/val"
+)
+
+import (
 	"github.com/jackc/pgx/v5/pgconn"
 )
 
@@ -449,6 +453,18 @@ func Post(rw http.ResponseWriter, r *http.Request){
 				slog.Any   ("spcExpTs" , spcExpTs),
 			)
 
+			valRs, valRsErr := val.GetInf(&ctx, ssd.Logger, ssd.Conn, ssd.TntId, spcNm)
+			if valRsErr != nil {
+				error.IntSrv(ctx, rw, valRsErr)
+				return
+			}
+
+			if ! valRs[0].SpcNmOk {
+				notification.Show(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-reg-spc-form.warning-input-spc-nm-taken", "spcNm", spcNm)}, data)
+
+				return
+			}
+
 			s2gInfRs, s2gInfRsErr := GetS2gInf(&ctx, ssd.Logger, ssd.Conn, ssd.TntId)
 			if s2gInfRsErr != nil {
 				error.IntSrv(ctx, rw, s2gInfRsErr)
@@ -472,7 +488,8 @@ func Post(rw http.ResponseWriter, r *http.Request){
 
 			postErr := PostSpc(&ctx, ssd.Logger, ssd.Conn, ssd.TntId, spcNm, s2gInfRs[0].S2gCrtCn, s2gInfRs[0].S2gCrtOrg, spcEncCrt, spcEncPvk, spcSgnCrt, spcSgnPvk, spcIncTs, spcExpTs, data.User.AurNm, nil)
 			if postErr != nil {
-				error.IntSrv(ctx, rw, s2gInfRsErr)
+				notification.Show(ctx, slog.Default(), rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-mod-cdf-form.warning-input-unexpected-error")}, data)
+
 				return
 			}
 
