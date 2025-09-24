@@ -1,7 +1,6 @@
 package aur
 
 import (
-	"errors"
 	"fmt"
 	"log/slog"
 	"net/http"
@@ -12,7 +11,6 @@ import (
 import (
 	"github.com/andrewah64/base-app-client/internal/common/core/key"
 	"github.com/andrewah64/base-app-client/internal/common/core/session"
-	"github.com/andrewah64/base-app-client/internal/common/core/validator"
 	"github.com/andrewah64/base-app-client/internal/web/core/error"
 	"github.com/andrewah64/base-app-client/internal/web/core/ui/data/form"
 	"github.com/andrewah64/base-app-client/internal/web/core/ui/data/page"
@@ -21,8 +19,7 @@ import (
 )
 
 import (
-	"github.com/jackc/pgerrcode"
-	"github.com/jackc/pgx/v5/pgconn"
+	"github.com/andrewah64/base-app-client/cmd/web/core/auth/key/aur/val"
 )
 
 func Delete (rw http.ResponseWriter, r *http.Request) {
@@ -253,10 +250,6 @@ func Get(rw http.ResponseWriter, r *http.Request){
 }
 
 func Post(rw http.ResponseWriter, r *http.Request){
-	const (
-		valTmpl = "core/auth/key/aur/fragment/val"
-	)
-
 	ctx := r.Context()
 
 	ssd, ok := session.FromContext(ctx)
@@ -279,23 +272,20 @@ func Post(rw http.ResponseWriter, r *http.Request){
 		return
 	}
 
-	v      := validator.New()
 	aaukNm := form.VText(r, "key-aur-reg-aauk-nm")
 
 	ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Post::get data from form",
 		slog.String("aaukNm", aaukNm),
 	)
 
-	v.Check(validator.NotBlank(aaukNm), "key-aur-reg-aauk-nm-blank", data.T("web-core-auth-key-aur-reg-form.warning-input-aauk-nm-blank"))
+	valRs, valRsErr := val.GetInf(&ctx, ssd.Logger, ssd.Conn, ssd.TntId, data.User.AurId, aaukNm)
+	if valRsErr != nil {
+		error.IntSrv(ctx, rw, valRsErr)
+		return
+	}
 
-	ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Post::validate data retrieved from form",
-		slog.Int("len(v.Errors)", len(v.Errors)),
-	)
-
-	if !v.Valid() {
-		data.ResultSet = &map[string]any{"Validator" : &v}
-
-		html.Fragment(ctx, ssd.Logger, rw, r, valTmpl, http.StatusUnprocessableEntity, &data)
+	if ! valRs[0].AaukNmOk {
+		notification.Show(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-key-aur-reg-form.warning-input-aauk-nm-taken", "aaukNm", aaukNm)}, data)
 
 		return
 	}
@@ -306,31 +296,16 @@ func Post(rw http.ResponseWriter, r *http.Request){
 		return
 	}
 
-	exptErrs := []string{
-		pgerrcode.UniqueViolation,
-	}
-
-	regErr := PostKey(&ctx, ssd.Logger, ssd.Conn, ssd.TntId, data.User.AurId, key.Hash(aaukKey), true, aaukNm, data.User.AurNm, exptErrs)
+	regErr := PostKey(&ctx, ssd.Logger, ssd.Conn, ssd.TntId, data.User.AurId, key.Hash(aaukKey), true, aaukNm, data.User.AurNm, nil)
 	if regErr != nil {
-		var pgErr *pgconn.PgError
+		slog.LogAttrs(ctx, slog.LevelError, "Post::save key",
+			slog.String("regErr.Error()" , regErr.Error()),
+			slog.String("aaukNm"         , aaukNm),
+		)
 
-		if errors.As(regErr, &pgErr) {
-			switch pgErr.Code {
-				case pgerrcode.UniqueViolation:
-					v.AddError("key-aur-reg-aauk-nm-taken", data.T("web-core-auth-key-aur-reg-form.warning-input-aauk-nm-taken", "aaukNm", aaukNm))
-				default:
-					v.AddError("key-aur-reg-unexpected"   , data.T("web-core-auth-key-aur-tnt-reg-form.warning-input-unexpected-error"))
-			}
+		notification.Show(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-key-aur-reg-form.warning-input-unexpected-error")}, data)
 
-			data.ResultSet = &map[string]any{"Validator" : &v}
-
-			html.Fragment(ctx, ssd.Logger, rw, r, valTmpl, http.StatusUnprocessableEntity, &data)
-
-			return
-		} else {
-			error.IntSrv(ctx, rw, regErr)
-			return
-		}
+		return
 	}
 
 	data.ResultSet = &map[string]any{"Key": &aaukKey}
