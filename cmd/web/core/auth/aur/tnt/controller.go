@@ -1,7 +1,6 @@
 package tnt
 
 import (
-	"errors"
 	"fmt"
 	"log/slog"
 	"net/http"
@@ -12,7 +11,6 @@ import (
 import (
 	"github.com/andrewah64/base-app-client/internal/common/core/password"
 	"github.com/andrewah64/base-app-client/internal/common/core/session"
-	"github.com/andrewah64/base-app-client/internal/common/core/validator"
 	"github.com/andrewah64/base-app-client/internal/web/core/error"
 	"github.com/andrewah64/base-app-client/internal/web/core/ui/data/form"
 	"github.com/andrewah64/base-app-client/internal/web/core/ui/data/page"
@@ -21,8 +19,7 @@ import (
 )
 
 import (
-	"github.com/jackc/pgerrcode"
-	"github.com/jackc/pgx/v5/pgconn"
+	"github.com/andrewah64/base-app-client/cmd/web/core/auth/aur/tnt/val"
 )
 
 func Delete (rw http.ResponseWriter, r *http.Request) {
@@ -278,10 +275,6 @@ func Get (rw http.ResponseWriter, r *http.Request) {
 }
 
 func Post(rw http.ResponseWriter, r *http.Request){
-	const (
-		valTmpl = "core/auth/aur/tnt/fragment/val"
-	)
-
 	ctx := r.Context()
 
 	ssd, ok := session.FromContext(ctx)
@@ -304,7 +297,6 @@ func Post(rw http.ResponseWriter, r *http.Request){
 		return
 	}
 
-	v     := validator.New()
 	aurNm := form.VText  (r, "aur-tnt-reg-aur-nm")
 	aurPw := form.VText  (r, "aur-tnt-reg-pw")
 	grpId := form.PInt64 (r, "aur-tnt-reg-grp-id")
@@ -316,17 +308,19 @@ func Post(rw http.ResponseWriter, r *http.Request){
 		slog.Any   ("LngId", lngId),
 	)
 
-	v.Check(validator.NotBlank(aurNm), "aur-tnt-reg-aur-nm", data.T("web-core-auth-aur-tnt-reg-form.warning-input-aur-nm-blank"))
-	v.Check(validator.NotBlank(aurPw), "aur-tnt-reg-pw"    , data.T("web-core-auth-aur-tnt-reg-form.warning-input-pw-blank"))
-	v.Check(validator.NotNil  (grpId), "aur-tnt-reg-grp-id", data.T("web-core-auth-aur-tnt-reg-form.warning-input-grp-blank"))
-	v.Check(validator.NotNil  (lngId), "aur-tnt-reg-lng-id", data.T("web-core-auth-aur-tnt-reg-form.warning-input-lng-blank"))
+	valRs, valRsErr := val.GetInf(&ctx, ssd.Logger, ssd.Conn, ssd.TntId, aurNm)
+	if valRsErr != nil {
+		error.IntSrv(ctx, rw, valRsErr)
+		return
+	}
 
-	ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Post::validate data retrieved from form",
-		slog.Int("len(v.Errors)", len(v.Errors)),
+	ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Get::retrieve datasets",
+		slog.Int("len(valRs)" , len(valRs)),
 	)
 
-	if !v.Valid() {
-		html.Fragment(ctx, ssd.Logger, rw, r, valTmpl, http.StatusUnprocessableEntity, &data)
+	if ! valRs[0].AurNmOk {
+		notification.Show(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-aur-tnt-reg-form.warning-input-credentials-taken", "aurNm", aurNm)}, data)
+
 		return
 	}
 
@@ -336,37 +330,16 @@ func Post(rw http.ResponseWriter, r *http.Request){
 		return
 	}
 
-	exptErrs := []string{
-		pgerrcode.UniqueViolation,
-	}
-
-	regErr := PostAur(&ctx, ssd.Logger, ssd.Conn, ssd.TntId, grpId, aurNm, aurHshPw, lngId, data.User.AurNm, exptErrs)
+	regErr := PostAur(&ctx, ssd.Logger, ssd.Conn, ssd.TntId, grpId, aurNm, aurHshPw, lngId, data.User.AurNm, nil)
 	if regErr != nil {
-		var pgErr *pgconn.PgError
+		slog.LogAttrs(ctx, slog.LevelError, "Post::save user",
+			slog.String("regErr.Error()" , regErr.Error()),
+			slog.String("aurNm"          , aurNm),
+		)
 
-		if errors.As(regErr, &pgErr) {
-			switch pgErr.Code {
-				case pgerrcode.UniqueViolation:
-					v.AddError("aur-tnt-reg-credentials-taken", data.T("web-core-auth-aur-tnt-reg-form.warning-input-credentials-taken", "aurNm", aurNm))
-				default:
-					slog.LogAttrs(ctx, slog.LevelError, "unexpected error",
-						slog.String("regErr.Error()" , regErr.Error()),
-						slog.String("pgErr.Code"     , pgErr.Code),
-					)
+		notification.Show(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-aur-tnt-reg-form.warning-input-unexpected-error")}, data)
 
-					v.AddError("aur-tnt-reg-unexpected", data.T("web-core-auth-aur-tnt-reg-form.warning-input-unexpected-error"))
-			}
-
-			data.ResultSet = &map[string]any{"Validator" : &v}
-
-			html.Fragment(ctx, ssd.Logger, rw, r, valTmpl, http.StatusUnprocessableEntity, &data)
-
-			return
-		} else {
-			error.IntSrv(ctx, rw, regErr)
-
-			return
-		}
+		return
 	}
 
 	rw.Header().Set("HX-Trigger", "mod")
