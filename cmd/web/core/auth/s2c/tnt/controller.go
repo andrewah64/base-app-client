@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"net/url"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -204,7 +205,7 @@ func Get(rw http.ResponseWriter, r *http.Request){
 				return
 			}
 
-			spcNm      := form.VText (r, "s2c-tnt-inf-spc-nm")
+			spcNm      := strings.TrimSpace(form.VText (r, "s2c-tnt-inf-spc-nm"))
 			spcIncTs   := form.PDate (r, "s2c-tnt-inf-spc-inc-ts")
 			spcExpTs   := form.PDate (r, "s2c-tnt-inf-spc-exp-ts")
 			spcEnabled := form.PBool (r, "s2c-tnt-inf-spc-enabled")
@@ -249,7 +250,7 @@ func Get(rw http.ResponseWriter, r *http.Request){
 				return
 			}
 
-			spcNm      := form.VText (r, "s2c-tnt-inf-spc-nm")
+			spcNm      := strings.TrimSpace(form.VText (r, "s2c-tnt-inf-spc-nm"))
 			spcIncTs   := form.PDate (r, "s2c-tnt-inf-spc-inc-ts")
 			spcExpTs   := form.PDate (r, "s2c-tnt-inf-spc-exp-ts")
 			spcEnabled := form.PBool (r, "s2c-tnt-inf-spc-enabled")
@@ -310,8 +311,8 @@ func Patch(rw http.ResponseWriter, r *http.Request){
 				return
 			}
 
+			s2cEntityId := strings.TrimSpace(form.VText (r, "s2c-tnt-mod-gen-entity-id"))
 			s2cEnabled  := form.VBool (r, "s2c-tnt-mod-gen-enabled")
-			s2cEntityId := form.VText (r, "s2c-tnt-mod-gen-entity-id")
 			aumId       := form.VInt  (r, "s2c-tnt-mod-gen-aum-id")
 			uts         := form.VTime (r, "s2c-tnt-mod-gen-uts")
 
@@ -366,8 +367,8 @@ func Patch(rw http.ResponseWriter, r *http.Request){
 				return
 			}
 
-			s2gCrtCn  := form.VText (r, "s2g-tnt-mod-cdf-crt-cn")
-			s2gCrtOrg := form.VText (r, "s2g-tnt-mod-cdf-crt-org")
+			s2gCrtCn  := strings.TrimSpace(form.VText (r, "s2g-tnt-mod-cdf-crt-cn"))
+			s2gCrtOrg := strings.TrimSpace(form.VText (r, "s2g-tnt-mod-cdf-crt-org"))
 			uts       := form.VTime (r, "s2g-tnt-mod-cdf-uts")
 
 			ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Patch::get data from cdf form",
@@ -443,7 +444,7 @@ func Post(rw http.ResponseWriter, r *http.Request){
 				return
 			}
 
-			spcNm    := form.VText (r, "s2c-tnt-reg-spc-nm")
+			spcNm    := strings.TrimSpace(form.VText (r, "s2c-tnt-reg-spc-nm"))
 			spcIncTs := form.VDate (r, "s2c-tnt-reg-spc-inc-ts")
 			spcExpTs := form.VDate (r, "s2c-tnt-reg-spc-exp-ts")
 
@@ -482,14 +483,13 @@ func Post(rw http.ResponseWriter, r *http.Request){
 
 			spcSgnCrt, spcSgnPvk, spcSgnCrtErr := saml2.GenCert(s2gInfRs[0].S2gCrtCn, []string{s2gInfRs[0].S2gCrtOrg}, sgnKeyUsage, spcIncTs, spcExpTs)
 			if spcSgnCrtErr != nil {
-				error.IntSrv(ctx, rw, s2gInfRsErr)
+				error.IntSrv(ctx, rw, spcSgnCrtErr)
 				return
 			}
 
 			postErr := PostSpc(&ctx, ssd.Logger, ssd.Conn, ssd.TntId, spcNm, s2gInfRs[0].S2gCrtCn, s2gInfRs[0].S2gCrtOrg, spcEncCrt, spcEncPvk, spcSgnCrt, spcSgnPvk, spcIncTs, spcExpTs, data.User.AurNm, nil)
 			if postErr != nil {
-				notification.Show(ctx, slog.Default(), rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-mod-cdf-form.warning-input-unexpected-error")}, data)
-
+				error.IntSrv(ctx, rw, postErr)
 				return
 			}
 

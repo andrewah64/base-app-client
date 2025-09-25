@@ -39,6 +39,8 @@
 							<input type="text"
 							       name="grp-tnt-reg-grp-nm"
 							       id="grp-tnt-reg-grp-nm"
+							       pattern=".*\S+.*"
+							       title="{{.T "web-core-auth-grp-tnt-reg-form.message-grp-nm-pattern"}}"
 							       hx-get="/web/core/auth/grp/tnt/val"
 							       hx-target="#grp-tnt-reg-res"
 							       hx-trigger="change, keyup delay:200ms"

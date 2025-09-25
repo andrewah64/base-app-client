@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/url"
 	"strconv"
+	"strings"
 )
 
 import (
@@ -297,7 +298,7 @@ func Post(rw http.ResponseWriter, r *http.Request){
 		return
 	}
 
-	aurNm := form.VText  (r, "aur-tnt-reg-aur-nm")
+	aurNm := strings.TrimSpace(form.VText  (r, "aur-tnt-reg-aur-nm"))
 	aurPw := form.VText  (r, "aur-tnt-reg-pw")
 	grpId := form.PInt64 (r, "aur-tnt-reg-grp-id")
 	lngId := form.PInt64 (r, "aur-tnt-reg-lng-id")

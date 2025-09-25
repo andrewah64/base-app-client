@@ -17,6 +17,8 @@ descr                                 = "Define the values to be embedded into n
 header                                = "Configure certificate pairs"
 label-crt-cn                          = "Common name (required)"
 label-crt-org                         = "Organisation name (required)"
+message-crt-cn-pattern                = "Common names cannot consist only of whitespace"
+message-crt-org-pattern               = "Organisation names cannot consist only of whitespace"
 message-input-success                 = "Changes were applied successfully"
 submit-button-label                   = "Save"
 warning-input-olock-error             = "Another user modified the record"
@@ -31,6 +33,8 @@ label-aum-id                          = "Service provider: authentication method
 label-enabled                         = "Service provider: enabled"
 label-entity-id                       = "Service provider: entity ID (required)"
 label-mtd-url                         = "Service provider: metadata URL"
+label-spc-ok                          = "Service provider: enabled, valid certificate pair"
+message-entity-id-pattern             = "Entity IDs cannot consist only of whitespace"
 message-input-success                 = "Changes were applied successfully"
 submit-button-label                   = "Save"
 warning-input-olock-error             = "Another user modified the record"
@@ -74,6 +78,16 @@ header-label-exp-ts                   = "Valid to"
 header-label-inc-ts                   = "Valid from"
 header-label-spc-nm                   = "Cert pair name"
 
+[web-core-auth-s2c-tnt-mod-spc-form]
+
+message-input-success                 = "The cert pair was successfully edited"
+save-button-label                     = "Save"
+warning-input-olock-error             = "Another user modified this record"
+warning-input-spc-enabled             = "Another cert pair is enabled. Disable it first."
+warning-input-spc-nm-taken            = "'{{.spcNm}}' is taken"
+warning-input-spc-ts                  = "Expired certs cannot be enabled"
+warning-input-unexpected-error        = "Unexpected error"
+
 [web-core-auth-s2c-tnt-reg-spc-form]
 
 descr                                 = "Create new self-signed X509 encryption and signing certificates"
@@ -82,6 +96,7 @@ label-exp-ts                          = "Valid to"
 label-inc-ts                          = "Valid from"
 label-nm                              = "Name"
 message-input-success                 = "New certificates were created"
+message-spc-nm-pattern                = "SAML2 certificates pairs names' cannot consist only of whitespace"
 submit-button-label                   = "Create"
 title-warning-plural                  = "{{.n}} problems were identified which will prevent the cert pair from being registered"
 title-warning-singular                = "{{.n}} problem was identified which will prevent the cert pair from being registered"

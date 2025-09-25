@@ -145,6 +145,8 @@
 														<input type="text"
 														       name="s2c-tnt-mod-gen-entity-id"
 														       id="s2c-tnt-mod-gen-entity-id"
+														       pattern=".*\S+.*"
+														       title="{{.T "web-core-auth-s2c-tnt-mod-gen-form.message-entity-id-pattern"}}"
 														       value="{{$s2c.S2cEntityId}}"
 														       required
 														       class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6">
@@ -240,6 +242,26 @@
 									</div>
 								</div>
 							</div>
+
+							<div class="pb-2">
+								<div class="mt-5 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+									<div class="sm:col-span-3">
+										<div class="grid grid-cols-1">
+											<div class="col-start-1">
+												<label class="block text-sm/6 font-medium text-gray-900">
+													{{.T "web-core-auth-s2c-tnt-mod-gen-form.label-spc-ok"}}
+												</label>
+												<div class="mt-2">
+													<span id="s2c-tnt-mod-gen-spc-ok"
+													      class="sm:text-sm/6">
+														{{$s2c.SpcOk}}
+													</span>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
 						</div>
 					{{if $hasRoleWebCoreS2cTntMod}}
 						<div class="fixed bottom-0 left-0 w-full h-[100px] bg-white flex items-center justify-end pr-4 border-t border-gray-200">
@@ -304,6 +326,8 @@
 														<input type="text"
 														       name="s2g-tnt-mod-cdf-crt-cn"
 														       id="s2g-tnt-mod-cdf-crt-cn"
+														       pattern=".*\S+.*"
+														       title="{{.T "web-core-auth-s2c-tnt-mod-cdf-form.message-crt-cn-pattern"}}"
 														       value="{{$s2g.S2gCrtCn}}"
 														       required
 														       class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6">
@@ -336,6 +360,8 @@
 														<input type="text"
 														       name="s2g-tnt-mod-cdf-crt-org"
 														       id="s2g-tnt-mod-cdf-crt-org"
+														       pattern=".*\S+.*"
+														       title="{{.T "web-core-auth-s2c-tnt-mod-cdf-form.message-crt-org-pattern"}}"
 														       value="{{$s2g.S2gCrtOrg}}"
 														       required
 														       class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6">
@@ -407,6 +433,8 @@
 										<input type="text"
 										       name="s2c-tnt-reg-spc-nm"
 										       id="s2c-tnt-reg-spc-nm"
+										       pattern=".*\S+.*"
+										       title="{{.T "web-core-auth-s2c-tnt-reg-spc-form.message-spc-nm-pattern"}}"
 										       hx-get="/web/core/auth/s2c/tnt/val/spc"
 										       hx-target="#s2c-tnt-reg-spc-res"
 										       hx-trigger="change, keyup delay:200ms"

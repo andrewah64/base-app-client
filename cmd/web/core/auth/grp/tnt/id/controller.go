@@ -6,6 +6,7 @@ import (
 	"log/slog"
 	"net/http"
 	"strconv"
+	"strings"
 )
 
 import (
@@ -98,7 +99,7 @@ func Patch(rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	grpNm := form.VText (r, fmt.Sprintf("grp-tnt-mod-grp-nm-%v", grpId))
+	grpNm := strings.TrimSpace(form.VText (r, fmt.Sprintf("grp-tnt-mod-grp-nm-%v", grpId)))
 	uts   := form.VTime (r, fmt.Sprintf("grp-tnt-mod-uts-%v"   , grpId))
 
 	ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Patch::get data from form",

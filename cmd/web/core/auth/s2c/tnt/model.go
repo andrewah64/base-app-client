@@ -140,6 +140,7 @@ type S2cInf struct {
 	AumId       int
 	EppAcsPt    string
 	EppMtdPt    string
+	SpcOk       bool
 	Uts         time.Time
 }
 

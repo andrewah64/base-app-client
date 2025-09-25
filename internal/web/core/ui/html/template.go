@@ -43,8 +43,7 @@ func Fragment(ctx context.Context, logger *slog.Logger, rw http.ResponseWriter, 
 			return
 		}
 	} else {
-		e.IntSrv(ctx, rw, fmt.Errorf("fragment '%v' not found", cacheKey))
-		return
+		panic(fmt.Sprintf("fragment '%v' not found", cacheKey))
 	}
 }
 
@@ -74,8 +73,7 @@ func Tmpl(ctx context.Context, logger *slog.Logger, rw http.ResponseWriter, r *h
 
 		buf.WriteTo(rw)
 	} else {
-		e.IntSrv(ctx, rw, fmt.Errorf("template '%v' not found", cacheKey))
-		return
+		panic(fmt.Sprintf("template '%v' not found", cacheKey))
 	}
 }
 
