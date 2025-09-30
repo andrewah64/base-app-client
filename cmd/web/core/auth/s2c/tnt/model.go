@@ -296,6 +296,45 @@ func PatchS2g (ctx *context.Context, logger *slog.Logger, conn *pgxpool.Conn, tn
 	return nil
 }
 
+func PostIdp (ctx *context.Context, logger *slog.Logger, conn *pgxpool.Conn, tntId int, idpEntityId string, ipcCrt [][]byte, ipcCrtUse []string, ipcIncTs []time.Time, ipcExpTs []time.Time, mdeUrl string, sloUrl []string, ssoUrl []string, by string, exptErrs []string) error {
+	var (
+		sprocCall = "call web_core_auth_s2c_tnt_mod.reg_idp(@p_tnt_id, @p_idp_entity_id, @p_ipc_crt, @p_ipc_crt_use, @p_ipc_inc_ts, @p_ipc_exp_ts, @p_mde_url, @p_slo_url, @p_sso_url, @p_by)"
+		sprocParams = pgx.NamedArgs{
+			"p_tnt_id"        : tntId,
+			"p_idp_entity_id" : idpEntityId,
+			"p_ipc_crt"       : ipcCrt,
+			"p_ipc_crt_use"   : ipcCrtUse,
+			"p_ipc_inc_ts"    : ipcIncTs,
+			"p_ipc_exp_ts"    : ipcExpTs,
+			"p_mde_url"       : mdeUrl,
+			"p_slo_url"       : sloUrl,
+			"p_sso_url"       : ssoUrl,
+			"p_by"            : by,
+		}
+	)
+
+	sprocErr := db.Sproc(ctx, logger, conn, sprocCall, sprocParams, exptErrs)
+	if sprocErr != nil {
+		logger.LogAttrs(*ctx, slog.LevelDebug, "call sproc",
+			slog.String("sprocCall"   , sprocCall),
+			slog.String("error"       , sprocErr.Error()),
+			slog.Int   ("tntId"       , tntId),
+			slog.String("idpEntityId" , idpEntityId),
+			slog.Any   ("ipcCrtUse"   , ipcCrtUse),
+			slog.Any   ("ipcIncTs"    , ipcIncTs),
+			slog.Any   ("ipcExpTs"    , ipcExpTs),
+			slog.String("mdeUrl"      , mdeUrl),
+			slog.Any   ("sloUrl"      , sloUrl),
+			slog.Any   ("ssoUrl"      , ssoUrl),
+			slog.String("by"          , by),
+		)
+
+		return sprocErr
+	}
+
+	return nil
+}
+
 func PostSpc (ctx *context.Context, logger *slog.Logger, conn *pgxpool.Conn, tntId int, spcNm string, spcCnNm string, spcOrgNm string, spcEncCrt []byte, spcEncPvk []byte, spcSgnCrt []byte, spcSgnPvk []byte, spcIncTs time.Time, spcExpTs time.Time, by string, exptErrs []string) error {
 	var (
 		sprocCall   = "call web_core_auth_s2c_tnt_mod.reg_spc(@p_tnt_id, @p_spc_nm, @p_spc_cn_nm, @p_spc_org_nm, @p_spc_enc_crt, @p_spc_enc_pvk, @p_spc_sgn_crt, @p_spc_sgn_pvk, @p_spc_inc_ts, @p_spc_exp_ts, @p_by)"

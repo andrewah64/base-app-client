@@ -629,32 +629,42 @@
 							{{.T "web-core-auth-s2c-tnt-reg-idp-form.descr"}}
 						</p>
 					</div>
+					<div class="col-start-2 row-start-1">
+						<output id="s2c-tnt-reg-mde-res"
+							role="alert"
+							aria-live="polite"
+							class="mt-2 text-sm/6 font-medium text-red-700">
+						</output>
+					</div>
 					<div class="col-start-2 row-start-2">
-						<form>
+						<form id="s2c-tnt-reg-mde-form"
+						      hx-post="/web/core/auth/s2c/tnt/mde"
+						      hx-target="#s2c-tnt-reg-mde-res"
+						      _="on submit call (next <button/>).focus()">
 							<fieldset>
 								<div class="grid grid-rows-2 grid-cols-3 w-fit">
 									<div class="row-start-1 col-start-1">
 										<p class="mt-2 max-w-4xl text-sm text-gray-500">
-											<label for="key-aur-reg-aauk-nm">Name</label>
+											<label for="s2c-tnt-reg-mde-nm">Name</label>
 										</p>
 									</div>
 									<div class="row-start-2 col-start-1 flex items-center rounded-md bg-white pl-3 outline-1 -outline-offset-1 outline-gray-300 focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-indigo-600">
 										<input type="text"
-										       name="???"
-										       id="???"
+										       name="s2c-tnt-reg-mde-nm"
+										       id="s2c-tnt-reg-mde-nm"
 										       required
 										       class="block min-w-0 grow py-1.5 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6">
 									</div>
 
 									<div class="row-start-1 col-start-2">
 										<p class="mt-2 max-w-4xl text-sm text-gray-500">
-											<label for="key-aur-reg-aauk-nm">Metadata URL</label>
+											<label for="s2c-tnt-reg-mde-url">Metadata URL</label>
 										</p>
 									</div>
 									<div class="row-start-2 col-start-2 flex items-center rounded-md bg-white pl-3 outline-1 -outline-offset-1 outline-gray-300 focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-indigo-600">
 										<input type="url"
-										       name="???"
-										       id="???"
+										       name="s2c-tnt-reg-mde-url"
+										       id="s2c-tnt-reg-mde-url"
 										       required
 										       class="block min-w-0 grow py-1.5 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6">
 									</div>

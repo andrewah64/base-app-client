@@ -178,7 +178,6 @@ func Patch(rw http.ResponseWriter, r *http.Request) {
 
 						default:
 							notification.Show(ctx, slog.Default(), rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-mod-spc-form.warning-input-unexpected-error")}, data)
-
 					}
 
 					return

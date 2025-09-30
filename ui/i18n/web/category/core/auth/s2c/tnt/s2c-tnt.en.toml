@@ -50,6 +50,13 @@ header                                = "Register identity providers"
 descr                                 = "Create new self-signed X509 encryption and signing certificates"
 header                                = "Create certicate pairs"
 
+[web-core-auth-s2c-tnt-reg-idp]
+
+warning-input-empty-response          = "The response from the metadata URL was empty"
+warning-input-read-metadata           = "The metadata could not be read"
+warning-input-unreadable-response     = "The response from the metadata URL could not be read"
+
+
 [web-core-auth-s2c-tnt-del-spc-form]
 
 delete-button-label                   = "Delete"
