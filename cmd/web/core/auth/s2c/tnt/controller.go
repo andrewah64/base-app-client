@@ -512,11 +512,11 @@ func Post(rw http.ResponseWriter, r *http.Request){
 				return
 			}
 
-			mdeNm  := strings.TrimSpace(form.VText (r, "s2c-tnt-reg-mde-nm"))
+			idpNm  := strings.TrimSpace(form.VText (r, "s2c-tnt-reg-idp-nm"))
 			mdeUrl := strings.TrimSpace(form.VText (r, "s2c-tnt-reg-mde-url"))
 
 			ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Post::get data from mde form",
-				slog.String("mdeNm"  , mdeNm),
+				slog.String("idpNm"  , idpNm),
 				slog.String("mdeUrl" , mdeUrl),
 			)
 
@@ -526,7 +526,7 @@ func Post(rw http.ResponseWriter, r *http.Request){
 
 				ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Post:: Get response payload",
 					slog.String("mdeUrlResErr", mdeUrlResErr.Error()),
-					slog.String("mdeNm"       , mdeNm),
+					slog.String("idpNm"       , idpNm),
 					slog.String("mdeUrl"      , mdeUrl),
 				)
 
@@ -539,7 +539,7 @@ func Post(rw http.ResponseWriter, r *http.Request){
 
 				ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Post:: Get response payload",
 					slog.String("mtdRawErr" , mtdRawErr.Error()),
-					slog.String("mdeNm"     , mdeNm),
+					slog.String("idpNm"     , idpNm),
 					slog.String("mdeUrl"    , mdeUrl),
 				)
 
@@ -553,7 +553,7 @@ func Post(rw http.ResponseWriter, r *http.Request){
 
 				ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Post:: unmarshal metadata into struct",
 					slog.String("mtdErr" , mtdRawErr.Error()),
-					slog.String("mdeNm"  , mdeNm),
+					slog.String("idpNm"  , idpNm),
 					slog.String("mdeUrl" , mdeUrl),
 				)
 
@@ -642,13 +642,13 @@ func Post(rw http.ResponseWriter, r *http.Request){
 				ssoUrlBnd[i] = sso.Binding
 			}
 
-			postErr := PostIdp(&ctx, ssd.Logger, ssd.Conn, ssd.TntId, mtd.EntityID, ipcCrt, cruNm, ipcIncTs, ipcExpTs, mdeUrl, sloUrl, sloUrlBnd, ssoUrl, ssoUrlBnd, data.User.AurNm, nil)
+			postErr := PostIdp(&ctx, ssd.Logger, ssd.Conn, ssd.TntId, idpNm, mtd.EntityID, ipcCrt, cruNm, ipcIncTs, ipcExpTs, mdeUrl, sloUrl, sloUrlBnd, ssoUrl, ssoUrlBnd, data.User.AurNm, nil)
 			if postErr != nil {
 				error.IntSrv(ctx, rw, postErr)
 				return
 			}
 
-			notification.Show(ctx, ssd.Logger, rw, r, "success" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-reg-idp.message-input-success", "mdeNm", mdeNm)}, data)
+			notification.Show(ctx, ssd.Logger, rw, r, "success" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-reg-idp.message-input-success", "idpNm", idpNm)}, data)
 	}
 
 	ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Post::end")
