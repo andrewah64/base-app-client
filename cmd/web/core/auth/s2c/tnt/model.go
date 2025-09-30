@@ -296,19 +296,21 @@ func PatchS2g (ctx *context.Context, logger *slog.Logger, conn *pgxpool.Conn, tn
 	return nil
 }
 
-func PostIdp (ctx *context.Context, logger *slog.Logger, conn *pgxpool.Conn, tntId int, idpEntityId string, ipcCrt [][]byte, ipcCrtUse []string, ipcIncTs []time.Time, ipcExpTs []time.Time, mdeUrl string, sloUrl []string, ssoUrl []string, by string, exptErrs []string) error {
+func PostIdp (ctx *context.Context, logger *slog.Logger, conn *pgxpool.Conn, tntId int, idpEntityId string, ipcCrt [][]byte, cruNm []string, ipcIncTs []time.Time, ipcExpTs []time.Time, mdeUrl string, sloUrl []string, sloUrlBnd []string, ssoUrl []string, ssoUrlBnd []string, by string, exptErrs []string) error {
 	var (
-		sprocCall = "call web_core_auth_s2c_tnt_mod.reg_idp(@p_tnt_id, @p_idp_entity_id, @p_ipc_crt, @p_ipc_crt_use, @p_ipc_inc_ts, @p_ipc_exp_ts, @p_mde_url, @p_slo_url, @p_sso_url, @p_by)"
+		sprocCall = "call web_core_auth_s2c_tnt_mod.reg_idp(@p_tnt_id, @p_idp_entity_id, @p_ipc_crt, @p_cru_nm, @p_ipc_inc_ts, @p_ipc_exp_ts, @p_mde_url, @p_slo_url, @p_slo_url_bnd, @p_sso_url, @p_sso_url_bnd, @p_by)"
 		sprocParams = pgx.NamedArgs{
 			"p_tnt_id"        : tntId,
 			"p_idp_entity_id" : idpEntityId,
 			"p_ipc_crt"       : ipcCrt,
-			"p_ipc_crt_use"   : ipcCrtUse,
+			"p_cru_nm"        : cruNm,
 			"p_ipc_inc_ts"    : ipcIncTs,
 			"p_ipc_exp_ts"    : ipcExpTs,
 			"p_mde_url"       : mdeUrl,
 			"p_slo_url"       : sloUrl,
+			"p_slo_url_bnd"   : sloUrlBnd,
 			"p_sso_url"       : ssoUrl,
+			"p_sso_url_bnd"   : ssoUrlBnd,
 			"p_by"            : by,
 		}
 	)
@@ -320,12 +322,14 @@ func PostIdp (ctx *context.Context, logger *slog.Logger, conn *pgxpool.Conn, tnt
 			slog.String("error"       , sprocErr.Error()),
 			slog.Int   ("tntId"       , tntId),
 			slog.String("idpEntityId" , idpEntityId),
-			slog.Any   ("ipcCrtUse"   , ipcCrtUse),
+			slog.Any   ("cruNm"       , cruNm),
 			slog.Any   ("ipcIncTs"    , ipcIncTs),
 			slog.Any   ("ipcExpTs"    , ipcExpTs),
 			slog.String("mdeUrl"      , mdeUrl),
 			slog.Any   ("sloUrl"      , sloUrl),
+			slog.Any   ("sloUrlBnd"   , sloUrlBnd),
 			slog.Any   ("ssoUrl"      , ssoUrl),
+			slog.Any   ("ssoUrlBnd"   , ssoUrlBnd),
 			slog.String("by"          , by),
 		)
 

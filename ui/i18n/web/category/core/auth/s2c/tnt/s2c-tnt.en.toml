@@ -52,8 +52,13 @@ header                                = "Create certicate pairs"
 
 [web-core-auth-s2c-tnt-reg-idp]
 
+warning-input-decode-cert             = "Unexpected error"
+warning-input-empty-cert              = "The provided certificate is empty"
 warning-input-empty-response          = "The response from the metadata URL was empty"
+warning-input-gen-cert                = "Unexpected error"
+warning-input-marshal-cert            = "Unexpected error"
 warning-input-read-metadata           = "The metadata could not be read"
+message-input-success                 = "The IdP '{{.mdeNm}}' was registered"
 warning-input-unreadable-response     = "The response from the metadata URL could not be read"
 
 

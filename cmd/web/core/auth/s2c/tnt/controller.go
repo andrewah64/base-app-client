@@ -563,66 +563,92 @@ func Post(rw http.ResponseWriter, r *http.Request){
 			lkd := len(mtd.IDPSSODescriptor.KeyDescriptors)
 
 			ipcCrt    := make([][]byte    , lkd)
-			ipcCrtUse := make([]string    , lkd)
+			cruNm     := make([]string    , lkd)
 			ipcIncTs  := make([]time.Time , lkd)
 			ipcExpTs  := make([]time.Time , lkd)
 
 			for i, kds := range mtd.IDPSSODescriptor.KeyDescriptors {
 				for _, x5c := range kds.KeyInfo.X509Data.X509Certificates {
 					if strings.TrimSpace(x5c.Data) == "" {
-						fmt.Printf("\n\n 7e Err\n\n")
-						//log    - certs cannot be empty
-						//notify - unexpected error
+						notification.Show(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-reg-idp.warning-input-empty-cert")}, data)
+
+						ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Post:: x5c.Data is empty",
+							slog.Int   ("i"   , i),
+							slog.String("kds" , fmt.Sprintf("%+v", kds)),
+						)
+
 						return
 					}
 
 					x5d, x5dErr := base64.StdEncoding.DecodeString(strings.TrimSpace(x5c.Data))
 					if x5dErr != nil {
-						fmt.Printf("\n\n 8e : %v\n\n", x5dErr)
-						//log    - cannot decode x5c
-						//notify - unexpected error
+						notification.Show(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-reg-idp.warning-input-decode-cert")}, data)
+
+						slog.LogAttrs(ctx, slog.LevelError, "Post:: cannot decode x5c.Data",
+							slog.String("x5dErr" , x5dErr.Error()),
+							slog.Int   ("i"      , i),
+							slog.String("kds"    , fmt.Sprintf("%+v", kds)),
+						)
+
 						return
 					}
 
 					crt, crtErr := x509.ParseCertificate(x5d)
 					if crtErr != nil {
-						fmt.Printf("\n\n 9e : %v\n\n", crtErr)
-						//log    - can't parse cert out of data
-						//notify - unexpected error
+						notification.Show(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-reg-idp.warning-input-gen-cert")}, data)
+
+						slog.LogAttrs(ctx, slog.LevelError, "Post:: cannot parse x5d",
+							slog.String("crtErr" , crtErr.Error()),
+							slog.Int   ("i"      , i),
+							slog.String("kds"    , fmt.Sprintf("%+v", kds)),
+						)
+
 						return
 					}
 
 					mCrt, mCrtErr := json.Marshal(crt)
 					if mCrtErr != nil {
-						fmt.Printf("\n\n 10e : %v\n\n", mCrtErr)
+						notification.Show(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-reg-idp.warning-input-marshal-cert")}, data)
+
+						slog.LogAttrs(ctx, slog.LevelError, "Post:: marshal crt",
+							slog.String("crtErr" , crtErr.Error()),
+							slog.Int   ("i"      , i),
+							slog.String("kds"    , fmt.Sprintf("%+v", kds)),
+						)
+
 						return
 					}
 
-					ipcCrt[i]    = mCrt
-					ipcCrtUse[i] = kds.Use
-					ipcIncTs[i]  = crt.NotBefore
-					ipcExpTs[i]  = crt.NotAfter
+					ipcCrt[i]   = mCrt
+					cruNm[i]    = kds.Use
+					ipcIncTs[i] = crt.NotBefore
+					ipcExpTs[i] = crt.NotAfter
 				}
 			}
 
-			sloUrl := make([]string, len(mtd.IDPSSODescriptor.SingleLogoutServices))
+			sloUrl    := make([]string, len(mtd.IDPSSODescriptor.SingleLogoutServices))
+			sloUrlBnd := make([]string, len(mtd.IDPSSODescriptor.SingleLogoutServices))
 
 			for i, slo := range mtd.IDPSSODescriptor.SingleLogoutServices {
-				sloUrl[i] = slo.Location
+				sloUrl[i]    = slo.Location
+				sloUrlBnd[i] = slo.Binding
 			}
 
-			ssoUrl := make([]string, len(mtd.IDPSSODescriptor.SingleSignOnServices))
+			ssoUrl    := make([]string, len(mtd.IDPSSODescriptor.SingleSignOnServices))
+			ssoUrlBnd := make([]string, len(mtd.IDPSSODescriptor.SingleSignOnServices))
 
 			for i, sso := range mtd.IDPSSODescriptor.SingleSignOnServices {
-				ssoUrl[i] = sso.Location
+				ssoUrl[i]    = sso.Location
+				ssoUrlBnd[i] = sso.Binding
 			}
 
-			postErr := PostIdp(&ctx, ssd.Logger, ssd.Conn, ssd.TntId, mtd.EntityID, ipcCrt, ipcCrtUse, ipcIncTs, ipcExpTs, mdeUrl, sloUrl, ssoUrl, data.User.AurNm, nil)
+			postErr := PostIdp(&ctx, ssd.Logger, ssd.Conn, ssd.TntId, mtd.EntityID, ipcCrt, cruNm, ipcIncTs, ipcExpTs, mdeUrl, sloUrl, sloUrlBnd, ssoUrl, ssoUrlBnd, data.User.AurNm, nil)
 			if postErr != nil {
-				fmt.Printf("\n\n  --- tried to post & failed --- \n\n")
+				error.IntSrv(ctx, rw, postErr)
+				return
 			}
 
-			// Report success
+			notification.Show(ctx, ssd.Logger, rw, r, "success" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-reg-idp.message-input-success", "mdeNm", mdeNm)}, data)
 	}
 
 	ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Post::end")
