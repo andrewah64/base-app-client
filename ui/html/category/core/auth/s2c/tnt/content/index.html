@@ -621,44 +621,37 @@
 				<div class="grid grid-cols-2 grid-rows-1 border-b border-gray-200 pb-5 mb-5">
 					<div class="col-start-1 row-start-1">
 						<h2 class="text-base font-semibold text-gray-900">
-							Register IDP using metadata URL
+							{{.T "web-core-auth-s2c-tnt-reg-mde-form.header"}}
 						</h2>
 					</div>
 					<div class="col-start-1 row-start-2">
 						<p class="mt-2 max-w-4xl text-sm text-gray-500">
-							{{.T "web-core-auth-s2c-tnt-reg-idp-form.descr"}}
+							{{.T "web-core-auth-s2c-tnt-reg-mde-form.descr"}}
 						</p>
-					</div>
-					<div class="col-start-2 row-start-1">
-						<output id="s2c-tnt-reg-mde-res"
-							role="alert"
-							aria-live="polite"
-							class="mt-2 text-sm/6 font-medium text-red-700">
-						</output>
 					</div>
 					<div class="col-start-2 row-start-2">
 						<form id="s2c-tnt-reg-mde-form"
 						      hx-post="/web/core/auth/s2c/tnt/mde"
-						      hx-target="#s2c-tnt-reg-mde-res"
+						      hx-swap="none"
 						      _="on submit call (next <button/>).focus()">
 							<fieldset>
 								<div class="grid grid-rows-2 grid-cols-3 w-fit">
 									<div class="row-start-1 col-start-1">
 										<p class="mt-2 max-w-4xl text-sm text-gray-500">
-											<label for="s2c-tnt-reg-idp-nm">IdP Name</label>
+											<label for="s2c-tnt-reg-mde-idp-nm">{{.T "web-core-auth-s2c-tnt-reg-mde-form.label-idp-nm"}}</label>
 										</p>
 									</div>
 									<div class="row-start-2 col-start-1 flex items-center rounded-md bg-white pl-3 outline-1 -outline-offset-1 outline-gray-300 focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-indigo-600">
 										<input type="text"
-										       name="s2c-tnt-reg-idp-nm"
-										       id="s2c-tnt-reg-idp-nm"
+										       name="s2c-tnt-reg-mde-idp-nm"
+										       id="s2c-tnt-reg-mde-idp-nm"
 										       required
 										       class="block min-w-0 grow py-1.5 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6">
 									</div>
 
 									<div class="row-start-1 col-start-2">
 										<p class="mt-2 max-w-4xl text-sm text-gray-500">
-											<label for="s2c-tnt-reg-mde-url">Metadata URL</label>
+											<label for="s2c-tnt-reg-mde-url">{{.T "web-core-auth-s2c-tnt-reg-mde-form.label-mde-url"}}</label>
 										</p>
 									</div>
 									<div class="row-start-2 col-start-2 flex items-center rounded-md bg-white pl-3 outline-1 -outline-offset-1 outline-gray-300 focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-indigo-600">
@@ -675,7 +668,7 @@
 											     src="/static/img/spinner-white.svg"
 											     alt="Progress indicator">
 											<span class="htmx-indicator htmx-text">
-												Create
+												{{.T "web-core-auth-s2c-tnt-reg-mde-form.submit-button-label"}}
 											</span>
 										</button>
 									</div>
@@ -689,42 +682,59 @@
 				<div class="grid grid-cols-2 grid-rows-1 border-b border-gray-200 pb-5 mb-5">
 					<div class="col-start-1 row-start-1">
 						<h2 class="text-base font-semibold text-gray-900">
-							Register IDP using XML file
+							{{.T "web-core-auth-s2c-tnt-reg-xml-form.header"}}
 						</h2>
 					</div>
 					<div class="col-start-1 row-start-2">
 						<p class="mt-2 max-w-4xl text-sm text-gray-500">
-							{{.T "web-core-auth-s2c-tnt-reg-idp-form.descr"}}
+							{{.T "web-core-auth-s2c-tnt-reg-xml-form.descr"}}
 						</p>
 					</div>
 					<div class="col-start-2 row-start-2">
-						<form>
+						<form enctype="multipart/form-data"
+						      hx-post="/web/core/auth/s2c/tnt/xml"
+						      hx-swap="none">
 							<fieldset>
 								<div class="grid grid-rows-2 grid-cols-3 w-fit">
 									<div class="row-start-1 col-start-1">
 										<p class="mt-2 max-w-4xl text-sm text-gray-500">
-											<label for="key-aur-reg-aauk-nm">Name</label>
+											<label for="s2c-tnt-reg-xml-idp-nm">{{.T "web-core-auth-s2c-tnt-reg-xml-form.label-idp-nm"}}</label>
 										</p>
 									</div>
 									<div class="row-start-2 col-start-1 flex items-center rounded-md bg-white pl-3 outline-1 -outline-offset-1 outline-gray-300 focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-indigo-600">
 										<input type="text"
-										       name="???"
-										       id="???"
+										       name="s2c-tnt-reg-xml-idp-nm"
+										       id="s2c-tnt-reg-xml-idp-nm"
 										       required
 										       class="block min-w-0 grow py-1.5 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6">
 									</div>
 
 									<div class="row-start-1 col-start-2">
 										<p class="mt-2 max-w-4xl text-sm text-gray-500">
-											<label for="key-aur-reg-aauk-nm">XML file</label>
+											<label for="s2c-tnt-reg-xml-file">{{.T "web-core-auth-s2c-tnt-reg-xml-form.label-xml-file"}}</label>
 										</p>
 									</div>
-									<div class="row-start-2 col-start-2 flex items-center rounded-md bg-white pl-3 outline-1 -outline-offset-1 outline-gray-300 focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-indigo-600">
-										<input type="text"
-										       name="???"
-										       id="???"
-										       required
-										       class="block min-w-0 grow py-1.5 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6">
+									<div class="row-start-2 col-start-2 flex items-center rounded-md bg-white outline-1 -outline-offset-1 outline-gray-300 focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-indigo-600">
+										<div class="relative w-full"
+										     _="install FileUpload(fu: #s2c-tnt-reg-xml-file, lbl: #s2c-tnt-reg-xml-file-txt, lbltmptxt: #s2c-tnt-reg-xml-file-tmp-txt)">
+											<input type="file"
+											       name="s2c-tnt-reg-xml-file"
+											       id="s2c-tnt-reg-xml-file"
+											       required
+											       class="hidden">
+
+											<label for="s2c-tnt-reg-xml-file"
+											       class="block w-full min-w-0 grow py-1.5 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6 border border-gray-300 rounded-md cursor-pointer bg-white hover:bg-gray-50">
+												<span id="s2c-tnt-reg-xml-file-txt"
+												      class="text-gray-400">
+													{{.T "web-core-auth-s2c-tnt-reg-xml-form.upload-button-label"}}
+												</span>
+												<span id="s2c-tnt-reg-xml-file-tmp-txt"
+												      class="hidden">
+													{{.T "web-core-auth-s2c-tnt-reg-xml-form.upload-button-label"}}
+												</span>
+											</label>
+										</div>
 									</div>
 
 									<div class="row-start-2 col-start-3">
@@ -733,7 +743,7 @@
 											     src="/static/img/spinner-white.svg"
 											     alt="Progress indicator">
 											<span class="htmx-indicator htmx-text">
-												Create
+												{{.T "web-core-auth-s2c-tnt-reg-xml-form.submit-button-label"}}
 											</span>
 										</button>
 									</div>

@@ -3,6 +3,7 @@ package form
 import (
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -48,6 +49,19 @@ func PInt64(r *http.Request, fv string) *int64 {
 	}
 
 	return i
+}
+
+func PText(r *http.Request, fv string) *string {
+	var b string
+
+	switch r.Method {
+		case http.MethodPatch, http.MethodPost, http.MethodPut:
+			b = strings.TrimSpace(r.PostForm.Get(fv))
+		case http.MethodGet:
+			b = strings.TrimSpace(r.URL.Query().Get(fv))
+	}
+
+	return &b
 }
 
 func VBool(r *http.Request, fv string) bool {
@@ -124,9 +138,9 @@ func VText(r *http.Request, fv string) string {
 
 	switch r.Method {
 		case http.MethodPatch, http.MethodPost, http.MethodPut:
-			b = r.PostForm.Get(fv)
+			b = strings.TrimSpace(r.PostForm.Get(fv))
 		case http.MethodGet:
-			b = r.URL.Query().Get(fv)
+			b = strings.TrimSpace(r.URL.Query().Get(fv))
 	}
 
 	return b

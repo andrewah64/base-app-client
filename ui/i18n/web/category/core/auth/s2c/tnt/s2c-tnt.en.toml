@@ -6,7 +6,7 @@ header-edit                           = "Configure SAML2-based authentication"
 header-view                           = "View SAML2-based authentication configuration"
 tab-cdf                               = "Certificate configuration"
 tab-gen                               = "General configuration"
-tab-idp                               = "Manage IDPs"
+tab-idp                               = "Manage IdPs"
 tab-spc                               = "Manage SP certificates"
 title-edit                            = "<Application> : Configure SAML2-based authentication"
 title-view                            = "<Application> : View SAML2-based authentication configuration"
@@ -40,18 +40,13 @@ submit-button-label                   = "Save"
 warning-input-olock-error             = "Another user modified the record"
 warning-input-unexpected-error        = "Unexpected error"
 
-[web-core-auth-s2c-tnt-reg-idp-form]
+[web-core-auth-s2c-tnt-reg-mde-form]
 
-descr                                 = "Supply the URL from which an IDP's metadata can be retrieved"
+descr                                 = "Supply the URL from which an IdP's metadata can be retrieved"
 header                                = "Register identity providers"
-
-[web-core-auth-s2c-tnt-mod-idp-form]
-
-descr                                 = "Create new self-signed X509 encryption and signing certificates"
-header                                = "Create certicate pairs"
-
-[web-core-auth-s2c-tnt-reg-idp]
-
+label-idp-nm                          = "IdP name"
+label-mde-url                         = "Metadata URL"
+submit-button-label                   = "Register"
 warning-input-decode-cert             = "Unexpected error"
 warning-input-empty-cert              = "The provided certificate is empty"
 warning-input-empty-response          = "The response from the metadata URL was empty"
@@ -61,6 +56,21 @@ warning-input-read-metadata           = "The metadata could not be read"
 message-input-success                 = "The IdP '{{.idpNm}}' was registered"
 warning-input-unreadable-response     = "The response from the metadata URL could not be read"
 
+[web-core-auth-s2c-tnt-reg-xml-form]
+
+descr                                 = "Supply an XML file containing an IdP's metadata"
+header                                = "Register IDP using XML file"
+label-idp-nm                          = "IdP name"
+label-xml-file                        = "XML file"
+submit-button-label                   = "Register"
+upload-button-label                   = "Choose a file..."
+warning-input-decode-cert             = "Unexpected error"
+warning-input-empty-cert              = "The provided certificate is empty"
+warning-input-gen-cert                = "Unexpected error"
+warning-input-marshal-cert            = "Unexpected error"
+warning-input-read-metadata           = "The metadata could not be read"
+message-input-success                 = "The IdP '{{.idpNm}}' was registered"
+warning-input-unreadable-response     = "The XML file's content is unreadable"
 
 [web-core-auth-s2c-tnt-del-spc-form]
 

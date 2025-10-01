@@ -87,6 +87,16 @@ behavior DateRange (v1, v2)
 	end
 end
 
+behavior FileUpload (fu, lbl, lbltmptxt)
+	on change from me
+		if fu.files.length == 1 then
+			put `${fu.files[0].name}` into lbl
+		else
+			put `${lbltmptxt.innerHTML}` into lbl
+		end
+	end
+end
+
 behavior MultiSelect
 	def getSelectedLabel(container)
 		-- try the .selected label

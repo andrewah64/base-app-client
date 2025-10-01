@@ -35,7 +35,6 @@ import (
 )
 
 import (
-//	gosaml2dsig  "github.com/russellhaering/goxmldsig"
 	gosaml2types "github.com/russellhaering/gosaml2/types"
 )
 
@@ -214,7 +213,7 @@ func Get(rw http.ResponseWriter, r *http.Request){
 				return
 			}
 
-			spcNm      := strings.TrimSpace(form.VText (r, "s2c-tnt-inf-spc-nm"))
+			spcNm      := form.VText (r, "s2c-tnt-inf-spc-nm")
 			spcIncTs   := form.PDate (r, "s2c-tnt-inf-spc-inc-ts")
 			spcExpTs   := form.PDate (r, "s2c-tnt-inf-spc-exp-ts")
 			spcEnabled := form.PBool (r, "s2c-tnt-inf-spc-enabled")
@@ -259,7 +258,7 @@ func Get(rw http.ResponseWriter, r *http.Request){
 				return
 			}
 
-			spcNm      := strings.TrimSpace(form.VText (r, "s2c-tnt-inf-spc-nm"))
+			spcNm      := form.VText (r, "s2c-tnt-inf-spc-nm")
 			spcIncTs   := form.PDate (r, "s2c-tnt-inf-spc-inc-ts")
 			spcExpTs   := form.PDate (r, "s2c-tnt-inf-spc-exp-ts")
 			spcEnabled := form.PBool (r, "s2c-tnt-inf-spc-enabled")
@@ -320,7 +319,7 @@ func Patch(rw http.ResponseWriter, r *http.Request){
 				return
 			}
 
-			s2cEntityId := strings.TrimSpace(form.VText (r, "s2c-tnt-mod-gen-entity-id"))
+			s2cEntityId := form.VText (r, "s2c-tnt-mod-gen-entity-id")
 			s2cEnabled  := form.VBool (r, "s2c-tnt-mod-gen-enabled")
 			aumId       := form.VInt  (r, "s2c-tnt-mod-gen-aum-id")
 			uts         := form.VTime (r, "s2c-tnt-mod-gen-uts")
@@ -376,8 +375,8 @@ func Patch(rw http.ResponseWriter, r *http.Request){
 				return
 			}
 
-			s2gCrtCn  := strings.TrimSpace(form.VText (r, "s2g-tnt-mod-cdf-crt-cn"))
-			s2gCrtOrg := strings.TrimSpace(form.VText (r, "s2g-tnt-mod-cdf-crt-org"))
+			s2gCrtCn  := form.VText (r, "s2g-tnt-mod-cdf-crt-cn")
+			s2gCrtOrg := form.VText (r, "s2g-tnt-mod-cdf-crt-org")
 			uts       := form.VTime (r, "s2g-tnt-mod-cdf-uts")
 
 			ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Patch::get data from cdf form",
@@ -453,7 +452,7 @@ func Post(rw http.ResponseWriter, r *http.Request){
 				return
 			}
 
-			spcNm    := strings.TrimSpace(form.VText (r, "s2c-tnt-reg-spc-nm"))
+			spcNm    := form.VText (r, "s2c-tnt-reg-spc-nm")
 			spcIncTs := form.VDate (r, "s2c-tnt-reg-spc-inc-ts")
 			spcExpTs := form.VDate (r, "s2c-tnt-reg-spc-exp-ts")
 
@@ -505,6 +504,7 @@ func Post(rw http.ResponseWriter, r *http.Request){
 			rw.Header().Set("HX-Trigger", "mod")
 
 			notification.Show(ctx, slog.Default(), rw, r, "success", &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-reg-spc-form.message-input-success")} , data)
+
 		case "mde":
 			pfErr := r.ParseForm()
 			if pfErr != nil {
@@ -512,8 +512,8 @@ func Post(rw http.ResponseWriter, r *http.Request){
 				return
 			}
 
-			idpNm  := strings.TrimSpace(form.VText (r, "s2c-tnt-reg-idp-nm"))
-			mdeUrl := strings.TrimSpace(form.VText (r, "s2c-tnt-reg-mde-url"))
+			idpNm  := form.VText (r, "s2c-tnt-reg-mde-idp-nm")
+			mdeUrl := form.VText (r, "s2c-tnt-reg-mde-url")
 
 			ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Post::get data from mde form",
 				slog.String("idpNm"  , idpNm),
@@ -522,7 +522,7 @@ func Post(rw http.ResponseWriter, r *http.Request){
 
 			mdeUrlRes, mdeUrlResErr := http.Get(mdeUrl)
 			if mdeUrlResErr != nil {
-				notification.Show(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-reg-idp.warning-input-empty-response")}, data)
+				notification.Show(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-reg-mde-form.warning-input-empty-response")}, data)
 
 				ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Post:: Get response payload",
 					slog.String("mdeUrlResErr", mdeUrlResErr.Error()),
@@ -535,7 +535,7 @@ func Post(rw http.ResponseWriter, r *http.Request){
 
 			mtdRaw, mtdRawErr := io.ReadAll(mdeUrlRes.Body)
 			if mtdRawErr != nil {
-				notification.Show(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-reg-idp.warning-input-unreadable-response")}, data)
+				notification.Show(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-reg-mde-form.warning-input-unreadable-response")}, data)
 
 				ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Post:: Get response payload",
 					slog.String("mtdRawErr" , mtdRawErr.Error()),
@@ -549,7 +549,7 @@ func Post(rw http.ResponseWriter, r *http.Request){
 			mtd    := &gosaml2types.EntityDescriptor{}
 			mtdErr := xml.Unmarshal(mtdRaw, mtd)
 			if mtdErr != nil {
-				notification.Show(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-reg-idp.warning-input-read-metadata")}, data)
+				notification.Show(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-reg-mde-form.warning-input-read-metadata")}, data)
 
 				ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Post:: unmarshal metadata into struct",
 					slog.String("mtdErr" , mtdRawErr.Error()),
@@ -570,7 +570,7 @@ func Post(rw http.ResponseWriter, r *http.Request){
 			for i, kds := range mtd.IDPSSODescriptor.KeyDescriptors {
 				for _, x5c := range kds.KeyInfo.X509Data.X509Certificates {
 					if strings.TrimSpace(x5c.Data) == "" {
-						notification.Show(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-reg-idp.warning-input-empty-cert")}, data)
+						notification.Show(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-reg-mde-form.warning-input-empty-cert")}, data)
 
 						ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Post:: x5c.Data is empty",
 							slog.Int   ("i"   , i),
@@ -582,7 +582,7 @@ func Post(rw http.ResponseWriter, r *http.Request){
 
 					x5d, x5dErr := base64.StdEncoding.DecodeString(strings.TrimSpace(x5c.Data))
 					if x5dErr != nil {
-						notification.Show(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-reg-idp.warning-input-decode-cert")}, data)
+						notification.Show(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-reg-mde-form.warning-input-decode-cert")}, data)
 
 						slog.LogAttrs(ctx, slog.LevelError, "Post:: cannot decode x5c.Data",
 							slog.String("x5dErr" , x5dErr.Error()),
@@ -595,7 +595,7 @@ func Post(rw http.ResponseWriter, r *http.Request){
 
 					crt, crtErr := x509.ParseCertificate(x5d)
 					if crtErr != nil {
-						notification.Show(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-reg-idp.warning-input-gen-cert")}, data)
+						notification.Show(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-reg-mde-form.warning-input-gen-cert")}, data)
 
 						slog.LogAttrs(ctx, slog.LevelError, "Post:: cannot parse x5d",
 							slog.String("crtErr" , crtErr.Error()),
@@ -608,7 +608,7 @@ func Post(rw http.ResponseWriter, r *http.Request){
 
 					mCrt, mCrtErr := json.Marshal(crt)
 					if mCrtErr != nil {
-						notification.Show(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-reg-idp.warning-input-marshal-cert")}, data)
+						notification.Show(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-reg-mde-form.warning-input-marshal-cert")}, data)
 
 						slog.LogAttrs(ctx, slog.LevelError, "Post:: marshal crt",
 							slog.String("crtErr" , crtErr.Error()),
@@ -642,13 +642,151 @@ func Post(rw http.ResponseWriter, r *http.Request){
 				ssoUrlBnd[i] = sso.Binding
 			}
 
-			postErr := PostIdp(&ctx, ssd.Logger, ssd.Conn, ssd.TntId, idpNm, mtd.EntityID, ipcCrt, cruNm, ipcIncTs, ipcExpTs, mdeUrl, sloUrl, sloUrlBnd, ssoUrl, ssoUrlBnd, data.User.AurNm, nil)
+			postErr := PostIdp(&ctx, ssd.Logger, ssd.Conn, ssd.TntId, idpNm, mtd.EntityID, ipcCrt, cruNm, ipcIncTs, ipcExpTs, &mdeUrl, sloUrl, sloUrlBnd, ssoUrl, ssoUrlBnd, data.User.AurNm, nil)
 			if postErr != nil {
 				error.IntSrv(ctx, rw, postErr)
 				return
 			}
 
-			notification.Show(ctx, ssd.Logger, rw, r, "success" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-reg-idp.message-input-success", "idpNm", idpNm)}, data)
+			rw.Header().Set("HX-Trigger", "mod")
+
+			notification.Show(ctx, ssd.Logger, rw, r, "success" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-reg-mde-form.message-input-success", "idpNm", idpNm)}, data)
+
+		case "xml":
+			mpfErr := r.ParseMultipartForm(200 * 1024)
+			if mpfErr != nil {
+				error.IntSrv(ctx, rw, mpfErr)
+				return
+			}
+
+			idpNm := form.VText(r, "s2c-tnt-reg-xml-idp-nm")
+
+			xmlFile, _, xmlFileErr := r.FormFile("s2c-tnt-reg-xml-file")
+			if xmlFileErr != nil {
+				error.IntSrv(ctx, rw, xmlFileErr)
+				return
+			}
+
+			ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Post::get data from xml form",
+				slog.String("idpNm" , idpNm),
+			)
+
+			mtdRaw, mtdRawErr := io.ReadAll(xmlFile)
+			if mtdRawErr != nil {
+				notification.Show(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-reg-xml-form.warning-input-unreadable-xml")}, data)
+
+				ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Post:: Get XML from file",
+					slog.String("mtdRawErr" , mtdRawErr.Error()),
+					slog.String("idpNm"     , idpNm),
+				)
+
+				return
+			}
+			
+			mtd    := &gosaml2types.EntityDescriptor{}
+			mtdErr := xml.Unmarshal(mtdRaw, mtd)
+			if mtdErr != nil {
+				notification.Show(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-reg-xml-form.warning-input-read-metadata")}, data)
+
+				ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Post:: unmarshal metadata into struct",
+					slog.String("mtdErr" , mtdRawErr.Error()),
+					slog.String("idpNm"  , idpNm),
+				)
+
+				return
+			}
+
+			lkd := len(mtd.IDPSSODescriptor.KeyDescriptors)
+
+			ipcCrt    := make([][]byte    , lkd)
+			cruNm     := make([]string    , lkd)
+			ipcIncTs  := make([]time.Time , lkd)
+			ipcExpTs  := make([]time.Time , lkd)
+
+			for i, kds := range mtd.IDPSSODescriptor.KeyDescriptors {
+				for _, x5c := range kds.KeyInfo.X509Data.X509Certificates {
+					if strings.TrimSpace(x5c.Data) == "" {
+						notification.Show(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-reg-xml-form.warning-input-empty-cert")}, data)
+
+						ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Post:: x5c.Data is empty",
+							slog.Int   ("i"   , i),
+							slog.String("kds" , fmt.Sprintf("%+v", kds)),
+						)
+
+						return
+					}
+
+					x5d, x5dErr := base64.StdEncoding.DecodeString(strings.TrimSpace(x5c.Data))
+					if x5dErr != nil {
+						notification.Show(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-reg-xml-form.warning-input-decode-cert")}, data)
+
+						slog.LogAttrs(ctx, slog.LevelError, "Post:: cannot decode x5c.Data",
+							slog.String("x5dErr" , x5dErr.Error()),
+							slog.Int   ("i"      , i),
+							slog.String("kds"    , fmt.Sprintf("%+v", kds)),
+						)
+
+						return
+					}
+
+					crt, crtErr := x509.ParseCertificate(x5d)
+					if crtErr != nil {
+						notification.Show(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-reg-xml-form.warning-input-gen-cert")}, data)
+
+						slog.LogAttrs(ctx, slog.LevelError, "Post:: cannot parse x5d",
+							slog.String("crtErr" , crtErr.Error()),
+							slog.Int   ("i"      , i),
+							slog.String("kds"    , fmt.Sprintf("%+v", kds)),
+						)
+
+						return
+					}
+
+					mCrt, mCrtErr := json.Marshal(crt)
+					if mCrtErr != nil {
+						notification.Show(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-reg-xml-form.warning-input-marshal-cert")}, data)
+
+						slog.LogAttrs(ctx, slog.LevelError, "Post:: marshal crt",
+							slog.String("crtErr" , crtErr.Error()),
+							slog.Int   ("i"      , i),
+							slog.String("kds"    , fmt.Sprintf("%+v", kds)),
+						)
+
+						return
+					}
+
+					ipcCrt[i]   = mCrt
+					cruNm[i]    = kds.Use
+					ipcIncTs[i] = crt.NotBefore
+					ipcExpTs[i] = crt.NotAfter
+				}
+			}
+
+			sloUrl    := make([]string, len(mtd.IDPSSODescriptor.SingleLogoutServices))
+			sloUrlBnd := make([]string, len(mtd.IDPSSODescriptor.SingleLogoutServices))
+
+			for i, slo := range mtd.IDPSSODescriptor.SingleLogoutServices {
+				sloUrl[i]    = slo.Location
+				sloUrlBnd[i] = slo.Binding
+			}
+
+			ssoUrl    := make([]string, len(mtd.IDPSSODescriptor.SingleSignOnServices))
+			ssoUrlBnd := make([]string, len(mtd.IDPSSODescriptor.SingleSignOnServices))
+
+			for i, sso := range mtd.IDPSSODescriptor.SingleSignOnServices {
+				ssoUrl[i]    = sso.Location
+				ssoUrlBnd[i] = sso.Binding
+			}
+
+			postErr := PostIdp(&ctx, ssd.Logger, ssd.Conn, ssd.TntId, idpNm, mtd.EntityID, ipcCrt, cruNm, ipcIncTs, ipcExpTs, nil, sloUrl, sloUrlBnd, ssoUrl, ssoUrlBnd, data.User.AurNm, nil)
+			if postErr != nil {
+				error.IntSrv(ctx, rw, postErr)
+				return
+			}
+
+			rw.Header().Set("HX-Trigger", "mod")
+
+			notification.Show(ctx, ssd.Logger, rw, r, "success" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-reg-xml-form.message-input-success", "idpNm", idpNm)}, data)
 	}
 
 	ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Post::end")
