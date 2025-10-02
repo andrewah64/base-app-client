@@ -38,6 +38,25 @@ import (
 	gosaml2types "github.com/russellhaering/gosaml2/types"
 )
 
+func idpParams(idpNm string, idpEntityId string, idpEnabled *bool, pageNumber int) string {
+	v := url.Values{}
+
+	v.Set("s2c-tnt-inf-idp-nm"        , idpNm)
+
+	v.Set("s2c-tnt-inf-idp-entity-id" , idpEntityId)
+
+	switch idpEnabled {
+		case nil:
+			v.Set("s2c-tnt-inf-idp-enabled" , "")
+		default :
+			v.Set("s2c-tnt-inf-idp-enabled" , strconv.FormatBool(*idpEnabled))
+	}
+
+	v.Set("s2c-tnt-inf-idp-page-number" , strconv.Itoa(pageNumber))
+
+	return v.Encode()
+}
+
 func spcParams(spcNm string, spcIncTs *time.Time, spcExpTs *time.Time, spcEnabled *bool, pageNumber int) string {
 	v := url.Values{}
 
@@ -171,6 +190,12 @@ func Get(rw http.ResponseWriter, r *http.Request){
 				return
 			}
 
+			idpInfRs, idpInfRsErr := GetIdpInf(&ctx, ssd.Logger, ssd.Conn, ssd.TntId, "", "", nil, offset, resultLimit)
+			if idpInfRsErr != nil {
+				error.IntSrv(ctx, rw, idpInfRsErr)
+				return
+			}
+
 			s2cInfRs, s2cInfRsErr := GetS2cInf(&ctx, ssd.Logger, ssd.Conn, ssd.TntId)
 			if s2cInfRsErr != nil {
 				error.IntSrv(ctx, rw, s2cInfRsErr)
@@ -194,11 +219,13 @@ func Get(rw http.ResponseWriter, r *http.Request){
 			}
 
 			data.ResultSet = &map[string]any{
+				"Idp"         : &idpInfRs,
 				"S2c"         : &s2cInfRs,
 				"S2g"         : &s2gInfRs,
 				"Spc"         : &spcInfRs,
 				"PageNumber"  : pageNumber,
 				"ResultLimit" : resultLimit,
+				"IdpParams"   : idpParams("", "" , nil,      pageNumber),
 				"SpcParams"   : spcParams("", nil, nil, nil, pageNumber),
 			}
 
@@ -287,6 +314,86 @@ func Get(rw http.ResponseWriter, r *http.Request){
 			rw.Header().Set("HX-Trigger", "src")
 
 			html.Tmpl(ctx, ssd.Logger, rw, r, "core/auth/s2c/tnt/template/res-spc", http.StatusOK, &data)
+
+			ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Get::end [search]")
+
+		case "s2c-tnt-inf-idp-scr" : // idp infinite scroll
+			pfErr := r.ParseForm()
+			if pfErr != nil {
+				error.IntSrv(ctx, rw, pfErr)
+				return
+			}
+
+			idpNm       := form.VText (r, "s2c-tnt-inf-idp-nm")
+			idpEntityId := form.VText (r, "s2c-tnt-inf-idp-entity-id")
+			idpEnabled  := form.PBool (r, "s2c-tnt-inf-idp-enabled")
+			pageNumber  := form.VInt  (r, "s2c-tnt-inf-idp-page-number")
+			offset      := (pageNumber - 1) * resultLimit
+
+			ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Get::get data from form",
+				slog.String("idpNm"       , idpNm),
+				slog.String("idpEntityId" , idpEntityId),
+				slog.Any   ("idpEnabled"  , idpEnabled),
+				slog.Int   ("pageNumber"  , pageNumber),
+				slog.Int   ("offset"      , offset),
+			)
+
+			idpInfRs, idpInfRsErr := GetIdpInf(&ctx, ssd.Logger, ssd.Conn, ssd.TntId, idpNm, idpEntityId, idpEnabled, offset, resultLimit)
+			if idpInfRsErr != nil {
+				error.IntSrv(ctx, rw, idpInfRsErr)
+				return
+			}
+
+			ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Get::retrieve datasets",
+				slog.Int("len(idpInfRs)" , len(idpInfRs)),
+			)
+
+			data.ResultSet = &map[string]any{
+				"Idp"         : &idpInfRs,
+				"IdpParams"   : idpParams(idpNm, idpEntityId, idpEnabled, pageNumber + 1),
+				"ResultLimit" : resultLimit,
+			}
+
+			rw.Header().Set("HX-Trigger", "inf")
+
+			html.Tmpl(ctx, ssd.Logger, rw, r, "core/auth/s2c/tnt/template/res-idp", http.StatusOK, &data)
+
+			ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Get::end [infinite scroll]")
+
+		case "s2c-tnt-inf-idp-form" : // idp search
+			pfErr := r.ParseForm()
+			if pfErr != nil {
+				error.IntSrv(ctx, rw, pfErr)
+				return
+			}
+
+			idpNm       := form.VText (r, "s2c-tnt-inf-idp-nm")
+			idpEntityId := form.VText (r, "s2c-tnt-inf-idp-entity-id")
+			idpEnabled  := form.PBool (r, "s2c-tnt-inf-idp-enabled")
+			pageNumber  := form.VInt  (r, "s2c-tnt-inf-idp-page-number")
+
+			ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Get::get data from form",
+				slog.String("idpNm"       , idpNm),
+				slog.String("idpEntityId" , idpEntityId),
+				slog.Any   ("idpEnabled"  , idpEnabled),
+				slog.Int   ("pageNumber"  , pageNumber),
+			)
+
+			idpInfRs, idpInfRsErr := GetIdpInf(&ctx, ssd.Logger, ssd.Conn, ssd.TntId, idpNm, idpEntityId, idpEnabled, offset, resultLimit)
+			if idpInfRsErr != nil {
+				error.IntSrv(ctx, rw, idpInfRsErr)
+				return
+			}
+
+			data.ResultSet = &map[string]any{
+				"Idp"         : &idpInfRs,
+				"IdpParams"   : idpParams(idpNm, idpEntityId, idpEnabled, pageNumber),
+				"ResultLimit" : resultLimit,
+			}
+
+			rw.Header().Set("HX-Trigger", "src")
+
+			html.Tmpl(ctx, ssd.Logger, rw, r, "core/auth/s2c/tnt/template/res-idp", http.StatusOK, &data)
 
 			ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Get::end [search]")
 	}

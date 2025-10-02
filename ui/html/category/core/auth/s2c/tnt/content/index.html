@@ -767,51 +767,70 @@
 					</div>
 					<div class="col-start-2 row-start-1 flex items-center gap-6">
 						<h2 class="text-base font-semibold text-gray-900">
-							Filters
+							{{.T "web-core-auth-s2c-tnt-inf-idp-form.filter-header"}}
 						</h2>
 
-						<img id="???"
+						<img id="s2c-tnt-inf-idp-form-indicator"
 						     class="htmx-indicator htmx-spinner"
 						     src="/static/img/spinner-black.svg"
 						     alt="Progress indicator">
 					</div>
 					<div class="col-start-2 row-start-2">
-						<form>
-							<fieldset><!--
+						<form id="s2c-tnt-inf-idp-form"
+						      hx-swap="innerHTML"
+						      hx-get="/web/core/auth/s2c/tnt"
+						      hx-target="#s2c-tnt-inf-idp-res"
+						      hx-trigger="mod from:body, change, keyup delay:200ms"
+						      hx-indicator="#s2c-tnt-inf-idp-form-indicator">
+							<fieldset>
 								<input type="hidden"
-								       name="key-aur-inf-page-number"
-								       id="key-aur-inf-page-number"
-value="{{ .ResultSet.PageNumber }}">-->
+								       name="s2c-tnt-inf-idp-page-number"
+								       id="s2c-tnt-inf-idp-page-number"
+								       value="{{ .ResultSet.PageNumber }}">
 
-								<div class="grid grid-rows-2 grid-cols-2 w-fit">
+								<div class="grid grid-rows-2 grid-cols-3 w-fit">
 									<div>
 										<p class="col-start-1 row-start-1 mt-2 max-w-4xl text-sm text-gray-500">
-											<label for="key-aur-inf-aauk-nm">
-												Name
+											<label for="s2c-tnt-inf-idp-nm">
+												{{.T "web-core-auth-s2c-tnt-inf-idp-form.label-nm"}}
 											</label>
 										</p>
 									</div>
 									<div class="col-start-1 row-start-2 flex items-center rounded-md bg-white pl-3 outline-1 -outline-offset-1 outline-gray-300 focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-indigo-600">
 										<input type="text"
-										       name="key-aur-inf-aauk-nm"
-										       id="key-aur-inf-aauk-nm"
+										       name="s2c-tnt-inf-idp-nm"
+										       id="s2c-tnt-inf-idp-nm"
 										       class="block min-w-0 grow py-1.5 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6">
 									</div>
 
 									<div>
 										<p class="col-start-2 row-start-1 mt-2 max-w-4xl text-sm text-gray-500">
-											<label for="key-aur-inf-aauk-nm">
-												Enabled
+											<label for="s2c-tnt-inf-idp-entity-id">
+												{{.T "web-core-auth-s2c-tnt-inf-idp-form.label-entity-id"}}
 											</label>
 										</p>
 									</div>
-									<div class="col-start-2 row-start-2">
-										<select name="aur-tnt-inf-aur-enabled"
-											id="aur-tnt-inf-aur-enabled"
+									<div class="col-start-2 row-start-2 flex items-center rounded-md bg-white pl-3 outline-1 -outline-offset-1 outline-gray-300 focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-indigo-600">
+										<input type="text"
+										       name="s2c-tnt-inf-idp-entity-id"
+										       id="s2c-tnt-inf-idp-entity-id"
+										       class="block min-w-0 grow py-1.5 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6">
+									</div>
+
+									<div>
+										<p class="col-start-3 row-start-1 mt-2 max-w-4xl text-sm text-gray-500">
+											<label for="s2c-tnt-inf-idp-enabled">
+												{{.T "web-core-auth-s2c-tnt-inf-idp-form.label-enabled"}}
+											</label>
+										</p>
+									</div>
+									<div class="col-start-3 row-start-2">
+										<select name="s2c-tnt-inf-idp-enabled"
+											id="s2c-tnt-inf-idp-enabled"
 											class="w-full appearance-none rounded-md bg-white py-1.5 pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6">
-											<option value="">{{.T "web-core-auth-aur-tnt-inf-form.input-option-aur-enabled-all"}}</option>
-											<option value="true">{{.T "web-core-auth-aur-tnt-inf-form.input-option-aur-enabled-yes"}}</option>
-											<option value="false">{{.T "web-core-auth-aur-tnt-inf-form.input-option-aur-enabled-no"}}</option>
+											<option value="">{{.T "web-core-auth-s2c-tnt-inf-idp-form.input-option-idp-enabled-all"}}</option>
+											<option value="true">{{.T "web-core-auth-s2c-tnt-inf-idp-form.input-option-idp-enabled-yes"}}</option>
+											<option value="false">{{.T "web-core-auth-s2c-tnt-inf-idp-form.input-option-idp-enabled-no"}}</option>
 										</select>
 									</div>
 								</div>
@@ -823,25 +842,25 @@ value="{{ .ResultSet.PageNumber }}">-->
 				<div>
 					<form hx-swap="none">
 						<div class="pb-[100px]">
-							<table id="key-aur-inf-res"
+							<table id="s2c-tnt-inf-idp-res"
 							       class="min-w-full divide-y divide-gray-300">
-								<!-- MY TEMPLATE -->
+								{{ template "res-idp" . }}
 							</table>
 						</div>
 						<div class="fixed bottom-0 left-0 w-full h-[100px] bg-white flex items-center justify-end pr-4 border-t border-gray-200">
 							<button type="submit"
-								class="relative flex rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-								hx-delete="/web/core/auth/key/aur">
+							        class="relative flex rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+							        hx-delete="/web/core/auth/s2c/tnt/idp">
 								<img class="htmx-indicator htmx-spinner absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
 								     src="/static/img/spinner-white.svg"
 								     alt="Progress indicator">
-								<span id="key-aur-inf-dgd-btn-txt"
+								<span id="s2c-tnt-inf-idp-dgd-btn-txt"
 								      class="htmx-indicator htmx-text">
-									{{.T "web-core-auth-key-aur-del-form.delete-button-label"}} (0)
+									{{.T "web-core-auth-s2c-tnt-del-idp-form.delete-button-label"}} (0)
 								</span>
-								<span id="key-aur-inf-dgd-btn-tmp-txt"
+								<span id="s2c-tnt-inf-idp-dgd-btn-tmp-txt"
 								      class="hidden">
-									{{.T "web-core-auth-key-aur-del-form.delete-button-label"}}
+									{{.T "web-core-auth-s2c-tnt-del-idp-form.delete-button-label"}}
 								</span>
 							</button>
 						</div>

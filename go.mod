@@ -1,8 +1,8 @@
 module github.com/andrewah64/base-app-client
 
-go 1.24
+go 1.25
 
-toolchain go1.24.2
+toolchain go1.25.1
 
 require (
 	github.com/BurntSushi/toml v1.5.0

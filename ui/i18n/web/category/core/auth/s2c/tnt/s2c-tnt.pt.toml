@@ -4,16 +4,149 @@ descr-edit                            = "Change the way users are authenticated 
 descr-view                            = "Review SAML2 configuration"
 header-edit                           = "Configure SAML2-based authentication"
 header-view                           = "View SAML2-based authentication configuration"
+tab-cdf                               = "Certificate configuration"
+tab-gen                               = "General configuration"
+tab-idp                               = "Manage IdPs"
+tab-spc                               = "Manage SP certificates"
 title-edit                            = "<Application> : Configure SAML2-based authentication"
 title-view                            = "<Application> : View SAML2-based authentication configuration"
 
-[web-core-auth-s2c-tnt-mod-gen-form]
+[web-core-auth-s2c-tnt-mod-cdf-form]
 
-input-label-edit-aum-id               = "Authentication method"
-label-view-acs-url                    = "Assertion Consumer Service URL"
-label-view-mtd-url                    = "Service Provider metadata URL"
-label-view-aum-id                     = "Authentication method"
+descr                                 = "Define the values to be embedded into new X509 encryption and signing certificates"
+header                                = "Configure certificate pairs"
+label-crt-cn                          = "Common name (required)"
+label-crt-org                         = "Organisation name (required)"
+message-crt-cn-pattern                = "Common names cannot consist only of whitespace"
+message-crt-org-pattern               = "Organisation names cannot consist only of whitespace"
 message-input-success                 = "Changes were applied successfully"
 submit-button-label                   = "Save"
 warning-input-olock-error             = "Another user modified the record"
 warning-input-unexpected-error        = "Unexpected error"
+
+[web-core-auth-s2c-tnt-mod-gen-form]
+
+descr                                 = "Enable/disable and configure the mode of SAML2 authentication"
+header                                = "General SAML2 configuration"
+label-acs-url                         = "Service provider: assertion consumer service URL"
+label-aum-id                          = "Service provider: authentication method (required)"
+label-enabled                         = "Service provider: enabled"
+label-entity-id                       = "Service provider: entity ID (required)"
+label-mtd-url                         = "Service provider: metadata URL"
+label-spc-ok                          = "Service provider: enabled, valid certificate pair"
+message-entity-id-pattern             = "Entity IDs cannot consist only of whitespace"
+message-input-success                 = "Changes were applied successfully"
+submit-button-label                   = "Save"
+warning-input-olock-error             = "Another user modified the record"
+warning-input-unexpected-error        = "Unexpected error"
+
+[web-core-auth-s2c-tnt-reg-mde-form]
+
+descr                                 = "Supply the URL from which an IdP's metadata can be retrieved"
+header                                = "Register identity providers"
+label-idp-nm                          = "IdP name"
+label-mde-url                         = "Metadata URL"
+submit-button-label                   = "Register"
+warning-input-decode-cert             = "Unexpected error"
+warning-input-empty-cert              = "The provided certificate is empty"
+warning-input-empty-response          = "The response from the metadata URL was empty"
+warning-input-gen-cert                = "Unexpected error"
+warning-input-marshal-cert            = "Unexpected error"
+warning-input-read-metadata           = "The metadata could not be read"
+message-input-success                 = "The IdP '{{.idpNm}}' was registered"
+warning-input-unreadable-response     = "The response from the metadata URL could not be read"
+
+[web-core-auth-s2c-tnt-reg-xml-form]
+
+descr                                 = "Supply an XML file containing an IdP's metadata"
+header                                = "Register IDP using XML file"
+label-idp-nm                          = "IdP name"
+label-xml-file                        = "XML file"
+submit-button-label                   = "Register"
+upload-button-label                   = "Choose a file..."
+warning-input-decode-cert             = "Unexpected error"
+warning-input-empty-cert              = "The provided certificate is empty"
+warning-input-gen-cert                = "Unexpected error"
+warning-input-marshal-cert            = "Unexpected error"
+warning-input-read-metadata           = "The metadata could not be read"
+message-input-success                 = "The IdP '{{.idpNm}}' was registered"
+warning-input-unreadable-response     = "The XML file's content is unreadable"
+
+[web-core-auth-s2c-tnt-del-spc-form]
+
+delete-button-label                   = "Delete"
+message-delete-success-plural         = "{{.n}} cert pairs were deleted"
+message-delete-success-singular       = "{{.n}} cert pair was deleted"
+
+[web-core-auth-s2c-tnt-inf-spc-form]
+
+descr                                 = "Search for & manage self-signed X509 encryption and signing certificates"
+filter-header                         = "Filters"
+header                                = "Search certificate pairs"
+input-option-spc-enabled-all          = "All"
+input-option-spc-enabled-no           = "No"
+input-option-spc-enabled-yes          = "Yes"
+label-enabled                         = "Enabled"
+label-exp-ts                          = "Valid to"
+label-inc-ts                          = "Valid from"
+label-nm                              = "Name"
+
+[web-core-auth-s2c-tnt-inf-spc-results]
+
+edit-button-label                     = "Edit"
+header-label-cn-nm                    = "Common name"
+header-label-enabled                  = "Enabled"
+header-label-exp-ts                   = "Valid to"
+header-label-inc-ts                   = "Valid from"
+header-label-spc-nm                   = "Name"
+
+[web-core-auth-s2c-tnt-mod-spc-form]
+
+message-input-success                 = "The cert pair was successfully edited"
+save-button-label                     = "Save"
+warning-input-olock-error             = "Another user modified this record"
+warning-input-spc-enabled             = "Another cert pair is enabled. Disable it first."
+warning-input-spc-nm-taken            = "'{{.spcNm}}' is taken"
+warning-input-spc-ts                  = "Expired certs cannot be enabled"
+warning-input-unexpected-error        = "Unexpected error"
+
+[web-core-auth-s2c-tnt-reg-spc-form]
+
+descr                                 = "Create new self-signed X509 encryption and signing certificates"
+header                                = "Create certicate pairs"
+label-exp-ts                          = "Valid to"
+label-inc-ts                          = "Valid from"
+label-nm                              = "Name"
+message-input-success                 = "New certificates were created"
+message-spc-nm-pattern                = "SAML2 certificates pairs names' cannot consist only of whitespace"
+submit-button-label                   = "Create"
+title-warning-plural                  = "{{.n}} problems were identified which will prevent the cert pair from being registered"
+title-warning-singular                = "{{.n}} problem was identified which will prevent the cert pair from being registered"
+warning-input-spc-nm-taken            = "'{{.spcNm}}' is taken"
+warning-input-unexpected-error        = "Unexpected error"
+
+[web-core-auth-s2c-tnt-del-idp-form]
+
+delete-button-label                   = "Delete"
+message-delete-success-plural         = "{{.n}} cert pairs were deleted"
+message-delete-success-singular       = "{{.n}} cert pair was deleted"
+
+[web-core-auth-s2c-tnt-inf-idp-form]
+
+filter-header                         = "Filters"
+input-option-idp-enabled-all          = "All"
+input-option-idp-enabled-no           = "No"
+input-option-idp-enabled-yes          = "Yes"
+label-enabled                         = "Enabled"
+label-entity-id                       = "Entity Id"
+label-nm                              = "Name"
+
+[web-core-auth-s2c-tnt-inf-idp-results]
+
+edit-button-label                     = "Edit"
+header-label-enabled                  = "Enabled"
+header-label-idp-entity-id            = "Entity Id"
+header-label-idp-nm                   = "Name"
+header-label-num-mde                  = "#MDE"
+header-label-num-slo                  = "#SLO"
+header-label-num-sso                  = "#SSO"

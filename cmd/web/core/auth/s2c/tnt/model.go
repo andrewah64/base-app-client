@@ -84,6 +84,44 @@ func Opts (ctx *context.Context, logger *slog.Logger, conn *pgxpool.Conn, tntId 
 	return &idValMap, nil
 }
 
+type IdpInf struct {
+	IdpId       int
+	IdpNm       string
+	IdpEntityId string
+	IdpEnabled  bool
+	NumMde      int
+	NumSso      int
+	NumSlo      int
+}
+
+func GetIdpInf (ctx *context.Context, logger *slog.Logger, conn *pgxpool.Conn, tntId int, idpNm string, idpEntityId string, idpEnabled *bool, offset int, limit int) ([]IdpInf, error) {
+	rs, rErr := db.DataSet[IdpInf](ctx, logger, conn,
+		func(ctx *context.Context, tx *pgx.Tx)(string, string, *pgx.Rows, error){
+			dbFunc := "idp_inf"
+			qry    := fmt.Sprintf("select web_core_auth_s2c_tnt_inf.%v($1, $2, $3, $4, $5, $6, $7)", dbFunc)
+
+			c, cErr := (*tx).Query(*ctx, qry, dbFunc, tntId, idpNm, idpEntityId, idpEnabled, offset, limit)
+			if cErr != nil {
+				slog.LogAttrs(*ctx, slog.LevelError, "get dataset",
+					slog.String("error"       , cErr.Error()),
+					slog.String("qry"         , qry),
+					slog.Int   ("tntId"       , tntId),
+					slog.String("idpNm"       , idpNm),
+					slog.String("idpEntityId" , idpEntityId),
+					slog.Any   ("idpEnabled"  , idpEnabled),
+					slog.Int   ("offset"      , offset),
+					slog.Int   ("limit"       , limit),
+				)
+
+				return qry, dbFunc, nil, fmt.Errorf("call database function: %w", cErr)
+			}
+
+			return qry, dbFunc, &c, nil
+		})
+
+	return rs, rErr
+}
+
 type UtsInf struct {
 	Uts time.Time
 }
@@ -221,6 +259,8 @@ func GetSpcInf (ctx *context.Context, logger *slog.Logger, conn *pgxpool.Conn, t
 					slog.Any   ("spcIncTs"   , spcIncTs),
 					slog.Any   ("spcExpTs"   , spcExpTs),
 					slog.Any   ("spcEnabled" , spcEnabled),
+					slog.Int   ("offset"     , offset),
+					slog.Int   ("limit"      , limit),
 				)
 
 				return qry, dbFunc, nil, fmt.Errorf("call database function: %w", cErr)
