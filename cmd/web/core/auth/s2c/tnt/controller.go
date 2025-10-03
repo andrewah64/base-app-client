@@ -795,7 +795,7 @@ func Post(rw http.ResponseWriter, r *http.Request){
 			notification.Show(ctx, ssd.Logger, rw, r, "success" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-reg-mde-form.message-input-success", "idpNm", idpNm)}, data)
 
 		case "xml":
-			mpfErr := r.ParseMultipartForm(200 * 1024)
+			mpfErr := r.ParseMultipartForm(200 * 1024) // 200 Kb file upload limit
 			if mpfErr != nil {
 				error.IntSrv(ctx, rw, mpfErr)
 				return
