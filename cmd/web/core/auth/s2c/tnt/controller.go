@@ -106,6 +106,41 @@ func Delete (rw http.ResponseWriter, r *http.Request) {
 	}
 
 	switch r.PathValue("nm") {
+		case "idp" :
+			pfErr := r.ParseForm()
+			if pfErr != nil {
+				error.IntSrv(ctx, rw, pfErr)
+				return
+			}
+
+			idpId, idpIdErr := form.VIntArray(r, "s2c-tnt-inf-idp-id")
+			if idpIdErr != nil {
+				error.IntSrv(ctx, rw, idpIdErr)
+				return
+			}
+
+			if len(idpId) > 0 {
+				delErr := DelIdp(&ctx, ssd.Logger, ssd.Conn, ssd.TntId, idpId, nil)
+				if delErr != nil{
+					error.IntSrv(ctx, rw, delErr)
+					return
+				}
+
+				ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Delete::success")
+
+				rw.Header().Set("HX-Trigger", "mod")
+
+				message := ""
+
+				if len(idpId) == 1 {
+					message = data.T("web-core-auth-s2c-tnt-del-idp-form.message-delete-success-singular", "n", strconv.Itoa(len(idpId)))
+				} else {
+					message = data.T("web-core-auth-s2c-tnt-del-idp-form.message-delete-success-plural"  , "n", strconv.Itoa(len(idpId)))
+				}
+
+				notification.Show(ctx, ssd.Logger, rw, r, "success" , &map[string]string{"Message" : message}, data)
+			}
+
 		case "spc" :
 			pfErr := r.ParseForm()
 			if pfErr != nil {

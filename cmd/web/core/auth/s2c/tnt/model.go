@@ -16,6 +16,31 @@ import (
 	"github.com/andrewah64/base-app-client/internal/common/core/db"
 )
 
+func DelIdp (ctx *context.Context, logger *slog.Logger, conn *pgxpool.Conn, tntId int, idpId []int, exptErrs []string) error {
+	var (
+		sprocCall   = "call web_core_auth_s2c_tnt_mod.del_idp(@p_tnt_id, @p_idp_id)"
+		sprocParams = pgx.NamedArgs{
+			"p_tnt_id" : tntId,
+			"p_idp_id" : idpId,
+		}
+	)
+
+	sprocErr := db.Sproc(ctx, logger, conn, sprocCall, sprocParams, exptErrs)
+	if sprocErr != nil {
+		logger.LogAttrs(*ctx, slog.LevelDebug, "call sproc",
+			slog.String("sprocCall" , sprocCall),
+			slog.String("error"     , sprocErr.Error()),
+			slog.Int   ("tntId"     , tntId),
+			slog.Any   ("idpId"     , idpId),
+			slog.Any   ("exptErrs"  , exptErrs),
+		)
+
+		return sprocErr
+	}
+
+	return nil
+}
+
 func DelSpc (ctx *context.Context, logger *slog.Logger, conn *pgxpool.Conn, tntId int, spcId []int, exptErrs []string) error {
 	var (
 		sprocCall   = "call web_core_auth_s2c_tnt_mod.del_spc(@p_tnt_id, @p_spc_id)"

@@ -128,8 +128,8 @@ warning-input-unexpected-error        = "Unexpected error"
 [web-core-auth-s2c-tnt-del-idp-form]
 
 delete-button-label                   = "Delete"
-message-delete-success-plural         = "{{.n}} cert pairs were deleted"
-message-delete-success-singular       = "{{.n}} cert pair was deleted"
+message-delete-success-plural         = "{{.n}} IdPs were deleted"
+message-delete-success-singular       = "{{.n}} IdP was deleted"
 
 [web-core-auth-s2c-tnt-inf-idp-form]
 
