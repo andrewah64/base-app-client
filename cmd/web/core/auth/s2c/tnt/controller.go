@@ -128,7 +128,7 @@ func Delete (rw http.ResponseWriter, r *http.Request) {
 
 				ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Delete::success")
 
-				rw.Header().Set("HX-Trigger", "mod")
+				rw.Header().Set("HX-Trigger", `{"mod":{"target":"#s2c-tnt-inf-idp-form"}}`)
 
 				message := ""
 
@@ -163,7 +163,7 @@ func Delete (rw http.ResponseWriter, r *http.Request) {
 
 				ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Delete::success")
 
-				rw.Header().Set("HX-Trigger", "mod")
+				rw.Header().Set("HX-Trigger", `{"mod":{"target":"#s2c-tnt-inf-spc-form"}}`)
 
 				message := ""
 
@@ -643,7 +643,7 @@ func Post(rw http.ResponseWriter, r *http.Request){
 				return
 			}
 
-			rw.Header().Set("HX-Trigger", "mod")
+			rw.Header().Set("HX-Trigger", `{"mod":{"target":"#s2c-tnt-inf-spc-form"}}`)
 
 			notification.Show(ctx, slog.Default(), rw, r, "success", &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-reg-spc-form.message-input-success")} , data)
 
@@ -790,7 +790,7 @@ func Post(rw http.ResponseWriter, r *http.Request){
 				return
 			}
 
-			rw.Header().Set("HX-Trigger", "mod")
+			rw.Header().Set("HX-Trigger", `{"mod":{"target":"#s2c-tnt-inf-idp-form"}}`)
 
 			notification.Show(ctx, ssd.Logger, rw, r, "success" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-reg-mde-form.message-input-success", "idpNm", idpNm)}, data)
 
@@ -926,7 +926,7 @@ func Post(rw http.ResponseWriter, r *http.Request){
 				return
 			}
 
-			rw.Header().Set("HX-Trigger", "mod")
+			rw.Header().Set("HX-Trigger", `{"mod":{"target":"#s2c-tnt-inf-idp-form"}}`)
 
 			notification.Show(ctx, ssd.Logger, rw, r, "success" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-reg-xml-form.message-input-success", "idpNm", idpNm)}, data)
 	}
