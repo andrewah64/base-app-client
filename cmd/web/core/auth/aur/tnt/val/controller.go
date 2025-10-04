@@ -5,6 +5,7 @@ import (
 	"log/slog"
 	"net/http"
 	"strings"
+	"strconv"
 )
 
 import (
@@ -38,7 +39,6 @@ func Get(rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	v     := validator.New()
 	aurNm := strings.ToLower(form.VText (r, "aur-tnt-reg-aur-nm"))
 
 	ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Get::get result of validation",
@@ -63,7 +63,7 @@ func Get(rw http.ResponseWriter, r *http.Request) {
 	}
 
 	notification.Vrl(ctx, ssd.Logger, rw, r,
-		data.T("web-core-auth-aur-tnt-page.title-edit"),
+		data.T("web-core-auth-aur-tnt-page.title"),
 		data.T("web-core-auth-aur-tnt-reg-form.title-warning-singular", "n", strconv.Itoa(len(msgs))),
 		data.T("web-core-auth-aur-tnt-reg-form.title-warning-plural"  , "n", strconv.Itoa(len(msgs))),
 		&msgs,
