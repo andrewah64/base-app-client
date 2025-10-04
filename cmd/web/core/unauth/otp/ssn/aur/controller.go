@@ -155,6 +155,6 @@ func Post(rw http.ResponseWriter, r *http.Request){
 
 		rw.Header().Set("HX-Redirect", aurRs[0].EppPt)
 	} else {
-		notification.Show(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-unauth-otp-ssn-aur-mod-form.error-otp-cd")}, data)
+		notification.Toast(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-unauth-otp-ssn-aur-mod-form.error-otp-cd")}, data)
 	}
 }

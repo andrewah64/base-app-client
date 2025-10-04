@@ -16,7 +16,7 @@ import (
 )
 
 type IdpInf struct {
-	IdpNmOk string
+	IdpNmOk bool
 }
 
 func GetIdpInf (ctx *context.Context, logger *slog.Logger, conn *pgxpool.Conn, tntId int, idpNm string) ([]IdpInf, error) {

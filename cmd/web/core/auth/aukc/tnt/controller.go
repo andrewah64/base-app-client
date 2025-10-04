@@ -40,7 +40,7 @@ func Get(rw http.ResponseWriter, r *http.Request){
 	p := r.URL.Query()
 
 	if p.Has("ntf") && p.Has("lvl"){
-		notification.Show(ctx, slog.Default(), rw, r, p.Get("lvl"), &map[string]string{"Message" : data.T(p.Get("ntf"))} , data)
+		notification.Toast(ctx, slog.Default(), rw, r, p.Get("lvl"), &map[string]string{"Message" : data.T(p.Get("ntf"))} , data)
 	}
 
 	aukcInfRs, aukcInfRsErr := GetAukcInf(&ctx, ssd.Logger, ssd.Conn, ssd.TntId)
@@ -187,7 +187,7 @@ func Patch(rw http.ResponseWriter, r *http.Request){
 						slog.Any   ("uts"              , uts),
 					)
 
-					notification.Show(ctx, slog.Default(), rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-aukc-tnt-mod-form.warning-input-aukc-unexpected-error")}, data)
+					notification.Toast(ctx, slog.Default(), rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-aukc-tnt-mod-form.warning-input-aukc-unexpected-error")}, data)
 			}
 		}
 
@@ -202,7 +202,7 @@ func Patch(rw http.ResponseWriter, r *http.Request){
 
 	html.HiddenUtsFragment(rw, "aukc-tnt-mod-uts-ctr", "aukc-tnt-mod-uts", "aukc-tnt-mod-uts", aukcUtsInfRs[0].Uts, data.TFT())
 
-	notification.Show(ctx, slog.Default(), rw, r, "success", &map[string]string{"Message" : data.T("web-core-auth-aukc-tnt-mod-form.message-input-success")} , data)
+	notification.Toast(ctx, slog.Default(), rw, r, "success", &map[string]string{"Message" : data.T("web-core-auth-aukc-tnt-mod-form.message-input-success")} , data)
 
 	ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Patch::end")
 }

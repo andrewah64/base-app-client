@@ -68,7 +68,7 @@ func Get(rw http.ResponseWriter, r *http.Request) {
 			html.Fragment(ctx, ssd.Logger, rw, r, "core/auth/s2c/tnt/fragment/modrow-idp", http.StatusCreated, &data)
 
 			if len(idpRs) == 0 {
-				notification.Show(ctx, slog.Default(), rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-mod-idp-form.warning-input-olock-error")}, data)
+				notification.Toast(ctx, slog.Default(), rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-mod-idp-form.warning-input-olock-error")}, data)
 			}
 
 		case "spc" :
@@ -94,7 +94,7 @@ func Get(rw http.ResponseWriter, r *http.Request) {
 			html.Fragment(ctx, ssd.Logger, rw, r, "core/auth/s2c/tnt/fragment/modrow-spc", http.StatusCreated, &data)
 
 			if len(spcRs) == 0 {
-				notification.Show(ctx, slog.Default(), rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-mod-spc-form.warning-input-olock-error")}, data)
+				notification.Toast(ctx, slog.Default(), rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-mod-spc-form.warning-input-olock-error")}, data)
 			}
 	}
 
@@ -153,7 +153,7 @@ func Patch(rw http.ResponseWriter, r *http.Request) {
 			if ! idpValRs[0].IdpNmOk {
 				Get(rw, r)
 
-				notification.Show(ctx, slog.Default(), rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-mod-idp-form.warning-input-idp-nm-taken", "idpNm" , idpNm)}, data)
+				notification.Toast(ctx, slog.Default(), rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-mod-idp-form.warning-input-idp-nm-taken", "idpNm" , idpNm)}, data)
 
 				return
 			}
@@ -180,13 +180,13 @@ func Patch(rw http.ResponseWriter, r *http.Request) {
 
 					switch pgErr.Code {
 						case "OLOKU":
-							notification.Show(ctx, slog.Default(), rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-mod-idp-form.warning-input-olock-error")}, data)
+							notification.Toast(ctx, slog.Default(), rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-mod-idp-form.warning-input-olock-error")}, data)
 
 						case "OLOKD":
 							//intentionally empty
 
 						default:
-							notification.Show(ctx, slog.Default(), rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-mod-idp-form.warning-input-unexpected-error")}, data)
+							notification.Toast(ctx, slog.Default(), rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-mod-idp-form.warning-input-unexpected-error")}, data)
 					}
 
 					return
@@ -203,7 +203,7 @@ func Patch(rw http.ResponseWriter, r *http.Request) {
 
 			html.Fragment(ctx, ssd.Logger, rw, r, "core/auth/s2c/tnt/fragment/infrow-idp", http.StatusCreated, &data)
 
-			notification.Show(ctx, slog.Default(), rw, r, "success" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-mod-idp-form.message-input-success")}, data)
+			notification.Toast(ctx, slog.Default(), rw, r, "success" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-mod-idp-form.message-input-success")}, data)
 
 		case "spc" :
 			spcId, spcIdErr := strconv.Atoi(r.PathValue("id"))
@@ -231,7 +231,7 @@ func Patch(rw http.ResponseWriter, r *http.Request) {
 			if ! spcValRs[0].SpcNmOk {
 				Get(rw, r)
 
-				notification.Show(ctx, slog.Default(), rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-mod-spc-form.warning-input-spc-nm-taken", "spcNm" , spcNm)}, data)
+				notification.Toast(ctx, slog.Default(), rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-mod-spc-form.warning-input-spc-nm-taken", "spcNm" , spcNm)}, data)
 
 				return
 			}
@@ -239,7 +239,7 @@ func Patch(rw http.ResponseWriter, r *http.Request) {
 			if ! spcValRs[0].SpcEnabledOk {
 				Get(rw, r)
 
-				notification.Show(ctx, slog.Default(), rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-mod-spc-form.warning-input-spc-enabled")}, data)
+				notification.Toast(ctx, slog.Default(), rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-mod-spc-form.warning-input-spc-enabled")}, data)
 
 				return
 			}
@@ -247,7 +247,7 @@ func Patch(rw http.ResponseWriter, r *http.Request) {
 			if ! spcValRs[0].SpcTsOk {
 				Get(rw, r)
 
-				notification.Show(ctx, slog.Default(), rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-mod-spc-form.warning-input-spc-ts")}, data)
+				notification.Toast(ctx, slog.Default(), rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-mod-spc-form.warning-input-spc-ts")}, data)
 
 				return
 			}
@@ -274,13 +274,13 @@ func Patch(rw http.ResponseWriter, r *http.Request) {
 
 					switch pgErr.Code {
 						case "OLOKU":
-							notification.Show(ctx, slog.Default(), rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-mod-spc-form.warning-input-olock-error")}, data)
+							notification.Toast(ctx, slog.Default(), rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-mod-spc-form.warning-input-olock-error")}, data)
 
 						case "OLOKD":
 							//intentionally empty
 
 						default:
-							notification.Show(ctx, slog.Default(), rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-mod-spc-form.warning-input-unexpected-error")}, data)
+							notification.Toast(ctx, slog.Default(), rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-mod-spc-form.warning-input-unexpected-error")}, data)
 					}
 
 					return
@@ -297,7 +297,7 @@ func Patch(rw http.ResponseWriter, r *http.Request) {
 
 			html.Fragment(ctx, ssd.Logger, rw, r, "core/auth/s2c/tnt/fragment/infrow-spc", http.StatusCreated, &data)
 
-			notification.Show(ctx, slog.Default(), rw, r, "success" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-mod-spc-form.message-input-success")}, data)
+			notification.Toast(ctx, slog.Default(), rw, r, "success" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-mod-spc-form.message-input-success")}, data)
 	}
 
 	ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Patch::end")

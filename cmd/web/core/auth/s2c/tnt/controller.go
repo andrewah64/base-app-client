@@ -138,7 +138,7 @@ func Delete (rw http.ResponseWriter, r *http.Request) {
 					message = data.T("web-core-auth-s2c-tnt-del-idp-form.message-delete-success-plural"  , "n", strconv.Itoa(len(idpId)))
 				}
 
-				notification.Show(ctx, ssd.Logger, rw, r, "success" , &map[string]string{"Message" : message}, data)
+				notification.Toast(ctx, ssd.Logger, rw, r, "success" , &map[string]string{"Message" : message}, data)
 			}
 
 		case "spc" :
@@ -173,7 +173,7 @@ func Delete (rw http.ResponseWriter, r *http.Request) {
 					message = data.T("web-core-auth-s2c-tnt-del-spc-form.message-delete-success-plural"  , "n", strconv.Itoa(len(spcId)))
 				}
 
-				notification.Show(ctx, ssd.Logger, rw, r, "success" , &map[string]string{"Message" : message}, data)
+				notification.Toast(ctx, ssd.Logger, rw, r, "success" , &map[string]string{"Message" : message}, data)
 			}
 	}
 
@@ -202,7 +202,7 @@ func Get(rw http.ResponseWriter, r *http.Request){
 	p := r.URL.Query()
 
 	if p.Has("ntf") && p.Has("lvl"){
-		notification.Show(ctx, slog.Default(), rw, r, p.Get("lvl"), &map[string]string{"Message" : data.T(p.Get("ntf"))} , data)
+		notification.Toast(ctx, slog.Default(), rw, r, p.Get("lvl"), &map[string]string{"Message" : data.T(p.Get("ntf"))} , data)
 	}
 
 	pageNumber  := 2
@@ -494,7 +494,7 @@ func Patch(rw http.ResponseWriter, r *http.Request){
 								slog.Any   ("uts"        , uts),
 							)
 
-							notification.Show(ctx, slog.Default(), rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-mod-gen-form.warning-input-unexpected-error")}, data)
+							notification.Toast(ctx, slog.Default(), rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-mod-gen-form.warning-input-unexpected-error")}, data)
 
 							return
 					}
@@ -509,7 +509,7 @@ func Patch(rw http.ResponseWriter, r *http.Request){
 
 			html.HiddenUtsFragment(rw, "s2c-tnt-mod-gen-uts-ctr", "s2c-tnt-mod-gen-uts", "s2c-tnt-mod-gen-uts", s2cUtsInfRs[0].Uts, data.TFT())
 
-			notification.Show(ctx, slog.Default(), rw, r, "success", &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-mod-gen-form.message-input-success")} , data)
+			notification.Toast(ctx, slog.Default(), rw, r, "success", &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-mod-gen-form.message-input-success")} , data)
 		case "cdf":
 			pfErr := r.ParseForm()
 			if pfErr != nil {
@@ -548,7 +548,7 @@ func Patch(rw http.ResponseWriter, r *http.Request){
 								slog.Any   ("uts"       , uts),
 							)
 
-							notification.Show(ctx, slog.Default(), rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-mod-cdf-form.warning-input-unexpected-error")}, data)
+							notification.Toast(ctx, slog.Default(), rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-mod-cdf-form.warning-input-unexpected-error")}, data)
 
 							return
 					}
@@ -563,7 +563,7 @@ func Patch(rw http.ResponseWriter, r *http.Request){
 
 			html.HiddenUtsFragment(rw, "s2g-tnt-mod-cdf-uts-ctr", "s2g-tnt-mod-cdf-uts", "s2g-tnt-mod-cdf-uts", s2gUtsInfRs[0].Uts, data.TFT())
 
-			notification.Show(ctx, slog.Default(), rw, r, "success", &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-mod-cdf-form.message-input-success")} , data)
+			notification.Toast(ctx, slog.Default(), rw, r, "success", &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-mod-cdf-form.message-input-success")} , data)
 	}
 
 	ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Patch::end")
@@ -611,7 +611,7 @@ func Post(rw http.ResponseWriter, r *http.Request){
 			}
 
 			if ! valRs[0].SpcNmOk {
-				notification.Show(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-reg-spc-form.warning-input-spc-nm-taken", "spcNm", spcNm)}, data)
+				notification.Toast(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-reg-spc-form.warning-input-spc-nm-taken", "spcNm", spcNm)}, data)
 
 				return
 			}
@@ -645,7 +645,7 @@ func Post(rw http.ResponseWriter, r *http.Request){
 
 			rw.Header().Set("HX-Trigger", `{"mod":{"target":"#s2c-tnt-inf-spc-form"}}`)
 
-			notification.Show(ctx, slog.Default(), rw, r, "success", &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-reg-spc-form.message-input-success")} , data)
+			notification.Toast(ctx, slog.Default(), rw, r, "success", &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-reg-spc-form.message-input-success")} , data)
 
 		case "mde":
 			pfErr := r.ParseForm()
@@ -664,7 +664,7 @@ func Post(rw http.ResponseWriter, r *http.Request){
 
 			mdeUrlRes, mdeUrlResErr := http.Get(mdeUrl)
 			if mdeUrlResErr != nil {
-				notification.Show(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-reg-mde-form.warning-input-empty-response")}, data)
+				notification.Toast(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-reg-mde-form.warning-input-empty-response")}, data)
 
 				ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Post:: Get response payload",
 					slog.String("mdeUrlResErr", mdeUrlResErr.Error()),
@@ -677,7 +677,7 @@ func Post(rw http.ResponseWriter, r *http.Request){
 
 			mtdRaw, mtdRawErr := io.ReadAll(mdeUrlRes.Body)
 			if mtdRawErr != nil {
-				notification.Show(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-reg-mde-form.warning-input-unreadable-response")}, data)
+				notification.Toast(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-reg-mde-form.warning-input-unreadable-response")}, data)
 
 				ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Post:: Get response payload",
 					slog.String("mtdRawErr" , mtdRawErr.Error()),
@@ -691,7 +691,7 @@ func Post(rw http.ResponseWriter, r *http.Request){
 			mtd    := &gosaml2types.EntityDescriptor{}
 			mtdErr := xml.Unmarshal(mtdRaw, mtd)
 			if mtdErr != nil {
-				notification.Show(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-reg-mde-form.warning-input-read-metadata")}, data)
+				notification.Toast(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-reg-mde-form.warning-input-read-metadata")}, data)
 
 				ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Post:: unmarshal metadata into struct",
 					slog.String("mtdErr" , mtdRawErr.Error()),
@@ -712,7 +712,7 @@ func Post(rw http.ResponseWriter, r *http.Request){
 			for i, kds := range mtd.IDPSSODescriptor.KeyDescriptors {
 				for _, x5c := range kds.KeyInfo.X509Data.X509Certificates {
 					if strings.TrimSpace(x5c.Data) == "" {
-						notification.Show(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-reg-mde-form.warning-input-empty-cert")}, data)
+						notification.Toast(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-reg-mde-form.warning-input-empty-cert")}, data)
 
 						ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Post:: x5c.Data is empty",
 							slog.Int   ("i"   , i),
@@ -724,7 +724,7 @@ func Post(rw http.ResponseWriter, r *http.Request){
 
 					x5d, x5dErr := base64.StdEncoding.DecodeString(strings.TrimSpace(x5c.Data))
 					if x5dErr != nil {
-						notification.Show(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-reg-mde-form.warning-input-decode-cert")}, data)
+						notification.Toast(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-reg-mde-form.warning-input-decode-cert")}, data)
 
 						slog.LogAttrs(ctx, slog.LevelError, "Post:: cannot decode x5c.Data",
 							slog.String("x5dErr" , x5dErr.Error()),
@@ -737,7 +737,7 @@ func Post(rw http.ResponseWriter, r *http.Request){
 
 					crt, crtErr := x509.ParseCertificate(x5d)
 					if crtErr != nil {
-						notification.Show(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-reg-mde-form.warning-input-gen-cert")}, data)
+						notification.Toast(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-reg-mde-form.warning-input-gen-cert")}, data)
 
 						slog.LogAttrs(ctx, slog.LevelError, "Post:: cannot parse x5d",
 							slog.String("crtErr" , crtErr.Error()),
@@ -750,7 +750,7 @@ func Post(rw http.ResponseWriter, r *http.Request){
 
 					mCrt, mCrtErr := json.Marshal(crt)
 					if mCrtErr != nil {
-						notification.Show(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-reg-mde-form.warning-input-marshal-cert")}, data)
+						notification.Toast(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-reg-mde-form.warning-input-marshal-cert")}, data)
 
 						slog.LogAttrs(ctx, slog.LevelError, "Post:: marshal crt",
 							slog.String("crtErr" , crtErr.Error()),
@@ -792,7 +792,7 @@ func Post(rw http.ResponseWriter, r *http.Request){
 
 			rw.Header().Set("HX-Trigger", `{"mod":{"target":"#s2c-tnt-inf-idp-form"}}`)
 
-			notification.Show(ctx, ssd.Logger, rw, r, "success" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-reg-mde-form.message-input-success", "idpNm", idpNm)}, data)
+			notification.Toast(ctx, ssd.Logger, rw, r, "success" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-reg-mde-form.message-input-success", "idpNm", idpNm)}, data)
 
 		case "xml":
 			mpfErr := r.ParseMultipartForm(200 * 1024) // 200 Kb file upload limit
@@ -815,7 +815,7 @@ func Post(rw http.ResponseWriter, r *http.Request){
 
 			mtdRaw, mtdRawErr := io.ReadAll(xmlFile)
 			if mtdRawErr != nil {
-				notification.Show(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-reg-xml-form.warning-input-unreadable-xml")}, data)
+				notification.Toast(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-reg-xml-form.warning-input-unreadable-xml")}, data)
 
 				ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Post:: Get XML from file",
 					slog.String("mtdRawErr" , mtdRawErr.Error()),
@@ -828,7 +828,7 @@ func Post(rw http.ResponseWriter, r *http.Request){
 			mtd    := &gosaml2types.EntityDescriptor{}
 			mtdErr := xml.Unmarshal(mtdRaw, mtd)
 			if mtdErr != nil {
-				notification.Show(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-reg-xml-form.warning-input-read-metadata")}, data)
+				notification.Toast(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-reg-xml-form.warning-input-read-metadata")}, data)
 
 				ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Post:: unmarshal metadata into struct",
 					slog.String("mtdErr" , mtdRawErr.Error()),
@@ -848,7 +848,7 @@ func Post(rw http.ResponseWriter, r *http.Request){
 			for i, kds := range mtd.IDPSSODescriptor.KeyDescriptors {
 				for _, x5c := range kds.KeyInfo.X509Data.X509Certificates {
 					if strings.TrimSpace(x5c.Data) == "" {
-						notification.Show(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-reg-xml-form.warning-input-empty-cert")}, data)
+						notification.Toast(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-reg-xml-form.warning-input-empty-cert")}, data)
 
 						ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Post:: x5c.Data is empty",
 							slog.Int   ("i"   , i),
@@ -860,7 +860,7 @@ func Post(rw http.ResponseWriter, r *http.Request){
 
 					x5d, x5dErr := base64.StdEncoding.DecodeString(strings.TrimSpace(x5c.Data))
 					if x5dErr != nil {
-						notification.Show(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-reg-xml-form.warning-input-decode-cert")}, data)
+						notification.Toast(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-reg-xml-form.warning-input-decode-cert")}, data)
 
 						slog.LogAttrs(ctx, slog.LevelError, "Post:: cannot decode x5c.Data",
 							slog.String("x5dErr" , x5dErr.Error()),
@@ -873,7 +873,7 @@ func Post(rw http.ResponseWriter, r *http.Request){
 
 					crt, crtErr := x509.ParseCertificate(x5d)
 					if crtErr != nil {
-						notification.Show(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-reg-xml-form.warning-input-gen-cert")}, data)
+						notification.Toast(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-reg-xml-form.warning-input-gen-cert")}, data)
 
 						slog.LogAttrs(ctx, slog.LevelError, "Post:: cannot parse x5d",
 							slog.String("crtErr" , crtErr.Error()),
@@ -886,7 +886,7 @@ func Post(rw http.ResponseWriter, r *http.Request){
 
 					mCrt, mCrtErr := json.Marshal(crt)
 					if mCrtErr != nil {
-						notification.Show(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-reg-xml-form.warning-input-marshal-cert")}, data)
+						notification.Toast(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-reg-xml-form.warning-input-marshal-cert")}, data)
 
 						slog.LogAttrs(ctx, slog.LevelError, "Post:: marshal crt",
 							slog.String("crtErr" , crtErr.Error()),
@@ -928,7 +928,7 @@ func Post(rw http.ResponseWriter, r *http.Request){
 
 			rw.Header().Set("HX-Trigger", `{"mod":{"target":"#s2c-tnt-inf-idp-form"}}`)
 
-			notification.Show(ctx, ssd.Logger, rw, r, "success" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-reg-xml-form.message-input-success", "idpNm", idpNm)}, data)
+			notification.Toast(ctx, ssd.Logger, rw, r, "success" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-reg-xml-form.message-input-success", "idpNm", idpNm)}, data)
 	}
 
 	ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Post::end")

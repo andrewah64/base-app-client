@@ -71,7 +71,7 @@ func Delete (rw http.ResponseWriter, r *http.Request) {
 			message = data.T("web-core-auth-aur-tnt-del-form.message-delete-success-plural"  , "n", strconv.Itoa(len(aurId)))
 		}
 
-		notification.Show(ctx, ssd.Logger, rw, r, "success" , &map[string]string{"Message" : message}, data)
+		notification.Toast(ctx, ssd.Logger, rw, r, "success" , &map[string]string{"Message" : message}, data)
 	}
 
 	ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Delete::end")
@@ -320,7 +320,7 @@ func Post(rw http.ResponseWriter, r *http.Request){
 	)
 
 	if ! valRs[0].AurNmOk {
-		notification.Show(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-aur-tnt-reg-form.warning-input-credentials-taken", "aurNm", aurNm)}, data)
+		notification.Toast(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-aur-tnt-reg-form.warning-input-credentials-taken", "aurNm", aurNm)}, data)
 
 		return
 	}
@@ -338,14 +338,14 @@ func Post(rw http.ResponseWriter, r *http.Request){
 			slog.String("aurNm"          , aurNm),
 		)
 
-		notification.Show(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-aur-tnt-reg-form.warning-input-unexpected-error")}, data)
+		notification.Toast(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-aur-tnt-reg-form.warning-input-unexpected-error")}, data)
 
 		return
 	}
 
 	rw.Header().Set("HX-Trigger", "mod")
 
-	notification.Show(ctx, ssd.Logger, rw, r, "success" , &map[string]string{"Message" : data.T ("web-core-auth-aur-tnt-reg-form.message-input-success", "aurNm", aurNm)}, data)
+	notification.Toast(ctx, ssd.Logger, rw, r, "success" , &map[string]string{"Message" : data.T ("web-core-auth-aur-tnt-reg-form.message-input-success", "aurNm", aurNm)}, data)
 
 	ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Post::end")
 

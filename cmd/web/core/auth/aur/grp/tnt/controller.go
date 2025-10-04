@@ -120,7 +120,7 @@ func Patch(rw http.ResponseWriter, r *http.Request){
 		message = data.T("web-core-auth-aur-grp-tnt-mod-form.message-input-success-plural", "n", strconv.Itoa(len(aurId)))
 	}
 
-	notification.Show(ctx, ssd.Logger, rw, r, "success" , &map[string]string{"Message" : message}, data)
+	notification.Toast(ctx, ssd.Logger, rw, r, "success" , &map[string]string{"Message" : message}, data)
 
 	ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Patch::end")
 

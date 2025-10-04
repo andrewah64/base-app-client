@@ -132,7 +132,7 @@ func Post (rw http.ResponseWriter, r *http.Request) {
 
 		rw.Header().Set("HX-Location", `{"path":"/", "target":"#main", "select":"#content", "values":{"ntf": "web-core-unauth-otp-aur-mod-form.message-otp-cd-success"}}`)
 	} else {
-		notification.Show(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-unauth-otp-aur-mod-form.error-otp-cd")}, data)
+		notification.Toast(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-unauth-otp-aur-mod-form.error-otp-cd")}, data)
 	}
 
 	ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Post::end")

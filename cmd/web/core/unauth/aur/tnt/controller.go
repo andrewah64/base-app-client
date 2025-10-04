@@ -136,7 +136,7 @@ func Post(rw http.ResponseWriter, r *http.Request){
 					slog.Bool("validator.Blank(aurPw2)", validator.Blank(aurPw2)),
 				)
 
-				notification.Show(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-unauth-aur-tnt-aupc-tab.error-input-unexpected")}, data)
+				notification.Toast(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-unauth-aur-tnt-aupc-tab.error-input-unexpected")}, data)
 
 				return
 			}
@@ -148,13 +148,13 @@ func Post(rw http.ResponseWriter, r *http.Request){
 			}
 
 			if !aurNmRs[0].AurNmLenPass {
-				notification.Show(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-unauth-aur-tnt-aupc-tab.error-input-aur-nm-len")}, data)
+				notification.Toast(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-unauth-aur-tnt-aupc-tab.error-input-aur-nm-len")}, data)
 
 				return
 			}
 
 			if !aurNmRs[0].AurNmAvbPass {
-				notification.Show(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-unauth-aur-tnt-aupc-tab.error-input-aur-nm-avb")}, data)
+				notification.Toast(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-unauth-aur-tnt-aupc-tab.error-input-aur-nm-avb")}, data)
 
 				return
 			}
@@ -166,7 +166,7 @@ func Post(rw http.ResponseWriter, r *http.Request){
 			}
 
 			if !aurEaRs[0].AurEaAvbPass {
-				notification.Show(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-unauth-aur-tnt-aupc-tab.error-input-aur-ea-avb")}, data)
+				notification.Toast(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-unauth-aur-tnt-aupc-tab.error-input-aur-ea-avb")}, data)
 
 				return
 			}
@@ -177,13 +177,13 @@ func Post(rw http.ResponseWriter, r *http.Request){
 					slog.String("aurEaErr.Error()" , aurEaErr.Error()),
 				)
 
-				notification.Show(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-unauth-aur-tnt-aupc-tab.error-input-aur-ea-vld")}, data)
+				notification.Toast(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-unauth-aur-tnt-aupc-tab.error-input-aur-ea-vld")}, data)
 
 				return
 			}
 
 			if aurPw != aurPw2 {
-				notification.Show(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-unauth-aur-tnt-aupc-tab.error-input-aur-pwd-2-vld")}, data)
+				notification.Toast(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-unauth-aur-tnt-aupc-tab.error-input-aur-pwd-2-vld")}, data)
 
 				return
 			}
@@ -248,7 +248,7 @@ func Post(rw http.ResponseWriter, r *http.Request){
 					slog.Bool("validator.Blank(aurNm)" , validator.Blank(aurNm)),
 				)
 
-				notification.Show(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-unauth-ssn-aur-reg-pky-form.error-input-unexpected")}, data)
+				notification.Toast(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-unauth-ssn-aur-reg-pky-form.error-input-unexpected")}, data)
 
 				return
 			}
@@ -262,13 +262,13 @@ func Post(rw http.ResponseWriter, r *http.Request){
 			}
 
 			if !aurNmRs[0].AurNmLenPass {
-				notification.Show(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-unauth-aur-tnt-pky-tab.error-input-aur-nm-len")}, data)
+				notification.Toast(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-unauth-aur-tnt-pky-tab.error-input-aur-nm-len")}, data)
 
 				return
 			}
 
 			if !aurNmRs[0].AurNmAvbPass {
-				notification.Show(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-unauth-aur-tnt-pky-tab.error-input-aur-nm-avb")}, data)
+				notification.Toast(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-unauth-aur-tnt-pky-tab.error-input-aur-nm-avb")}, data)
 
 				return
 			}

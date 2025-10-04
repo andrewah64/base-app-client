@@ -233,7 +233,7 @@ func Put(rw http.ResponseWriter, r *http.Request){
 
 	rw.Header().Set("HX-Trigger", "mod-log")
 
-	notification.Show(ctx, ssd.Logger, rw, r, "success" , &map[string]string{"Message" : data.T ("web-core-auth-log-aur-tnt-mod-bulk-form.message-input-success")}, data)
+	notification.Toast(ctx, ssd.Logger, rw, r, "success" , &map[string]string{"Message" : data.T ("web-core-auth-log-aur-tnt-mod-bulk-form.message-input-success")}, data)
 
 	ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Put::end")
 

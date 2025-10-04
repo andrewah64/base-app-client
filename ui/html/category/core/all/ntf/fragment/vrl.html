@@ -1,17 +1,17 @@
-{{$numMsgs := len .Msgs}}
+{{$numMsgs := len .NotificationData.Msgs}}
 
 <title>
-	{{.Title}}
 	{{if eq $numMsgs 0}}
-	{{else if eq $numErrs 1}}
-	: {{.Singular}}
+		{{.NotificationData.Title}}
 	{{else}}
-	: {{.Plural}}
+		{{.NotificationData.Title}} : {{if eq $numMsgs 1}}{{.NotificationData.Singular}}{{else}}{{.NotificationData.Plural}}{{end}}
 	{{end}}
 </title>
 
+{{if ge $numMsgs 1}}
 <ul>
-	{{ range $k, $v := .Msgs }}
+	{{ range $k, $v := .NotificationData.Msgs }}
 		<li>{{$v}}</li>
 	{{ end }}
 </ul>
+{{end}}

@@ -48,7 +48,7 @@ func Get(rw http.ResponseWriter, r *http.Request){
 	p := r.URL.Query()
 
 	if p.Has("ntf"){
-		notification.Show(ctx, ssd.Logger, rw, r, "info", &map[string]string{"Message" : data.T(p.Get("ntf"))} , data)
+		notification.Toast(ctx, ssd.Logger, rw, r, "info", &map[string]string{"Message" : data.T(p.Get("ntf"))} , data)
 	}
 
 	cs.Identity(&ctx, ssd.Logger, ssd.Conn, "role_web_core_unauth_ssn_aur_reg")
@@ -118,7 +118,7 @@ func Post(rw http.ResponseWriter, r *http.Request){
 					slog.Bool("validator.Blank(aurPwd)", validator.Blank(aurPwd)),
 				)
 
-				notification.Show(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-unauth-ssn-aur-reg-aupc-form.error-input-unexpected")}, data)
+				notification.Toast(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-unauth-ssn-aur-reg-aupc-form.error-input-unexpected")}, data)
 
 				return
 			}
@@ -204,7 +204,7 @@ func Post(rw http.ResponseWriter, r *http.Request){
 					slog.Bool("validator.Blank(aurNm)" , validator.Blank(aurNm)),
 				)
 
-				notification.Show(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-unauth-ssn-aur-reg-pky-form.error-input-unexpected")}, data)
+				notification.Toast(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-unauth-ssn-aur-reg-pky-form.error-input-unexpected")}, data)
 
 				return
 			}
@@ -218,7 +218,7 @@ func Post(rw http.ResponseWriter, r *http.Request){
 			}
 
 			if !aurNmRs[0].AurNmPass {
-				notification.Show(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-unauth-ssn-aur-reg-pky-form.error-input-aur-nm")}, data)
+				notification.Toast(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-unauth-ssn-aur-reg-pky-form.error-input-aur-nm")}, data)
 
 				return
 			}

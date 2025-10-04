@@ -42,7 +42,7 @@ func Get(rw http.ResponseWriter, r *http.Request){
 	p := r.URL.Query()
 
 	if p.Has("ntf") && p.Has("lvl"){
-		notification.Show(ctx, slog.Default(), rw, r, p.Get("lvl"), &map[string]string{"Message" : data.T(p.Get("ntf"))} , data)
+		notification.Toast(ctx, slog.Default(), rw, r, p.Get("lvl"), &map[string]string{"Message" : data.T(p.Get("ntf"))} , data)
 	}
 
 	ocpInfRs, ocpInfRsErr := GetOcpInf(&ctx, ssd.Logger, ssd.Conn, ssd.TntId)
@@ -128,7 +128,7 @@ func Patch(rw http.ResponseWriter, r *http.Request){
 					rw.Header().Set("HX-Location", fmt.Sprintf(`{"path":"%v", "target":"#main", "select":"#content", "swap" : "innerHTML show:window:top", "values":{"ntf": "web-core-auth-occ-tnt-mod-form.warning-input-occ-olock-error", "lvl": "error"}}`, currentUrl))
 
 				case pgerrcode.UniqueViolation:
-					notification.Show(ctx, slog.Default(), rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-occ-tnt-mod-form.warning-input-occ-url-taken")}, data)
+					notification.Toast(ctx, slog.Default(), rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-occ-tnt-mod-form.warning-input-occ-url-taken")}, data)
 
 				default:
 					slog.LogAttrs(ctx, slog.LevelError, "unexpected error",
@@ -136,7 +136,7 @@ func Patch(rw http.ResponseWriter, r *http.Request){
 						slog.String("pgErr.Code"       , pgErr.Code),
 					)
 
-					notification.Show(ctx, slog.Default(), rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-occ-tnt-mod-form.warning-input-occ-unexpected-error")}, data)
+					notification.Toast(ctx, slog.Default(), rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-occ-tnt-mod-form.warning-input-occ-unexpected-error")}, data)
 			}
 		}
 
@@ -151,7 +151,7 @@ func Patch(rw http.ResponseWriter, r *http.Request){
 
 	html.HiddenUtsFragment(rw, fmt.Sprintf("occ-tnt-mod-uts-ctr-%v", occId), fmt.Sprintf("occ-tnt-mod-uts-%v", occId), fmt.Sprintf("occ-tnt-mod-uts-%v", occId), occUtsInfRs[0].Uts, data.TFT())
 
-	notification.Show(ctx, slog.Default(), rw, r, "success", &map[string]string{"Message" : data.T("web-core-auth-occ-tnt-mod-form.message-input-success")} , data)
+	notification.Toast(ctx, slog.Default(), rw, r, "success", &map[string]string{"Message" : data.T("web-core-auth-occ-tnt-mod-form.message-input-success")} , data)
 
 	ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Patch::end")
 }

@@ -4,15 +4,15 @@ import (
 	"fmt"
 	"log/slog"
 	"net/http"
+	"strconv"
 )
 
 import (
 	"github.com/andrewah64/base-app-client/internal/common/core/session"
-	"github.com/andrewah64/base-app-client/internal/common/core/validator"
 	"github.com/andrewah64/base-app-client/internal/web/core/error"
 	"github.com/andrewah64/base-app-client/internal/web/core/ui/data/form"
 	"github.com/andrewah64/base-app-client/internal/web/core/ui/data/page"
-	"github.com/andrewah64/base-app-client/internal/web/core/ui/html"
+	"github.com/andrewah64/base-app-client/internal/web/core/ui/notification"
 )
 
 func Get(rw http.ResponseWriter, r *http.Request) {
@@ -56,6 +56,22 @@ func Get(rw http.ResponseWriter, r *http.Request) {
 			ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Get::retrieve datasets",
 				slog.Int("len(valRs)" , len(valRs)),
 			)
+
+			msgs := make([]string, 0)
+
+			if ! valRs[0].IdpNmOk {
+				msgs = append(msgs, data.T("web-core-auth-s2c-tnt-reg-mde-form.warning-input-idp-nm-taken", "idpNm", idpNm))
+			}
+
+
+			notification.Vrl(ctx, ssd.Logger, rw, r,
+				data.T("web-core-auth-s2c-tnt-page.title-edit"),
+				data.T("web-core-auth-s2c-tnt-reg-mde-form.title-warning-singular", "n", strconv.Itoa(len(valRs))),
+				data.T("web-core-auth-s2c-tnt-reg-mde-form.title-warning-plural"  , "n", strconv.Itoa(len(valRs))),
+				&msgs,
+				data,
+			)
+
 		case "xml" :
 			idpNm := form.VText (r, "s2c-tnt-reg-xml-idp-nm")
 
@@ -73,8 +89,22 @@ func Get(rw http.ResponseWriter, r *http.Request) {
 			ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Get::retrieve datasets",
 				slog.Int("len(valRs)" , len(valRs)),
 			)
+
+			msgs := make([]string, 0)
+
+			if ! valRs[0].IdpNmOk {
+				msgs = append(msgs, data.T("web-core-auth-s2c-tnt-reg-xml-form.warning-input-idp-nm-taken", "idpNm", idpNm))
+			}
+
+			notification.Vrl(ctx, ssd.Logger, rw, r,
+				data.T("web-core-auth-s2c-tnt-page.title-edit"),
+				data.T("web-core-auth-s2c-tnt-reg-xml-form.title-warning-singular", "n", strconv.Itoa(len(valRs))),
+				data.T("web-core-auth-s2c-tnt-reg-xml-form.title-warning-plural"  , "n", strconv.Itoa(len(valRs))),
+				&msgs,
+				data,
+			)
+
 		case "spc" :
-			v     := validator.New()
 			spcNm := form.VText (r, "s2c-tnt-reg-spc-nm")
 
 			ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Get::get result of validation",
@@ -92,18 +122,18 @@ func Get(rw http.ResponseWriter, r *http.Request) {
 				slog.Int("len(valRs)" , len(valRs)),
 			)
 
-			switch len(valRs) {
-				case 1:
-					if ! valRs[0].SpcNmOk {
-						v.AddError("s2c-tnt-reg-spc-nm-taken", data.T("web-core-auth-s2c-tnt-reg-spc-form.warning-input-spc-nm-taken", "spcNm", spcNm))
-					}
-				default:
-					v.AddError("s2c-tnt-reg-unexpected", data.T("web-core-auth-s2c-tnt-reg-spc-form.warning-input-unexpected-error"))
+			msgs := make([]string, 0)
+
+			if !valRs[0].SpcNmOk {
+				msgs = append(msgs, data.T("web-core-auth-s2c-tnt-reg-spc-form.warning-input-spc-nm-taken", "spcNm", spcNm))
 			}
 
-			data.ResultSet = &map[string]any{"Validator": &v}
-
-			html.Fragment(ctx, ssd.Logger, rw, r, "core/auth/s2c/tnt/fragment/val-spc", http.StatusUnprocessableEntity, &data)
-			return
+			notification.Vrl(ctx, ssd.Logger, rw, r,
+				data.T("web-core-auth-s2c-tnt-page.title-edit"),
+				data.T("web-core-auth-s2c-tnt-reg-spc-form.title-warning-singular", "n", strconv.Itoa(len(valRs))),
+				data.T("web-core-auth-s2c-tnt-reg-spc-form.title-warning-plural"  , "n", strconv.Itoa(len(valRs))),
+				&msgs,
+				data,
+			)
 	}
 }

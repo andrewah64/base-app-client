@@ -73,7 +73,7 @@ func Get(rw http.ResponseWriter, r *http.Request) {
 	html.Fragment(ctx, ssd.Logger, rw, r, "core/auth/aur/tnt/fragment/modrow", http.StatusCreated, &data)
 
 	if len(aurRs) == 0 {
-		notification.Show(ctx, slog.Default(), rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-aur-tnt-mod-form.warning-input-log-olock-error")}, data)
+		notification.Toast(ctx, slog.Default(), rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-aur-tnt-mod-form.warning-input-log-olock-error")}, data)
 	}
 
 	ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Get::end")
@@ -141,19 +141,19 @@ func Patch(rw http.ResponseWriter, r *http.Request) {
 		if errors.As(patchErr, &pgErr) {
 			switch pgErr.Code {
 				case "OLOKU":
-					notification.Show(ctx, slog.Default(), rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-aur-tnt-mod-form.warning-input-log-olock-error")}, data)
+					notification.Toast(ctx, slog.Default(), rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-aur-tnt-mod-form.warning-input-log-olock-error")}, data)
 
 				case "OLOKD":
 					// intentionally blank
 
 				case pgerrcode.CheckViolation:
-					notification.Show(ctx, slog.Default(), rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-aur-tnt-mod-form.warning-input-aur-nm-blank")}, data)
+					notification.Toast(ctx, slog.Default(), rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-aur-tnt-mod-form.warning-input-aur-nm-blank")}, data)
 
 				case pgerrcode.UniqueViolation:
-					notification.Show(ctx, slog.Default(), rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-aur-tnt-mod-form.warning-input-aur-nm-taken", "aurNm", aurNm)}, data)
+					notification.Toast(ctx, slog.Default(), rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-aur-tnt-mod-form.warning-input-aur-nm-taken", "aurNm", aurNm)}, data)
 
 				default:
-					notification.Show(ctx, slog.Default(), rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-aur-tnt-mod-form.warning-input-unexpected-error")}, data)
+					notification.Toast(ctx, slog.Default(), rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-aur-tnt-mod-form.warning-input-unexpected-error")}, data)
 
 			}
 		}
@@ -171,7 +171,7 @@ func Patch(rw http.ResponseWriter, r *http.Request) {
 
 	html.Fragment(ctx, ssd.Logger, rw, r, "core/auth/aur/tnt/fragment/infrow", http.StatusCreated, &data)
 
-	notification.Show(ctx, ssd.Logger, rw, r, "success", &map[string]string{"Message" : data.T("web-core-auth-aur-tnt-mod-form.message-input-success")}, data)
+	notification.Toast(ctx, ssd.Logger, rw, r, "success", &map[string]string{"Message" : data.T("web-core-auth-aur-tnt-mod-form.message-input-success")}, data)
 
 	ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Patch::end")
 }

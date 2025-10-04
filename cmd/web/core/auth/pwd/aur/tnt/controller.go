@@ -118,9 +118,9 @@ func Patch(rw http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		notification.Show(ctx, ssd.Logger, rw, r, "success" , &map[string]string{"Message" : data.T("web-core-auth-pwd-aur-tnt-mod-form.message-success")}, data)
+		notification.Toast(ctx, ssd.Logger, rw, r, "success" , &map[string]string{"Message" : data.T("web-core-auth-pwd-aur-tnt-mod-form.message-success")}, data)
 	} else {
-		notification.Show(ctx, ssd.Logger, rw, r, "error"   , &map[string]string{"Message" : data.T("web-core-auth-pwd-aur-tnt-mod-form.message-error")}, data)
+		notification.Toast(ctx, ssd.Logger, rw, r, "error"   , &map[string]string{"Message" : data.T("web-core-auth-pwd-aur-tnt-mod-form.message-error")}, data)
 	}
 
 	
