@@ -39,6 +39,40 @@ func Get(rw http.ResponseWriter, r *http.Request) {
 	}
 
 	switch r.PathValue("nm") {
+		case "mde" :
+			idpNm := form.VText (r, "s2c-tnt-reg-mde-idp-nm")
+
+			ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Get::get result of validation",
+				slog.Int   ("ssd.TntId" , ssd.TntId),
+				slog.String("idpNm"     , idpNm),
+			)
+
+			valRs, valRsErr := GetIdpInf(&ctx, ssd.Logger, ssd.Conn, ssd.TntId, idpNm)
+			if valRsErr != nil {
+				error.IntSrv(ctx, rw, valRsErr)
+				return
+			}
+
+			ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Get::retrieve datasets",
+				slog.Int("len(valRs)" , len(valRs)),
+			)
+		case "xml" :
+			idpNm := form.VText (r, "s2c-tnt-reg-xml-idp-nm")
+
+			ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Get::get result of validation",
+				slog.Int   ("ssd.TntId" , ssd.TntId),
+				slog.String("idpNm"     , idpNm),
+			)
+
+			valRs, valRsErr := GetIdpInf(&ctx, ssd.Logger, ssd.Conn, ssd.TntId, idpNm)
+			if valRsErr != nil {
+				error.IntSrv(ctx, rw, valRsErr)
+				return
+			}
+
+			ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Get::retrieve datasets",
+				slog.Int("len(valRs)" , len(valRs)),
+			)
 		case "spc" :
 			v     := validator.New()
 			spcNm := form.VText (r, "s2c-tnt-reg-spc-nm")
@@ -48,7 +82,7 @@ func Get(rw http.ResponseWriter, r *http.Request) {
 				slog.String("spcNm"     , spcNm),
 			)
 
-			valRs, valRsErr := GetInf(&ctx, ssd.Logger, ssd.Conn, ssd.TntId, spcNm)
+			valRs, valRsErr := GetSpcInf(&ctx, ssd.Logger, ssd.Conn, ssd.TntId, spcNm)
 			if valRsErr != nil {
 				error.IntSrv(ctx, rw, valRsErr)
 				return

@@ -604,7 +604,7 @@ func Post(rw http.ResponseWriter, r *http.Request){
 				slog.Any   ("spcExpTs" , spcExpTs),
 			)
 
-			valRs, valRsErr := val.GetInf(&ctx, ssd.Logger, ssd.Conn, ssd.TntId, spcNm)
+			valRs, valRsErr := val.GetSpcInf(&ctx, ssd.Logger, ssd.Conn, ssd.TntId, spcNm)
 			if valRsErr != nil {
 				error.IntSrv(ctx, rw, valRsErr)
 				return

@@ -1,0 +1,17 @@
+{{$numMsgs := len .Msgs}}
+
+<title>
+	{{.Title}}
+	{{if eq $numMsgs 0}}
+	{{else if eq $numErrs 1}}
+	: {{.Singular}}
+	{{else}}
+	: {{.Plural}}
+	{{end}}
+</title>
+
+<ul>
+	{{ range $k, $v := .Msgs }}
+		<li>{{$v}}</li>
+	{{ end }}
+</ul>
