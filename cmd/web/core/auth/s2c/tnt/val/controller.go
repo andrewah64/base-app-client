@@ -63,11 +63,10 @@ func Get(rw http.ResponseWriter, r *http.Request) {
 				msgs = append(msgs, data.T("web-core-auth-s2c-tnt-reg-mde-form.warning-input-idp-nm-taken", "idpNm", idpNm))
 			}
 
-
 			notification.Vrl(ctx, ssd.Logger, rw, r,
 				data.T("web-core-auth-s2c-tnt-page.title-edit"),
-				data.T("web-core-auth-s2c-tnt-reg-mde-form.title-warning-singular", "n", strconv.Itoa(len(valRs))),
-				data.T("web-core-auth-s2c-tnt-reg-mde-form.title-warning-plural"  , "n", strconv.Itoa(len(valRs))),
+				data.T("web-core-auth-s2c-tnt-reg-mde-form.title-warning-singular", "n", strconv.Itoa(len(msgs))),
+				data.T("web-core-auth-s2c-tnt-reg-mde-form.title-warning-plural"  , "n", strconv.Itoa(len(msgs))),
 				&msgs,
 				data,
 			)
@@ -98,8 +97,8 @@ func Get(rw http.ResponseWriter, r *http.Request) {
 
 			notification.Vrl(ctx, ssd.Logger, rw, r,
 				data.T("web-core-auth-s2c-tnt-page.title-edit"),
-				data.T("web-core-auth-s2c-tnt-reg-xml-form.title-warning-singular", "n", strconv.Itoa(len(valRs))),
-				data.T("web-core-auth-s2c-tnt-reg-xml-form.title-warning-plural"  , "n", strconv.Itoa(len(valRs))),
+				data.T("web-core-auth-s2c-tnt-reg-xml-form.title-warning-singular", "n", strconv.Itoa(len(msgs))),
+				data.T("web-core-auth-s2c-tnt-reg-xml-form.title-warning-plural"  , "n", strconv.Itoa(len(msgs))),
 				&msgs,
 				data,
 			)
@@ -130,8 +129,8 @@ func Get(rw http.ResponseWriter, r *http.Request) {
 
 			notification.Vrl(ctx, ssd.Logger, rw, r,
 				data.T("web-core-auth-s2c-tnt-page.title-edit"),
-				data.T("web-core-auth-s2c-tnt-reg-spc-form.title-warning-singular", "n", strconv.Itoa(len(valRs))),
-				data.T("web-core-auth-s2c-tnt-reg-spc-form.title-warning-plural"  , "n", strconv.Itoa(len(valRs))),
+				data.T("web-core-auth-s2c-tnt-reg-spc-form.title-warning-singular", "n", strconv.Itoa(len(msgs))),
+				data.T("web-core-auth-s2c-tnt-reg-spc-form.title-warning-plural"  , "n", strconv.Itoa(len(msgs))),
 				&msgs,
 				data,
 			)

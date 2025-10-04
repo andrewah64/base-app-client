@@ -4,15 +4,15 @@ import (
 	"fmt"
 	"log/slog"
 	"net/http"
+	"strconv"
 )
 
 import (
 	"github.com/andrewah64/base-app-client/internal/common/core/session"
-	"github.com/andrewah64/base-app-client/internal/common/core/validator"
 	"github.com/andrewah64/base-app-client/internal/web/core/error"
 	"github.com/andrewah64/base-app-client/internal/web/core/ui/data/form"
 	"github.com/andrewah64/base-app-client/internal/web/core/ui/data/page"
-	"github.com/andrewah64/base-app-client/internal/web/core/ui/html"
+	"github.com/andrewah64/base-app-client/internal/web/core/ui/notification"
 )
 
 func Get(rw http.ResponseWriter, r *http.Request) {
@@ -38,7 +38,6 @@ func Get(rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	v     := validator.New()
 	grpNm := form.VText (r, "grp-tnt-reg-grp-nm")
 
 	ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Get::get result of validation",
@@ -56,17 +55,17 @@ func Get(rw http.ResponseWriter, r *http.Request) {
 		slog.Int("len(valRs)" , len(valRs)),
 	)
 
-	switch len(valRs) {
-		case 1:
-			if ! valRs[0].GrpNmOk {
-				v.AddError("grp-tnt-reg-grp-nm-taken", data.T("web-core-auth-grp-tnt-reg-form.warning-input-grp-nm-taken", "grpNm", grpNm))
-			}
-		default:
-			v.AddError("grp-tnt-reg-unexpected", data.T("web-core-auth-grp-tnt-reg-form.warning-input-unexpected-error"))
+	msgs := make([]string, 0)
+
+	if ! valRs[0].GrpNmOk {
+		msgs = append(msgs, data.T("web-core-auth-grp-tnt-reg-form.warning-input-grp-nm-taken", "grpNm", grpNm))
 	}
 
-	data.ResultSet = &map[string]any{"Validator": &v}
-
-	html.Fragment(ctx, ssd.Logger, rw, r, "core/auth/grp/tnt/fragment/val", http.StatusUnprocessableEntity, &data)
-	return
+	notification.Vrl(ctx, ssd.Logger, rw, r,
+		data.T("web-core-auth-grp-tnt-page.title"),
+		data.T("web-core-auth-grp-tnt-reg-form.title-warning-singular", "n", strconv.Itoa(len(msgs))),
+		data.T("web-core-auth-grp-tnt-reg-form.title-warning-plural"  , "n", strconv.Itoa(len(msgs))),
+		&msgs,
+		data,
+	)
 }
