@@ -6,7 +6,6 @@ import (
 	"log/slog"
 	"net/http"
 	"strconv"
-	"strings"
 )
 
 import (
@@ -46,6 +45,32 @@ func Get(rw http.ResponseWriter, r *http.Request) {
 	)
 
 	switch nm {
+		case "idp" :
+			idpId, idpIdErr := strconv.Atoi(r.PathValue("id"))
+			if idpIdErr != nil || idpId < 1 {
+				error.IntSrv(ctx, rw, fmt.Errorf("Get::get idpId"))
+				return
+			}
+
+			idpRs, idpRsErr := GetRowIdpMod(&ctx, ssd.Logger, ssd.Conn, ssd.TntId, idpId)
+			if idpRsErr != nil {
+				error.IntSrv(ctx, rw, idpRsErr)
+				return
+			}
+
+			ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Get::retrieve datasets",
+				slog.Int("idpId"      , idpId),
+				slog.Int("len(idpRs)" , len(idpRs)),
+			)
+
+			data.ResultSet = &map[string]any{"Idp": &idpRs}
+
+			html.Fragment(ctx, ssd.Logger, rw, r, "core/auth/s2c/tnt/fragment/modrow-idp", http.StatusCreated, &data)
+
+			if len(idpRs) == 0 {
+				notification.Show(ctx, slog.Default(), rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-mod-idp-form.warning-input-olock-error")}, data)
+			}
+
 		case "spc" :
 			spcId, spcIdErr := strconv.Atoi(r.PathValue("id"))
 			if spcIdErr != nil || spcId < 1 {
@@ -102,6 +127,84 @@ func Patch(rw http.ResponseWriter, r *http.Request) {
 	)
 
 	switch nm {
+		case "idp" :
+			idpId, idpIdErr := strconv.Atoi(r.PathValue("id"))
+			if idpIdErr != nil || idpId < 1 {
+				error.IntSrv(ctx, rw, fmt.Errorf("Get::get idpId"))
+				return
+			}
+
+			pfErr := r.ParseForm()
+			if pfErr != nil {
+				error.IntSrv(ctx, rw, pfErr)
+				return
+			}
+
+			idpNm      := form.VText (r, fmt.Sprintf("s2c-tnt-inf-idp-nm-%v"      , idpId))
+			idpEnabled := form.VBool (r, fmt.Sprintf("s2c-tnt-inf-idp-enabled-%v" , idpId))
+			uts        := form.VTime (r, fmt.Sprintf("s2c-tnt-inf-idp-uts-%v"     , idpId))
+
+			idpValRs, idpValRsErr := GetRowIdpVal(&ctx, ssd.Logger, ssd.Conn, ssd.TntId, idpId, idpNm)
+			if idpValRsErr != nil {
+				error.IntSrv(ctx, rw, idpValRsErr)
+				return
+			}
+
+			if ! idpValRs[0].IdpNmOk {
+				Get(rw, r)
+
+				notification.Show(ctx, slog.Default(), rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-mod-idp-form.warning-input-idp-nm-taken", "idpNm" , idpNm)}, data)
+
+				return
+			}
+
+			exptErrs := []string{
+				"OLOKU",
+				"OLOKD",
+			}
+
+			patchErr := PatchIdp (&ctx, ssd.Logger, ssd.Conn, ssd.TntId, idpId, idpNm, idpEnabled, data.User.AurNm, uts, exptErrs)
+			if patchErr != nil{
+				Get(rw, r)
+
+				var pgErr *pgconn.PgError
+
+				if errors.As(patchErr, &pgErr) {
+					ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Patch: PatchGrp params",
+						slog.Int   ("ssd.TntId"  , ssd.TntId),
+						slog.Int   ("idpId"      , idpId),
+						slog.String("idpNm"      , idpNm),
+						slog.Bool  ("idpEnabled" , idpEnabled),
+						slog.String("patchErr"   , patchErr.Error()),
+					)
+
+					switch pgErr.Code {
+						case "OLOKU":
+							notification.Show(ctx, slog.Default(), rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-mod-idp-form.warning-input-olock-error")}, data)
+
+						case "OLOKD":
+							//intentionally empty
+
+						default:
+							notification.Show(ctx, slog.Default(), rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-mod-idp-form.warning-input-unexpected-error")}, data)
+					}
+
+					return
+				}
+			}
+
+			idpRs, idpRsErr := GetRowIdpInf(&ctx, ssd.Logger, ssd.Conn, ssd.TntId, idpId)
+			if idpRsErr != nil {
+				error.IntSrv(ctx, rw, idpRsErr)
+				return
+			}
+
+			data.ResultSet = &map[string]any{"Idp": &idpRs}
+
+			html.Fragment(ctx, ssd.Logger, rw, r, "core/auth/s2c/tnt/fragment/infrow-idp", http.StatusCreated, &data)
+
+			notification.Show(ctx, slog.Default(), rw, r, "success" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-mod-idp-form.message-input-success")}, data)
+
 		case "spc" :
 			spcId, spcIdErr := strconv.Atoi(r.PathValue("id"))
 			if spcIdErr != nil || spcId < 1 {
@@ -115,7 +218,7 @@ func Patch(rw http.ResponseWriter, r *http.Request) {
 				return
 			}
 
-			spcNm      := strings.TrimSpace(form.VText (r, fmt.Sprintf("s2c-tnt-inf-spc-nm-%v" , spcId)))
+			spcNm      := form.VText (r, fmt.Sprintf("s2c-tnt-inf-spc-nm-%v"      , spcId))
 			spcEnabled := form.VBool (r, fmt.Sprintf("s2c-tnt-inf-spc-enabled-%v" , spcId))
 			uts        := form.VTime (r, fmt.Sprintf("s2c-tnt-inf-spc-uts-%v"     , spcId))
 

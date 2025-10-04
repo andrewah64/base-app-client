@@ -144,9 +144,17 @@ label-nm                              = "Name"
 [web-core-auth-s2c-tnt-inf-idp-results]
 
 edit-button-label                     = "Edit"
+save-button-label                     = "Save"
 header-label-enabled                  = "Enabled"
 header-label-idp-entity-id            = "Entity Id"
 header-label-idp-nm                   = "Name"
 header-label-num-mde                  = "#MDE"
 header-label-num-slo                  = "#SLO"
 header-label-num-sso                  = "#SSO"
+
+[web-core-auth-s2c-tnt-mod-idp-form]
+
+message-input-success                 = "Changes were applied successfully"
+warning-input-idp-nm-taken            = "'{{.idpNm}}' is taken"
+warning-input-olock-error             = "Another user modified the record"
+warning-input-unexpected-error        = "Unexpected error"
