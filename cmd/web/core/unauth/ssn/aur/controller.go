@@ -14,7 +14,6 @@ import (
 	   "github.com/andrewah64/base-app-client/internal/common/core/password"
 	cs "github.com/andrewah64/base-app-client/internal/common/core/session"
 	   "github.com/andrewah64/base-app-client/internal/common/core/token"
-	   "github.com/andrewah64/base-app-client/internal/common/core/validator"
 	   "github.com/andrewah64/base-app-client/internal/web/core/error"
 	   "github.com/andrewah64/base-app-client/internal/web/core/passkey"
 	ws "github.com/andrewah64/base-app-client/internal/web/core/session"
@@ -113,7 +112,7 @@ func Post(rw http.ResponseWriter, r *http.Request){
 				slog.String("aurNm", aurNm),
 			)
 
-			if strings.TrimSpace(aurNm) == ""  || strings.TrimSpace(aurPwd) {
+			if strings.TrimSpace(aurNm) == ""  || strings.TrimSpace(aurPwd) == "" {
 				notification.Toast(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-unauth-ssn-aur-reg-aupc-form.error-input-unexpected")}, data)
 
 				return
@@ -174,13 +173,13 @@ func Post(rw http.ResponseWriter, r *http.Request){
 						slog.String("aurNm", aurNm),
 					)
 
+					msgs := []string{data.T("web-core-unauth-ssn-aur-reg-aupc-form.error-input-aur-nm-pwd-vld")}
+
 					notification.Vrl(ctx, ssd.Logger, rw, r,
 						data.T("web-core-unauth-ssn-aur-reg-page.title"),
-						data.T("web-core-unauth-ssn-aur-reg-aupc-form.title-warning-singular"),
-						data.T("web-core-unauth-ssn-aur-reg-aupc-form.title-warning-plural"),
-						&[]string{
-							data.T("web-core-unauth-ssn-aur-reg-aupc-form.error-input-aur-nm-pwd-vld")
-						},
+						data.T("web-core-unauth-ssn-aur-reg-aupc-form.title-warning-singular", "n", strconv.Itoa(len(msgs))),
+						data.T("web-core-unauth-ssn-aur-reg-aupc-form.title-warning-plural"  , "n", strconv.Itoa(len(msgs))),
+						&msgs,
 						data,
 					)
 
@@ -197,11 +196,7 @@ func Post(rw http.ResponseWriter, r *http.Request){
 				slog.String("aurNm", aurNm),
 			)
 
-			if validator.Blank(aurNm) {
-				ssd.Logger.LogAttrs(ctx, slog.LevelError, "Post::pky::front end mandatory field checks have failed",
-					slog.Bool("validator.Blank(aurNm)" , validator.Blank(aurNm)),
-				)
-
+			if strings.TrimSpace(aurNm) == "" {
 				notification.Toast(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-unauth-ssn-aur-reg-pky-form.error-input-unexpected")}, data)
 
 				return
