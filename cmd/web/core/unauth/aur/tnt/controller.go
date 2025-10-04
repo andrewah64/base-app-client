@@ -14,7 +14,6 @@ import (
 	"github.com/andrewah64/base-app-client/internal/common/core/session"
 	"github.com/andrewah64/base-app-client/internal/common/core/tenant"
 	"github.com/andrewah64/base-app-client/internal/common/core/token"
-	"github.com/andrewah64/base-app-client/internal/common/core/validator"
 	"github.com/andrewah64/base-app-client/internal/web/core/error"
 	"github.com/andrewah64/base-app-client/internal/web/core/passkey"
 	"github.com/andrewah64/base-app-client/internal/web/core/ui/data/form"
@@ -128,14 +127,7 @@ func Post(rw http.ResponseWriter, r *http.Request){
 				slog.Any   ("aurEa", aurEa),
 			)
 
-			if validator.Blank(aurNm)||validator.Blank(aurEa)||validator.Blank(aurPw)||validator.Blank(aurPw2) {
-				ssd.Logger.LogAttrs(ctx, slog.LevelError, "Post::aupc::front end mandatory field checks have failed",
-					slog.Bool("validator.Blank(aurNm)" , validator.Blank(aurNm)),
-					slog.Bool("validator.Blank(aurEa)" , validator.Blank(aurEa)),
-					slog.Bool("validator.Blank(aurPw)" , validator.Blank(aurPw)),
-					slog.Bool("validator.Blank(aurPw2)", validator.Blank(aurPw2)),
-				)
-
+			if strings.TrimSpace(aurNm) == "" ||strings.TrimSpace(aurEa) == "" || strings.TrimSpace(aurPw) == "" || strings.TrimSpace(aurPw2) == ""{
 				notification.Toast(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-unauth-aur-tnt-aupc-tab.error-input-unexpected")}, data)
 
 				return
@@ -243,11 +235,7 @@ func Post(rw http.ResponseWriter, r *http.Request){
 				slog.String("aurNm" , aurNm),
 			)
 
-			if validator.Blank(aurNm) {
-				ssd.Logger.LogAttrs(ctx, slog.LevelError, "Post::pky::front end mandatory field checks have failed",
-					slog.Bool("validator.Blank(aurNm)" , validator.Blank(aurNm)),
-				)
-
+			if strings.TrimSpace(aurNm) == "" {
 				notification.Toast(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-unauth-ssn-aur-reg-pky-form.error-input-unexpected")}, data)
 
 				return

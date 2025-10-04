@@ -40,6 +40,40 @@ submit-button-label                   = "Save"
 warning-input-olock-error             = "Another user modified the record"
 warning-input-unexpected-error        = "Unexpected error"
 
+[web-core-auth-s2c-tnt-del-idp-form]
+
+delete-button-label                   = "Delete"
+message-delete-success-plural         = "{{.n}} IdPs were deleted"
+message-delete-success-singular       = "{{.n}} IdP was deleted"
+
+[web-core-auth-s2c-tnt-inf-idp-form]
+
+filter-header                         = "Filters"
+input-option-idp-enabled-all          = "All"
+input-option-idp-enabled-no           = "No"
+input-option-idp-enabled-yes          = "Yes"
+label-enabled                         = "Enabled"
+label-entity-id                       = "Entity Id"
+label-nm                              = "Name"
+
+[web-core-auth-s2c-tnt-inf-idp-results]
+
+edit-button-label                     = "Edit"
+save-button-label                     = "Save"
+header-label-enabled                  = "Enabled"
+header-label-idp-entity-id            = "Entity Id"
+header-label-idp-nm                   = "Name"
+header-label-num-mde                  = "#MDE"
+header-label-num-slo                  = "#SLO"
+header-label-num-sso                  = "#SSO"
+
+[web-core-auth-s2c-tnt-mod-idp-form]
+
+message-input-success                 = "Changes were applied successfully"
+warning-input-idp-nm-taken            = "'{{.idpNm}}' is taken"
+warning-input-olock-error             = "Another user modified the record"
+warning-input-unexpected-error        = "Unexpected error"
+
 [web-core-auth-s2c-tnt-reg-mde-form]
 
 descr                                 = "Supply the URL from which an IdP's metadata can be retrieved"
@@ -47,30 +81,17 @@ header                                = "Register identity providers"
 label-idp-nm                          = "IdP name"
 label-mde-url                         = "Metadata URL"
 submit-button-label                   = "Register"
+title-warning-plural                  = "{{.n}} problems were identified which will prevent the IdP from being registered"
+title-warning-singular                = "{{.n}} problem was identified which will prevent the IdP from being registered"
 warning-input-decode-cert             = "Unexpected error"
 warning-input-empty-cert              = "The provided certificate is empty"
 warning-input-empty-response          = "The response from the metadata URL was empty"
 warning-input-gen-cert                = "Unexpected error"
+warning-input-idp-nm-taken            = "'{{.idpNm}}' is taken"
 warning-input-marshal-cert            = "Unexpected error"
 warning-input-read-metadata           = "The metadata could not be read"
 message-input-success                 = "The IdP '{{.idpNm}}' was registered"
 warning-input-unreadable-response     = "The response from the metadata URL could not be read"
-
-[web-core-auth-s2c-tnt-reg-xml-form]
-
-descr                                 = "Supply an XML file containing an IdP's metadata"
-header                                = "Register IDP using XML file"
-label-idp-nm                          = "IdP name"
-label-xml-file                        = "XML file"
-submit-button-label                   = "Register"
-upload-button-label                   = "Choose a file..."
-warning-input-decode-cert             = "Unexpected error"
-warning-input-empty-cert              = "The provided certificate is empty"
-warning-input-gen-cert                = "Unexpected error"
-warning-input-marshal-cert            = "Unexpected error"
-warning-input-read-metadata           = "The metadata could not be read"
-message-input-success                 = "The IdP '{{.idpNm}}' was registered"
-warning-input-unreadable-response     = "The XML file's content is unreadable"
 
 [web-core-auth-s2c-tnt-del-spc-form]
 
@@ -125,36 +146,21 @@ title-warning-singular                = "{{.n}} problem was identified which wil
 warning-input-spc-nm-taken            = "'{{.spcNm}}' is taken"
 warning-input-unexpected-error        = "Unexpected error"
 
-[web-core-auth-s2c-tnt-del-idp-form]
+[web-core-auth-s2c-tnt-reg-xml-form]
 
-delete-button-label                   = "Delete"
-message-delete-success-plural         = "{{.n}} IdPs were deleted"
-message-delete-success-singular       = "{{.n}} IdP was deleted"
-
-[web-core-auth-s2c-tnt-inf-idp-form]
-
-filter-header                         = "Filters"
-input-option-idp-enabled-all          = "All"
-input-option-idp-enabled-no           = "No"
-input-option-idp-enabled-yes          = "Yes"
-label-enabled                         = "Enabled"
-label-entity-id                       = "Entity Id"
-label-nm                              = "Name"
-
-[web-core-auth-s2c-tnt-inf-idp-results]
-
-edit-button-label                     = "Edit"
-save-button-label                     = "Save"
-header-label-enabled                  = "Enabled"
-header-label-idp-entity-id            = "Entity Id"
-header-label-idp-nm                   = "Name"
-header-label-num-mde                  = "#MDE"
-header-label-num-slo                  = "#SLO"
-header-label-num-sso                  = "#SSO"
-
-[web-core-auth-s2c-tnt-mod-idp-form]
-
-message-input-success                 = "Changes were applied successfully"
+descr                                 = "Supply an XML file containing an IdP's metadata"
+header                                = "Register IDP using XML file"
+label-idp-nm                          = "IdP name"
+label-xml-file                        = "XML file"
+message-input-success                 = "The IdP '{{.idpNm}}' was registered"
+submit-button-label                   = "Register"
+title-warning-plural                  = "{{.n}} problems were identified which will prevent the IdP from being registered"
+title-warning-singular                = "{{.n}} problem was identified which will prevent the IdP from being registered"
+upload-button-label                   = "Choose a file..."
+warning-input-decode-cert             = "Unexpected error"
+warning-input-empty-cert              = "The provided certificate is empty"
+warning-input-gen-cert                = "Unexpected error"
 warning-input-idp-nm-taken            = "'{{.idpNm}}' is taken"
-warning-input-olock-error             = "Another user modified the record"
-warning-input-unexpected-error        = "Unexpected error"
+warning-input-marshal-cert            = "Unexpected error"
+warning-input-read-metadata           = "The metadata could not be read"
+warning-input-unreadable-response     = "The XML file's content is unreadable"

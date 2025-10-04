@@ -14,7 +14,6 @@ import (
 	"github.com/andrewah64/base-app-client/internal/common/core/log"
 	"github.com/andrewah64/base-app-client/internal/common/core/mw/auth"
 	"github.com/andrewah64/base-app-client/internal/common/core/session"
-	"github.com/andrewah64/base-app-client/internal/common/core/validator"
 )
 
 func Authorise(next http.Handler) http.Handler {
@@ -45,12 +44,8 @@ func Authorise(next http.Handler) http.Handler {
 					slog.String("authToken", authToken),
 				)
 
-				v := validator.New()
-				v.Check(authToken      != "" , "token", "must be provided")
-				v.Check(len(authToken) == 26 , "token", "must be 26 bytes long")
-
-				if !v.Valid() {
-					error.ValErr(ctx, rw, v.Errors)
+				if len(authToken) != 26 {
+					error.ValErr(ctx, rw, map[string]string{"token" : "must be 26 characters"})
 					return
 				}
 
