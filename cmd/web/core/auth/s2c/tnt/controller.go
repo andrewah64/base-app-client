@@ -662,6 +662,18 @@ func Post(rw http.ResponseWriter, r *http.Request){
 				slog.String("mdeUrl" , mdeUrl),
 			)
 
+			valRs, valRsErr := val.GetIdpInf(&ctx, ssd.Logger, ssd.Conn, ssd.TntId, idpNm)
+			if valRsErr != nil {
+				error.IntSrv(ctx, rw, valRsErr)
+				return
+			}
+
+			if ! valRs[0].IdpNmOk {
+				notification.Toast(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-reg-mde-form.warning-input-idp-nm-taken", "idpNm", idpNm)}, data)
+
+				return
+			}
+
 			mdeUrlRes, mdeUrlResErr := http.Get(mdeUrl)
 			if mdeUrlResErr != nil {
 				notification.Toast(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-reg-mde-form.warning-input-empty-response")}, data)
@@ -802,6 +814,18 @@ func Post(rw http.ResponseWriter, r *http.Request){
 			}
 
 			idpNm := form.VText(r, "s2c-tnt-reg-xml-idp-nm")
+
+			valRs, valRsErr := val.GetIdpInf(&ctx, ssd.Logger, ssd.Conn, ssd.TntId, idpNm)
+			if valRsErr != nil {
+				error.IntSrv(ctx, rw, valRsErr)
+				return
+			}
+
+			if ! valRs[0].IdpNmOk {
+				notification.Toast(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-reg-xml-form.warning-input-idp-nm-taken", "idpNm", idpNm)}, data)
+
+				return
+			}
 
 			xmlFile, _, xmlFileErr := r.FormFile("s2c-tnt-reg-xml-file")
 			if xmlFileErr != nil {
