@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log/slog"
 	"net/http"
-	"strings"
 )
 
 import (
@@ -40,7 +39,7 @@ func Get(rw http.ResponseWriter, r *http.Request) {
 	}
 
 	v      := validator.New()
-	aaukNm := strings.TrimSpace(form.VText (r, "key-aur-reg-aauk-nm"))
+	aaukNm := form.VText (r, "key-aur-reg-aauk-nm")
 
 	ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Get::get result of validation",
 		slog.Int   ("ssd.TntId" , ssd.TntId),

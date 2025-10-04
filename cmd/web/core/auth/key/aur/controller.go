@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"net/url"
 	"strconv"
-	"strings"
 )
 
 import (
@@ -273,7 +272,7 @@ func Post(rw http.ResponseWriter, r *http.Request){
 		return
 	}
 
-	aaukNm := strings.TrimSpace(form.VText(r, "key-aur-reg-aauk-nm"))
+	aaukNm := form.VText(r, "key-aur-reg-aauk-nm")
 
 	ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Post::get data from form",
 		slog.String("aaukNm", aaukNm),

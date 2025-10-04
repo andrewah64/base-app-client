@@ -105,7 +105,7 @@ func Post(rw http.ResponseWriter, r *http.Request){
 
 	switch strings.Split(r.PathValue("aum"), "/")[0] {
 		case "aupc":
-			aurNm  := strings.ToLower(strings.TrimSpace(form.VText(r, "ssn-aur-reg-aupc-aur-nm")))
+			aurNm  := strings.ToLower(form.VText(r, "ssn-aur-reg-aupc-aur-nm"))
 			aurPwd := form.VText(r, "ssn-aur-reg-aupc-aur-pwd")
 
 			ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Post::get data from form",
@@ -193,7 +193,7 @@ func Post(rw http.ResponseWriter, r *http.Request){
 				}
 			}
 		case "pky-atn-bgn":
-			aurNm := strings.ToLower(strings.TrimSpace(form.VText(r, "ssn-aur-reg-pky-aur-nm")))
+			aurNm := strings.ToLower(form.VText(r, "ssn-aur-reg-pky-aur-nm"))
 
 			ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Post::get data from form",
 				slog.String("aurNm", aurNm),

@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log/slog"
 	"net/http"
-	"strings"
 )
 
 import (
@@ -42,7 +41,7 @@ func Get(rw http.ResponseWriter, r *http.Request) {
 	switch r.PathValue("nm") {
 		case "spc" :
 			v     := validator.New()
-			spcNm := strings.TrimSpace(form.VText (r, "s2c-tnt-reg-spc-nm"))
+			spcNm := form.VText (r, "s2c-tnt-reg-spc-nm")
 
 			ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Get::get result of validation",
 				slog.Int   ("ssd.TntId" , ssd.TntId),

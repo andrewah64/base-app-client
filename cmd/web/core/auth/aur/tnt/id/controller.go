@@ -6,7 +6,6 @@ import (
 	"log/slog"
 	"net/http"
 	"strconv"
-	"strings"
 )
 
 import (
@@ -111,7 +110,7 @@ func Patch(rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	aurNm      := strings.TrimSpace(form.VText(r, fmt.Sprintf("aur-tnt-mod-aur-nm-%v" , aurId)))
+	aurNm      := form.VText(r, fmt.Sprintf("aur-tnt-mod-aur-nm-%v"  , aurId))
 	aurEnabled := form.VBool(r, fmt.Sprintf("aur-tnt-mod-enabled-%v" , aurId))
 	lngId      := form.VInt (r, fmt.Sprintf("aur-tnt-mod-language-%v", aurId))
 	pgId       := form.VInt (r, fmt.Sprintf("aur-tnt-mod-page-%v"    , aurId))

@@ -6,7 +6,6 @@ import (
 	"log/slog"
 	"net/http"
 	"strconv"
-	"strings"
 )
 
 import (
@@ -97,9 +96,9 @@ func Patch(rw http.ResponseWriter, r *http.Request){
 		return
 	}
 
-	occUrl          := strings.TrimSpace(form.VText (r, fmt.Sprintf("occ-tnt-mod-client-url-%v"    , occId)))
-	occClientId     := strings.TrimSpace(form.VText (r, fmt.Sprintf("occ-tnt-mod-client-id-%v"     , occId)))
-	occClientSecret := strings.TrimSpace(form.VText (r, fmt.Sprintf("occ-tnt-mod-client-secret-%v" , occId)))
+	occUrl          := form.VText (r, fmt.Sprintf("occ-tnt-mod-client-url-%v"    , occId))
+	occClientId     := form.VText (r, fmt.Sprintf("occ-tnt-mod-client-id-%v"     , occId))
+	occClientSecret := form.VText (r, fmt.Sprintf("occ-tnt-mod-client-secret-%v" , occId))
 	occEnabled      := form.VBool (r, fmt.Sprintf("occ-tnt-mod-enabled-%v"       , occId))
 	uts             := form.VTime (r, fmt.Sprintf("occ-tnt-mod-uts-%v"           , occId))
 

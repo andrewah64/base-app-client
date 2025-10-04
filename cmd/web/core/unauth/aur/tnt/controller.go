@@ -118,10 +118,10 @@ func Post(rw http.ResponseWriter, r *http.Request){
 
 	switch strings.Split(r.PathValue("aum"), "/")[0] {
 		case "aupc":
-			aurNm  := strings.ToLower(strings.TrimSpace(form.VText (r, "aur-tnt-reg-aupc-aur-nm")))
-			aurEa  := strings.TrimSpace(form.VText (r, "aur-tnt-reg-aupc-aur-ea"))
-			aurPw  := form.VText  (r, "aur-tnt-reg-aupc-aur-pwd")
-			aurPw2 := form.VText  (r, "aur-tnt-reg-aupc-aur-pwd-2")
+			aurNm  := strings.ToLower(form.VText (r, "aur-tnt-reg-aupc-aur-nm"))
+			aurEa  := form.VText (r, "aur-tnt-reg-aupc-aur-ea")
+			aurPw  := form.VText (r, "aur-tnt-reg-aupc-aur-pwd")
+			aurPw2 := form.VText (r, "aur-tnt-reg-aupc-aur-pwd-2")
 
 			ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Post::get data from form",
 				slog.String("aurNm" , aurNm),
@@ -237,7 +237,7 @@ func Post(rw http.ResponseWriter, r *http.Request){
 				rw.Header().Set("HX-Location", `{"path":"/", "target":"#main", "select":"#content", "values":{"ntf": "web-core-unauth-aur-tnt-aupc-tab.message-success"}}`)
 			}
 		case "pky-reg-bgn":
-			aurNm := strings.ToLower(strings.TrimSpace(form.VText(r, "aur-tnt-reg-pky-aur-nm")))
+			aurNm := strings.ToLower(form.VText(r, "aur-tnt-reg-pky-aur-nm"))
 
 			ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Post::get data from form",
 				slog.String("aurNm" , aurNm),

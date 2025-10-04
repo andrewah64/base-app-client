@@ -6,7 +6,6 @@ import (
 	"log/slog"
 	"net/http"
 	"strconv"
-	"strings"
 )
 
 import (
@@ -99,9 +98,9 @@ func Patch(rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	aaukNm      := strings.TrimSpace(form.VText(r, fmt.Sprintf("key-aur-mod-aauk-nm-%v" , aaukId)))
-	aaukEnabled := form.VBool(r, fmt.Sprintf("key-aur-mod-aauk-enabled-%v", aaukId))
-	uts         := form.VTime(r, fmt.Sprintf("key-aur-mod-uts-%v"         , aaukId))
+	aaukNm      := form.VText(r, fmt.Sprintf("key-aur-mod-aauk-nm-%v"      , aaukId))
+	aaukEnabled := form.VBool(r, fmt.Sprintf("key-aur-mod-aauk-enabled-%v" , aaukId))
+	uts         := form.VTime(r, fmt.Sprintf("key-aur-mod-uts-%v"          , aaukId))
 
 	ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Patch::get data from form",
 		slog.Int   ("aaukId"      , aaukId),
