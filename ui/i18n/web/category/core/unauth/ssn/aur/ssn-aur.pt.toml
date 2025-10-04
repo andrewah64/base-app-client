@@ -14,6 +14,8 @@ header                              = "Use your username & password"
 input-label-aur-nm                  = "Username (required)"
 input-label-aur-pwd                 = "Password (required)"
 submit-button-label                 = "Sign in"
+title-warning-plural                = "{{.n}} problems were identified which prevented the user from being authenticated"
+title-warning-singular              = "{{.n}} problem was identified which prevented the user from being authenticated"
 
 [web-core-unauth-ssn-aur-reg-pky-form]
 error-input-aur-nm                  = "Username is incorrect"

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log/slog"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -112,12 +113,7 @@ func Post(rw http.ResponseWriter, r *http.Request){
 				slog.String("aurNm", aurNm),
 			)
 
-			if validator.Blank(aurNm) || validator.Blank(aurPwd) {
-				ssd.Logger.LogAttrs(ctx, slog.LevelError, "Post::front end username/password length checks have failed",
-					slog.Bool("validator.Blank(aurNm)" , validator.Blank(aurNm)),
-					slog.Bool("validator.Blank(aurPwd)", validator.Blank(aurPwd)),
-				)
-
+			if strings.TrimSpace(aurNm) == ""  || strings.TrimSpace(aurPwd) {
 				notification.Toast(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-unauth-ssn-aur-reg-aupc-form.error-input-unexpected")}, data)
 
 				return
@@ -178,13 +174,15 @@ func Post(rw http.ResponseWriter, r *http.Request){
 						slog.String("aurNm", aurNm),
 					)
 
-					v := validator.New()
-
-					v.Check(false, "ssn-aur-reg-creds", data.T("web-core-unauth-ssn-aur-reg-aupc-form.error-input-aur-nm-pwd-vld"))
-
-					data.ResultSet = &map[string]any{"Validator" : &v}
-
-					html.Fragment(ctx, ssd.Logger, rw, r, "core/unauth/ssn/aur/fragment/val", http.StatusUnauthorized, &data)
+					notification.Vrl(ctx, ssd.Logger, rw, r,
+						data.T("web-core-unauth-ssn-aur-reg-page.title"),
+						data.T("web-core-unauth-ssn-aur-reg-aupc-form.title-warning-singular"),
+						data.T("web-core-unauth-ssn-aur-reg-aupc-form.title-warning-plural"),
+						&[]string{
+							data.T("web-core-unauth-ssn-aur-reg-aupc-form.error-input-aur-nm-pwd-vld")
+						},
+						data,
+					)
 
 					return
 				} else {
