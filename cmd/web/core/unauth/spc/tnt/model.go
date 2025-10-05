@@ -15,15 +15,15 @@ import (
 	"github.com/andrewah64/base-app-client/internal/common/core/db"
 )
 
-type SpcInf struct {
+type MetadataInf struct {
 	S2cEntityId string
 	S2cAcsUrl   string
 	SpcSgnCrt   []byte
 	SpcEncCrt   []byte
 }
 
-func GetSpc (ctx *context.Context, logger *slog.Logger, conn *pgxpool.Conn, tntId int) ([]SpcInf, error) {
-	rs, rErr := db.DataSet[SpcInf](ctx, logger, conn,
+func GetMetadataInf (ctx *context.Context, logger *slog.Logger, conn *pgxpool.Conn, tntId int) ([]MetadataInf, error) {
+	rs, rErr := db.DataSet[MetadataInf](ctx, logger, conn,
 		func(ctx *context.Context, tx *pgx.Tx)(string, string, *pgx.Rows, error){
 			dbFunc := "spc_inf"
 			qry    := fmt.Sprintf("select web_core_unauth_spc_tnt_inf.%v($1, $2)", dbFunc)

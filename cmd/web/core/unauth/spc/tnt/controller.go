@@ -13,7 +13,11 @@ import (
 	"github.com/andrewah64/base-app-client/internal/web/core/error"
 )
 
-func Get (rw http.ResponseWriter, r *http.Request) {
+func Acs (rw http.ResponseWriter, r *http.Request) {
+
+}
+
+func Metadata (rw http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	ssd, ok := session.FromContext(ctx)
@@ -26,7 +30,7 @@ func Get (rw http.ResponseWriter, r *http.Request) {
 
 	session.Identity(&ctx, ssd.Logger, ssd.Conn, "role_web_core_unauth_spc_tnt_inf")
 
-	spcRs, spcRsErr := GetSpc(&ctx, ssd.Logger, ssd.Conn, ssd.TntId)
+	spcRs, spcRsErr := GetMetadataInf(&ctx, ssd.Logger, ssd.Conn, ssd.TntId)
 	if spcRsErr != nil {
 		error.IntSrv(ctx, rw, spcRsErr)
 		return

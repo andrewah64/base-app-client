@@ -198,7 +198,8 @@ func main() {
 			"web.core.unauth.otp.aur.Post"      : unauthotpaur.Post,
 			"web.core.unauth.otp.ssn.aur.Get"   : unauthotpssnaur.Get,
 			"web.core.unauth.otp.ssn.aur.Post"  : unauthotpssnaur.Post,
-			"web.core.unauth.spc.tnt.Get"       : unauthspctnt.Get,
+			"web.core.unauth.saml2.Acs"         : unauthspctnt.Acs,
+			"web.core.unauth.saml2.Metadata"    : unauthspctnt.Metadata,
 			"web.core.unauth.ssn.aur.Get"       : unauthssnaur.Get,
 			"web.core.unauth.ssn.aur.Post"      : unauthssnaur.Post,
 		}
