@@ -51,6 +51,10 @@ behavior CbdgSelectAll(tb, rcb, btn, btntmptxt)
 end
 
 behavior CbdgSelectRow(tb, acb, btn, btntmptxt)
+	init
+		set me.checked to acb.checked
+	end
+
 	on click from me
 		set c to 0
 		set n to 0
