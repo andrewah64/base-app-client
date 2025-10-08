@@ -45,12 +45,6 @@ func Get(rw http.ResponseWriter, r *http.Request){
 		return
 	}
 
-	p := r.URL.Query()
-
-	if p.Has("ntf"){
-		notification.Toast(ctx, ssd.Logger, rw, r, "info", &map[string]string{"Message" : data.T(p.Get("ntf"))} , data)
-	}
-
 	cs.Identity(&ctx, ssd.Logger, ssd.Conn, "role_web_core_unauth_ssn_aur_reg")
 
 	aumRs, aumRsErr := GetAumInf(&ctx, ssd.Logger, ssd.Conn, ssd.TntId)
@@ -58,26 +52,41 @@ func Get(rw http.ResponseWriter, r *http.Request){
 		error.IntSrv(ctx, rw, aumRsErr)
 		return
 	}
-	
-	rs := make(map[string]any)
 
-	rs["Aum"] = &aumRs
-
-	if aumRs[0].AupcEnabled {
-		pwdRs, pwdRsErr := GetPwdInf(&ctx, ssd.Logger, ssd.Conn, ssd.TntId)
-		if pwdRsErr != nil {
-			error.IntSrv(ctx, rw, pwdRsErr)
-			return
-		}
-
-		rs["Pwd"] = &pwdRs
+	if aumRs[0].Saml2S2i { //IdP initiated SAML2 : this endpoint doesn't serve a purpose
+		return
 	}
 
-	data.ResultSet = &rs
+	if aumRs[0].Saml2S2s {
+		http.Redirect(rw, r, "", http.StatusSeeOther)
+		return
+	} else {
+		p := r.URL.Query()
 
-	html.Tmpl(ctx, ssd.Logger, rw, r, "core/unauth/ssn/aur/content", http.StatusOK, &data)
+		if p.Has("ntf"){
+			notification.Toast(ctx, ssd.Logger, rw, r, "info", &map[string]string{"Message" : data.T(p.Get("ntf"))} , data)
+		}
 
-	ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Get::end")
+		rs := make(map[string]any)
+
+		rs["Aum"] = &aumRs
+
+		if aumRs[0].AupcEnabled {
+			pwdRs, pwdRsErr := GetPwdInf(&ctx, ssd.Logger, ssd.Conn, ssd.TntId)
+			if pwdRsErr != nil {
+				error.IntSrv(ctx, rw, pwdRsErr)
+				return
+			}
+
+			rs["Pwd"] = &pwdRs
+		}
+
+		data.ResultSet = &rs
+
+		html.Tmpl(ctx, ssd.Logger, rw, r, "core/unauth/ssn/aur/content", http.StatusOK, &data)
+
+		ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Get::end")
+	}
 }
 
 func Post(rw http.ResponseWriter, r *http.Request){
@@ -99,7 +108,7 @@ func Post(rw http.ResponseWriter, r *http.Request){
 
 	pfErr := r.ParseForm()
 	if pfErr != nil {
-		error.IntSrv(ctx, rw, pfErr) 
+		error.IntSrv(ctx, rw, pfErr)
 		return
 	}
 

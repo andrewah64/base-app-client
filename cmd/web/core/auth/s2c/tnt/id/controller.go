@@ -144,9 +144,17 @@ func Patch(rw http.ResponseWriter, r *http.Request) {
 			idpEnabled := form.VBool (r, fmt.Sprintf("s2c-tnt-inf-idp-enabled-%v" , idpId))
 			uts        := form.VTime (r, fmt.Sprintf("s2c-tnt-inf-idp-uts-%v"     , idpId))
 
-			idpValRs, idpValRsErr := GetRowIdpVal(&ctx, ssd.Logger, ssd.Conn, ssd.TntId, idpId, idpNm)
+			idpValRs, idpValRsErr := GetRowIdpVal(&ctx, ssd.Logger, ssd.Conn, ssd.TntId, idpId, idpEnabled, idpNm)
 			if idpValRsErr != nil {
 				error.IntSrv(ctx, rw, idpValRsErr)
+				return
+			}
+
+			if ! idpValRs[0].IdpEnabledOk {
+				Get(rw, r)
+
+				notification.Toast(ctx, slog.Default(), rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-mod-idp-form.warning-input-idp-enabled")}, data)
+
 				return
 			}
 

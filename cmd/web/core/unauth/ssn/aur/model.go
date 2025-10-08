@@ -56,6 +56,9 @@ func GetAukcAtnInf (ctx *context.Context, logger *slog.Logger, conn *pgxpool.Con
 type AumInf struct {
 	AupcEnabled      bool
 	AukcEnabled      bool
+	Saml2S2i         bool
+	Saml2S2s         bool
+	Saml2S2u         bool
 	GoogleEnabled    bool
 	MicrosoftEnabled bool
 }

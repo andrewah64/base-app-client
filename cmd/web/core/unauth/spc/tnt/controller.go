@@ -14,7 +14,23 @@ import (
 )
 
 func Acs (rw http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
 
+	ssd, ok := session.FromContext(ctx)
+	if ! ok {
+		error.IntSrv(ctx, rw, fmt.Errorf("Acs::get request info"))
+		return
+	}
+
+	pfErr := r.ParseForm()
+	if pfErr != nil {
+		error.IntSrv(ctx, rw, pfErr) 
+		return
+	}
+
+	fmt.Printf("\n\n r.Form : %+v \n\n", r.Form)
+
+	session.Identity(&ctx, ssd.Logger, ssd.Conn, "role_web_core_unauth_spc_tnt_inf")
 }
 
 func Metadata (rw http.ResponseWriter, r *http.Request) {
@@ -22,11 +38,11 @@ func Metadata (rw http.ResponseWriter, r *http.Request) {
 
 	ssd, ok := session.FromContext(ctx)
 	if ! ok {
-		error.IntSrv(ctx, rw, fmt.Errorf("Get::get request info"))
+		error.IntSrv(ctx, rw, fmt.Errorf("Metadata::get request info"))
 		return
 	}
 
-	ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Get::start")
+	ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Metadata::start")
 
 	session.Identity(&ctx, ssd.Logger, ssd.Conn, "role_web_core_unauth_spc_tnt_inf")
 
@@ -36,7 +52,7 @@ func Metadata (rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Get::SPC resultset length",
+	ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Metadata::SPC resultset length",
 		slog.Int("len(spcRs)", len(spcRs)),
 	)
 

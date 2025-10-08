@@ -70,6 +70,7 @@ header-label-num-sso                  = "#SSO"
 [web-core-auth-s2c-tnt-mod-idp-form]
 
 message-input-success                 = "Changes were applied successfully"
+warning-input-idp-enabled             = "Another IdP is enabled. Disable it first."
 warning-input-idp-nm-taken            = "'{{.idpNm}}' is taken"
 warning-input-olock-error             = "Another user modified the record"
 warning-input-unexpected-error        = "Unexpected error"
