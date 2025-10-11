@@ -204,6 +204,7 @@ type S2cInf struct {
 	EppAcsPt    string
 	EppMtdPt    string
 	SpcOk       bool
+	IdpOk       bool
 	Uts         time.Time
 }
 

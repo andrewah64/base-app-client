@@ -32,6 +32,7 @@ label-acs-url                         = "Service provider: assertion consumer se
 label-aum-id                          = "Service provider: authentication method (required)"
 label-enabled                         = "Service provider: enabled"
 label-entity-id                       = "Service provider: entity ID (required)"
+label-idp-ok                          = "Identity provider: enabled, valid certificates and endpoints"
 label-mtd-url                         = "Service provider: metadata URL"
 label-spc-ok                          = "Service provider: enabled, valid certificate pair"
 message-entity-id-pattern             = "Entity IDs cannot consist only of whitespace"
