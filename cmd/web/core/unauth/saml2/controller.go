@@ -64,23 +64,23 @@ func Metadata (rw http.ResponseWriter, r *http.Request) {
 
 		metadata := `<?xml version="1.0" encoding="UTF-8"?>
 			       <EntityDescriptor xmlns="urn:oasis:names:tc:SAML:2.0:metadata" entityID="%s">
-				 <SPSSODescriptor protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol" AuthnRequestsSigned="true" WantAssertionsSigned="true">
-				   <KeyDescriptor use="signing">
-				     <ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
-				       <ds:X509Data>
-					 <ds:X509Certificate>%s</ds:X509Certificate>
-				       </ds:X509Data>
-				     </ds:KeyInfo>
-				   </KeyDescriptor>
-				   <KeyDescriptor use="encryption">
-				     <ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
-				       <ds:X509Data>
-					 <ds:X509Certificate>%s</ds:X509Certificate>
-				       </ds:X509Data>
-				     </ds:KeyInfo>
-				   </KeyDescriptor>
-				   <AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="%s" index="0" isDefault="true"/>
-				 </SPSSODescriptor>
+			         <SPSSODescriptor protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol" AuthnRequestsSigned="true" WantAssertionsSigned="true">
+			           <KeyDescriptor use="signing">
+			             <ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+			               <ds:X509Data>
+			                 <ds:X509Certificate>%s</ds:X509Certificate>
+			               </ds:X509Data>
+			             </ds:KeyInfo>
+			           </KeyDescriptor>
+			           <KeyDescriptor use="encryption">
+			             <ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+			               <ds:X509Data>
+			                 <ds:X509Certificate>%s</ds:X509Certificate>
+			               </ds:X509Data>
+			             </ds:KeyInfo>
+			           </KeyDescriptor>
+			           <AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="%s" index="0" isDefault="true"/>
+			         </SPSSODescriptor>
 			       </EntityDescriptor>`
 
 		rw.Header().Set("Content-Type", "application/samlmetadata+xml")

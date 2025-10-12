@@ -50,12 +50,12 @@ import (
 	auths2ctntval    "github.com/andrewah64/base-app-client/cmd/web/core/auth/s2c/tnt/val"
 	authssntnt       "github.com/andrewah64/base-app-client/cmd/web/core/auth/ssn/tnt"
 	authssnaur       "github.com/andrewah64/base-app-client/cmd/web/core/auth/ssn/aur"
-	oidc             "github.com/andrewah64/base-app-client/cmd/web/core/oidc"
 	unauthaurtnt     "github.com/andrewah64/base-app-client/cmd/web/core/unauth/aur/tnt"
 	unauthaurtntval  "github.com/andrewah64/base-app-client/cmd/web/core/unauth/aur/tnt/val"
+	unauthoidc       "github.com/andrewah64/base-app-client/cmd/web/core/unauth/oidc"
 	unauthotpaur     "github.com/andrewah64/base-app-client/cmd/web/core/unauth/otp/aur"
 	unauthotpssnaur  "github.com/andrewah64/base-app-client/cmd/web/core/unauth/otp/ssn/aur"
-	unauthspctnt     "github.com/andrewah64/base-app-client/cmd/web/core/unauth/spc/tnt"
+	unauthsaml2      "github.com/andrewah64/base-app-client/cmd/web/core/unauth/saml2"
 	unauthssnaur     "github.com/andrewah64/base-app-client/cmd/web/core/unauth/ssn/aur"
 )
 
@@ -189,17 +189,17 @@ func main() {
 			"web.core.auth.ssn.tnt.Get"         : authssntnt.Get,
 			"web.core.auth.ssn.tnt.Delete"      : authssntnt.Delete,
 			"web.core.auth.ssn.aur.Delete"      : authssnaur.Delete,
-			"web.core.unauth.oidc.Call"         : oidc.Call,
-			"web.core.unauth.oidc.Callback"     : oidc.Callback,
 			"web.core.unauth.aur.tnt.Get"       : unauthaurtnt.Get,
 			"web.core.unauth.aur.tnt.Post"      : unauthaurtnt.Post,
 			"web.core.unauth.aur.tnt.val.Get"   : unauthaurtntval.Get,
+			"web.core.unauth.oidc.Call"         : unauthoidc.Call,
+			"web.core.unauth.oidc.Callback"     : unauthoidc.Callback,
 			"web.core.unauth.otp.aur.Get"       : unauthotpaur.Get,
 			"web.core.unauth.otp.aur.Post"      : unauthotpaur.Post,
 			"web.core.unauth.otp.ssn.aur.Get"   : unauthotpssnaur.Get,
 			"web.core.unauth.otp.ssn.aur.Post"  : unauthotpssnaur.Post,
-			"web.core.unauth.saml2.Acs"         : unauthspctnt.Acs,
-			"web.core.unauth.saml2.Metadata"    : unauthspctnt.Metadata,
+			"web.core.unauth.saml2.Acs"         : unauthsaml2.Acs,
+			"web.core.unauth.saml2.Metadata"    : unauthsaml2.Metadata,
 			"web.core.unauth.ssn.aur.Get"       : unauthssnaur.Get,
 			"web.core.unauth.ssn.aur.Post"      : unauthssnaur.Post,
 		}
