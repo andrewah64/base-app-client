@@ -15,18 +15,22 @@ import (
 	"github.com/andrewah64/base-app-client/internal/common/core/db"
 )
 
-type MetadataInf struct {
+type AcsInf struct {
+	SsoUrl      string
+	SsoBndNm    string
+	SloUrl      *string
+	SloBndNm    *string
+	IdpEntityId string
+	AcsEppPt    string
 	S2cEntityId string
-	S2cAcsUrl   string
-	SpcSgnCrt   []byte
-	SpcEncCrt   []byte
+	IpcCrt      [][]byte
 }
 
-func GetMetadataInf (ctx *context.Context, logger *slog.Logger, conn *pgxpool.Conn, tntId int) ([]MetadataInf, error) {
-	rs, rErr := db.DataSet[MetadataInf](ctx, logger, conn,
+func GetAcsInf (ctx *context.Context, logger *slog.Logger, conn *pgxpool.Conn, tntId int) ([]AcsInf, error) {
+	rs, rErr := db.DataSet[AcsInf](ctx, logger, conn,
 		func(ctx *context.Context, tx *pgx.Tx)(string, string, *pgx.Rows, error){
-			dbFunc := "spc_inf"
-			qry    := fmt.Sprintf("select web_core_unauth_spc_tnt_inf.%v($1, $2)", dbFunc)
+			dbFunc := "acs_inf"
+			qry    := fmt.Sprintf("select web_core_unauth_saml2_acs_inf.%v($1, $2)", dbFunc)
 
 			c, cErr := (*tx).Query(*ctx, qry, dbFunc, tntId)
 			if cErr != nil {

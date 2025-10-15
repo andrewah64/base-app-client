@@ -17,7 +17,7 @@ require (
 )
 
 require (
-	github.com/beevik/etree v1.5.0 // indirect
+	github.com/beevik/etree v1.6.0 // indirect
 	github.com/boombuler/barcode v1.0.2 // indirect
 	github.com/coreos/go-oidc/v3 v3.15.0 // indirect
 	github.com/fxamacker/cbor/v2 v2.9.0 // indirect

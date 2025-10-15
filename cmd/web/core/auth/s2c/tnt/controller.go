@@ -760,20 +760,7 @@ func Post(rw http.ResponseWriter, r *http.Request){
 						return
 					}
 
-					mCrt, mCrtErr := json.Marshal(crt)
-					if mCrtErr != nil {
-						notification.Toast(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-reg-mde-form.warning-input-marshal-cert")}, data)
-
-						slog.LogAttrs(ctx, slog.LevelError, "Post:: marshal crt",
-							slog.String("crtErr" , crtErr.Error()),
-							slog.Int   ("i"      , i),
-							slog.String("kds"    , fmt.Sprintf("%+v", kds)),
-						)
-
-						return
-					}
-
-					ipcCrt[i]   = mCrt
+					ipcCrt[i]   = x5d
 					cruNm[i]    = kds.Use
 					ipcIncTs[i] = crt.NotBefore
 					ipcExpTs[i] = crt.NotAfter
