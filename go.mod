@@ -22,9 +22,9 @@ require (
 	github.com/coreos/go-oidc/v3 v3.15.0 // indirect
 	github.com/fxamacker/cbor/v2 v2.9.0 // indirect
 	github.com/go-jose/go-jose/v4 v4.1.0 // indirect
-	github.com/go-webauthn/webauthn v0.13.4 // indirect
-	github.com/go-webauthn/x v0.1.23 // indirect
-	github.com/golang-jwt/jwt/v5 v5.2.3 // indirect
+	github.com/go-webauthn/webauthn v0.14.0 // indirect
+	github.com/go-webauthn/x v0.1.25 // indirect
+	github.com/golang-jwt/jwt/v5 v5.3.0 // indirect
 	github.com/google/go-tpm v0.9.5 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20240606120523-5a60cdf6a761 // indirect
