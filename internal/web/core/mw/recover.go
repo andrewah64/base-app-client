@@ -14,7 +14,9 @@ func Recover (next http.Handler) http.Handler {
 		defer func (){
 			if err := recover(); err != nil {
 				rw.Header().Set("Connection", "close")
-				error.IntSrv(r.Context(), rw, fmt.Errorf("%s", err))
+				error.IntSrv(r.Context(), rw,
+					fmt.Errorf("web/core/mw/recover middleware :: %s", err),
+				)
 			}
 		} ()
 		next.ServeHTTP(rw, r)

@@ -25,7 +25,7 @@ import (
 func Mux(ctx *context.Context, handlers map[string]http.HandlerFunc) (http.Handler) {
 	slog.LogAttrs(*ctx, slog.LevelInfo, "load routes")
 
-	mux    := http.NewServeMux()
+	mux := http.NewServeMux()
 
 	standard := alice.New(wm.Recover , cm.ResponseHeaders, cm.CSRFHandler)
 	auth     := alice.New(wm.WebAuth)

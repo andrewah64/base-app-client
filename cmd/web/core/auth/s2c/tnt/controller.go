@@ -706,7 +706,18 @@ func Post(rw http.ResponseWriter, r *http.Request){
 				notification.Toast(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-reg-mde-form.warning-input-read-metadata")}, data)
 
 				ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Post:: unmarshal metadata into struct",
-					slog.String("mtdErr" , mtdRawErr.Error()),
+					slog.String("mtdErr" , mtdErr.Error()),
+					slog.String("idpNm"  , idpNm),
+					slog.String("mdeUrl" , mdeUrl),
+				)
+
+				return
+			}
+
+			if mtd.IDPSSODescriptor == nil {
+				notification.Toast(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-reg-mde-form.warning-input-read-metadata")}, data)
+
+				ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Post:: the metadata did not contain IDPSSODescriptor elements",
 					slog.String("idpNm"  , idpNm),
 					slog.String("mdeUrl" , mdeUrl),
 				)
@@ -835,15 +846,25 @@ func Post(rw http.ResponseWriter, r *http.Request){
 
 				return
 			}
-			
+	
 			mtd    := &gosaml2types.EntityDescriptor{}
 			mtdErr := xml.Unmarshal(mtdRaw, mtd)
 			if mtdErr != nil {
 				notification.Toast(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-reg-xml-form.warning-input-read-metadata")}, data)
 
 				ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Post:: unmarshal metadata into struct",
-					slog.String("mtdErr" , mtdRawErr.Error()),
+					slog.String("mtdErr" , mtdErr.Error()),
 					slog.String("idpNm"  , idpNm),
+				)
+
+				return
+			}
+
+			if mtd.IDPSSODescriptor == nil {
+				notification.Toast(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-reg-xml-form.warning-input-read-metadata")}, data)
+
+				ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Post:: the xml file did not contain IDPSSODescriptor elements",
+					slog.String("idpNm" , idpNm),
 				)
 
 				return
