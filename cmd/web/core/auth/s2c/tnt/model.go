@@ -41,31 +41,6 @@ func DelIdp (ctx *context.Context, logger *slog.Logger, conn *pgxpool.Conn, tntI
 	return nil
 }
 
-func DelSpc (ctx *context.Context, logger *slog.Logger, conn *pgxpool.Conn, tntId int, spcId []int, exptErrs []string) error {
-	var (
-		sprocCall   = "call web_core_auth_s2c_tnt_mod.del_spc(@p_tnt_id, @p_spc_id)"
-		sprocParams = pgx.NamedArgs{
-			"p_tnt_id" : tntId,
-			"p_spc_id" : spcId,
-		}
-	)
-
-	sprocErr := db.Sproc(ctx, logger, conn, sprocCall, sprocParams, exptErrs)
-	if sprocErr != nil {
-		logger.LogAttrs(*ctx, slog.LevelDebug, "call sproc",
-			slog.String("sprocCall" , sprocCall),
-			slog.String("error"     , sprocErr.Error()),
-			slog.Int   ("tntId"     , tntId),
-			slog.Any   ("spcId"     , spcId),
-			slog.Any   ("exptErrs"  , exptErrs),
-		)
-
-		return sprocErr
-	}
-
-	return nil
-}
-
 type Opt struct {
 	Key   string
 	Id    int
@@ -174,36 +149,11 @@ func GetS2cUtsInf (ctx *context.Context, logger *slog.Logger, conn *pgxpool.Conn
 	return rs, rErr
 }
 
-func GetS2gUtsInf (ctx *context.Context, logger *slog.Logger, conn *pgxpool.Conn, tntId int) ([]UtsInf, error) {
-	rs, rErr := db.DataSet[UtsInf](ctx, logger, conn,
-		func(ctx *context.Context, tx *pgx.Tx)(string, string, *pgx.Rows, error){
-			dbFunc := "s2g_uts_inf"
-			qry    := fmt.Sprintf("select web_core_auth_s2c_tnt_inf.%v($1, $2)", dbFunc)
-
-			c, cErr := (*tx).Query(*ctx, qry, dbFunc, tntId)
-			if cErr != nil {
-				slog.LogAttrs(*ctx, slog.LevelError, "get dataset",
-					slog.String("error" , cErr.Error()),
-					slog.String("qry"   , qry),
-					slog.Int   ("tntId" , tntId),
-				)
-
-				return qry, dbFunc, nil, fmt.Errorf("call database function: %w", cErr)
-			}
-
-			return qry, dbFunc, &c, nil
-		})
-
-	return rs, rErr
-}
-
 type S2cInf struct {
 	S2cEntityId string
 	S2cEnabled  bool
 	AumId       int
 	EppAcsPt    string
-	EppMtdPt    string
-	SpcOk       bool
 	IdpOk       bool
 	Uts         time.Time
 }
@@ -220,73 +170,6 @@ func GetS2cInf (ctx *context.Context, logger *slog.Logger, conn *pgxpool.Conn, t
 					slog.String("error" , cErr.Error()),
 					slog.String("qry"   , qry),
 					slog.Int   ("tntId" , tntId),
-				)
-
-				return qry, dbFunc, nil, fmt.Errorf("call database function: %w", cErr)
-			}
-
-			return qry, dbFunc, &c, nil
-		})
-
-	return rs, rErr
-}
-
-type S2gInf struct {
-	S2gCrtCn  string
-	S2gCrtOrg string
-	Uts       time.Time
-}
-
-func GetS2gInf (ctx *context.Context, logger *slog.Logger, conn *pgxpool.Conn, tntId int) ([]S2gInf, error) {
-	rs, rErr := db.DataSet[S2gInf](ctx, logger, conn,
-		func(ctx *context.Context, tx *pgx.Tx)(string, string, *pgx.Rows, error){
-			dbFunc := "s2g_inf"
-			qry    := fmt.Sprintf("select web_core_auth_s2c_tnt_inf.%v($1, $2)", dbFunc)
-
-			c, cErr := (*tx).Query(*ctx, qry, dbFunc, tntId)
-			if cErr != nil {
-				slog.LogAttrs(*ctx, slog.LevelError, "get dataset",
-					slog.String("error" , cErr.Error()),
-					slog.String("qry"   , qry),
-					slog.Int   ("tntId" , tntId),
-				)
-
-				return qry, dbFunc, nil, fmt.Errorf("call database function: %w", cErr)
-			}
-
-			return qry, dbFunc, &c, nil
-		})
-
-	return rs, rErr
-}
-
-type SpcInf struct {
-	SpcId      int
-	SpcNm      string
-	SpcCnNm    string
-	SpcIncTs   time.Time
-	SpcExpTs   time.Time
-	SpcEnabled bool
-}
-
-func GetSpcInf (ctx *context.Context, logger *slog.Logger, conn *pgxpool.Conn, tntId int, spcNm string, spcIncTs *time.Time, spcExpTs *time.Time, spcEnabled *bool, offset int, limit int) ([]SpcInf, error) {
-	rs, rErr := db.DataSet[SpcInf](ctx, logger, conn,
-		func(ctx *context.Context, tx *pgx.Tx)(string, string, *pgx.Rows, error){
-			dbFunc := "spc_inf"
-			qry    := fmt.Sprintf("select web_core_auth_s2c_tnt_inf.%v($1, $2, $3, $4, $5, $6, $7, $8)", dbFunc)
-
-			c, cErr := (*tx).Query(*ctx, qry, dbFunc, tntId, spcNm, spcIncTs, spcExpTs, spcEnabled, offset, limit)
-			if cErr != nil {
-				slog.LogAttrs(*ctx, slog.LevelError, "get dataset",
-					slog.String("error"      , cErr.Error()),
-					slog.String("qry"        , qry),
-					slog.Int   ("tntId"      , tntId),
-					slog.String("spcNm"      , spcNm),
-					slog.Any   ("spcIncTs"   , spcIncTs),
-					slog.Any   ("spcExpTs"   , spcExpTs),
-					slog.Any   ("spcEnabled" , spcEnabled),
-					slog.Int   ("offset"     , offset),
-					slog.Int   ("limit"      , limit),
 				)
 
 				return qry, dbFunc, nil, fmt.Errorf("call database function: %w", cErr)
@@ -323,37 +206,6 @@ func PatchS2c (ctx *context.Context, logger *slog.Logger, conn *pgxpool.Conn, tn
 			slog.String("by"          , by),
 			slog.Any   ("uts"         , uts),
 			slog.Any   ("exptErrs"    , exptErrs),
-		)
-
-		return sprocErr
-	}
-
-	return nil
-}
-
-func PatchS2g (ctx *context.Context, logger *slog.Logger, conn *pgxpool.Conn, tntId int, s2gCrtCn string, s2gCrtOrg string, by string, uts time.Time, exptErrs []string) error {
-	var (
-		sprocCall   = "call web_core_auth_s2c_tnt_mod.mod_s2g(@p_tnt_id, @p_s2g_crt_cn, @p_s2g_crt_org, @p_by, @p_uts)"
-		sprocParams = pgx.NamedArgs{
-			"p_tnt_id"      : tntId,
-			"p_s2g_crt_cn"  : s2gCrtCn,
-			"p_s2g_crt_org" : s2gCrtOrg,
-			"p_by"          : by,
-			"p_uts"         : uts,
-		}
-	)
-
-	sprocErr := db.Sproc(ctx, logger, conn, sprocCall, sprocParams, exptErrs)
-	if sprocErr != nil {
-		logger.LogAttrs(*ctx, slog.LevelDebug, "call sproc",
-			slog.String("sprocCall" , sprocCall),
-			slog.String("error"     , sprocErr.Error()),
-			slog.Int   ("tntId"     , tntId),
-			slog.String("s2gCrtCn"  , s2gCrtCn),
-			slog.String("s2gCrtOrg" , s2gCrtOrg),
-			slog.String("by"        , by),
-			slog.Any   ("uts"       , uts),
-			slog.Any   ("exptErrs"  , exptErrs),
 		)
 
 		return sprocErr
@@ -399,43 +251,6 @@ func PostIdp (ctx *context.Context, logger *slog.Logger, conn *pgxpool.Conn, tnt
 			slog.Any   ("ssoUrl"      , ssoUrl),
 			slog.Any   ("ssoUrlBnd"   , ssoUrlBnd),
 			slog.String("by"          , by),
-		)
-
-		return sprocErr
-	}
-
-	return nil
-}
-
-func PostSpc (ctx *context.Context, logger *slog.Logger, conn *pgxpool.Conn, tntId int, spcNm string, spcCnNm string, spcOrgNm string, spcEncCrt []byte, spcEncPvk []byte, spcSgnCrt []byte, spcSgnPvk []byte, spcIncTs time.Time, spcExpTs time.Time, by string, exptErrs []string) error {
-	var (
-		sprocCall   = "call web_core_auth_s2c_tnt_mod.reg_spc(@p_tnt_id, @p_spc_nm, @p_spc_cn_nm, @p_spc_org_nm, @p_spc_enc_crt, @p_spc_enc_pvk, @p_spc_sgn_crt, @p_spc_sgn_pvk, @p_spc_inc_ts, @p_spc_exp_ts, @p_by)"
-		sprocParams = pgx.NamedArgs{
-			"p_tnt_id"      : tntId,
-			"p_spc_nm"      : spcNm,
-			"p_spc_cn_nm"   : spcCnNm,
-			"p_spc_org_nm"  : spcOrgNm,
-			"p_spc_enc_crt" : spcEncCrt,
-			"p_spc_enc_pvk" : spcEncPvk,
-			"p_spc_sgn_crt" : spcSgnCrt,
-			"p_spc_sgn_pvk" : spcSgnPvk,
-			"p_spc_inc_ts"  : spcIncTs,
-			"p_spc_exp_ts"  : spcExpTs,
-			"p_by"          : by,
-		}
-	)
-
-	sprocErr := db.Sproc(ctx, logger, conn, sprocCall, sprocParams, exptErrs)
-	if sprocErr != nil {
-		logger.LogAttrs(*ctx, slog.LevelDebug, "call sproc",
-			slog.String("sprocCall" , sprocCall),
-			slog.String("error"     , sprocErr.Error()),
-			slog.Int   ("tntId"     , tntId),
-			slog.String("spcNm"     , spcNm),
-			slog.String("spcCnNm"   , spcCnNm),
-			slog.String("spcOrgNm"  , spcOrgNm),
-			slog.String("by"        , by),
-			slog.Any   ("exptErrs"  , exptErrs),
 		)
 
 		return sprocErr

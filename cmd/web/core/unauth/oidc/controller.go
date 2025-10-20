@@ -277,7 +277,7 @@ func Callback(rw http.ResponseWriter, r *http.Request){
 				slog.Int("len(cbAurInfRs)" , len(cbAurInfRs)),
 			)
 		case 1:
-
+			//the user was already registered
 		default:
 			e.IntSrv(ctx, rw, fmt.Errorf("Callback::%v records were returned when only 0 or 1 are expected", len(cbAurInfRs)))
 			return

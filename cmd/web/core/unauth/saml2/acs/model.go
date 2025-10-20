@@ -18,8 +18,6 @@ import (
 type AcsInf struct {
 	SsoUrl      string
 	SsoBndNm    string
-	SloUrl      *string
-	SloBndNm    *string
 	IdpEntityId string
 	AcsEppPt    string
 	S2cEntityId string

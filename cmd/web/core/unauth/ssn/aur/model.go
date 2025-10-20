@@ -58,7 +58,6 @@ type AumInf struct {
 	AukcEnabled      bool
 	Saml2S2i         bool
 	Saml2S2s         bool
-	Saml2S2u         bool
 	GoogleEnabled    bool
 	MicrosoftEnabled bool
 }

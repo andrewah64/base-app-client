@@ -27,7 +27,7 @@ func Mux(ctx *context.Context, handlers map[string]http.HandlerFunc) (http.Handl
 
 	mux := http.NewServeMux()
 
-	standard := alice.New(wm.Recover , cm.ResponseHeaders, cm.CSRFHandler)
+	standard := alice.New(wm.Recover , cm.ResponseHeaders/*, cm.CSRFHandler*/)
 	auth     := alice.New(wm.WebAuth)
 	unauth   := alice.New(wm.WebUnauth)
 

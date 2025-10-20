@@ -17,7 +17,6 @@ import (
 )
 
 import (
-	"github.com/andrewah64/base-app-client/internal/common/core/saml2"
 	"github.com/andrewah64/base-app-client/internal/common/core/session"
 	"github.com/andrewah64/base-app-client/internal/web/core/error"
 	"github.com/andrewah64/base-app-client/internal/web/core/ui/data/form"
@@ -53,37 +52,6 @@ func idpParams(idpNm string, idpEntityId string, idpEnabled *bool, pageNumber in
 	}
 
 	v.Set("s2c-tnt-inf-idp-page-number" , strconv.Itoa(pageNumber))
-
-	return v.Encode()
-}
-
-func spcParams(spcNm string, spcIncTs *time.Time, spcExpTs *time.Time, spcEnabled *bool, pageNumber int) string {
-	v := url.Values{}
-
-	v.Set("s2c-tnt-inf-spc-nm" , spcNm)
-
-	switch spcIncTs {
-		case nil:
-			v.Set("s2c-tnt-inf-spc-inc-ts" , "")
-		default :
-			v.Set("s2c-tnt-inf-spc-inc-ts" , spcIncTs.Format(time.DateOnly))
-	}
-
-	switch spcExpTs {
-		case nil:
-			v.Set("s2c-tnt-inf-spc-exp-ts" , "")
-		default :
-			v.Set("s2c-tnt-inf-spc-exp-ts" , spcExpTs.Format(time.DateOnly))
-	}
-
-	switch spcEnabled {
-		case nil:
-			v.Set("s2c-tnt-inf-spc-enabled" , "")
-		default :
-			v.Set("s2c-tnt-inf-spc-enabled" , strconv.FormatBool(*spcEnabled))
-	}
-
-	v.Set("s2c-tnt-inf-spc-page-number" , strconv.Itoa(pageNumber))
 
 	return v.Encode()
 }
@@ -136,41 +104,6 @@ func Delete (rw http.ResponseWriter, r *http.Request) {
 					message = data.T("web-core-auth-s2c-tnt-del-idp-form.message-delete-success-singular", "n", strconv.Itoa(len(idpId)))
 				} else {
 					message = data.T("web-core-auth-s2c-tnt-del-idp-form.message-delete-success-plural"  , "n", strconv.Itoa(len(idpId)))
-				}
-
-				notification.Toast(ctx, ssd.Logger, rw, r, "success" , &map[string]string{"Message" : message}, data)
-			}
-
-		case "spc" :
-			pfErr := r.ParseForm()
-			if pfErr != nil {
-				error.IntSrv(ctx, rw, pfErr)
-				return
-			}
-
-			spcId, spcIdErr := form.VIntArray(r, "s2c-tnt-inf-spc-id")
-			if spcIdErr != nil {
-				error.IntSrv(ctx, rw, spcIdErr)
-				return
-			}
-
-			if len(spcId) > 0 {
-				delErr := DelSpc(&ctx, ssd.Logger, ssd.Conn, ssd.TntId, spcId, nil)
-				if delErr != nil{
-					error.IntSrv(ctx, rw, delErr)
-					return
-				}
-
-				ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Delete::success")
-
-				rw.Header().Set("HX-Trigger", `{"mod":{"target":"#s2c-tnt-inf-spc-form"}}`)
-
-				message := ""
-
-				if len(spcId) == 1 {
-					message = data.T("web-core-auth-s2c-tnt-del-spc-form.message-delete-success-singular", "n", strconv.Itoa(len(spcId)))
-				} else {
-					message = data.T("web-core-auth-s2c-tnt-del-spc-form.message-delete-success-plural"  , "n", strconv.Itoa(len(spcId)))
 				}
 
 				notification.Toast(ctx, ssd.Logger, rw, r, "success" , &map[string]string{"Message" : message}, data)
@@ -237,18 +170,6 @@ func Get(rw http.ResponseWriter, r *http.Request){
 				return
 			}
 
-			s2gInfRs, s2gInfRsErr := GetS2gInf(&ctx, ssd.Logger, ssd.Conn, ssd.TntId)
-			if s2gInfRsErr != nil {
-				error.IntSrv(ctx, rw, s2gInfRsErr)
-				return
-			}
-
-			spcInfRs, spcInfRsErr := GetSpcInf(&ctx, ssd.Logger, ssd.Conn, ssd.TntId, "", nil, nil, nil, offset, resultLimit)
-			if spcInfRsErr != nil {
-				error.IntSrv(ctx, rw, spcInfRsErr)
-				return
-			}
-
 			data.FormOpts  = &map[string]any{
 				"Opts" : &optsRs,
 			}
@@ -256,101 +177,14 @@ func Get(rw http.ResponseWriter, r *http.Request){
 			data.ResultSet = &map[string]any{
 				"Idp"         : &idpInfRs,
 				"S2c"         : &s2cInfRs,
-				"S2g"         : &s2gInfRs,
-				"Spc"         : &spcInfRs,
 				"PageNumber"  : pageNumber,
 				"ResultLimit" : resultLimit,
-				"IdpParams"   : idpParams("", "" , nil,      pageNumber),
-				"SpcParams"   : spcParams("", nil, nil, nil, pageNumber),
+				"IdpParams"   : idpParams("", "" , nil, pageNumber),
 			}
 
 			html.Tmpl(ctx, ssd.Logger, rw, r, "core/auth/s2c/tnt/content", http.StatusOK, data)
 
 			ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Get::end [page load]")
-
-		case "s2c-tnt-inf-spc-scr" : // spc infinite scroll
-			pfErr := r.ParseForm()
-			if pfErr != nil {
-				error.IntSrv(ctx, rw, pfErr)
-				return
-			}
-
-			spcNm      := form.VText (r, "s2c-tnt-inf-spc-nm")
-			spcIncTs   := form.PDate (r, "s2c-tnt-inf-spc-inc-ts")
-			spcExpTs   := form.PDate (r, "s2c-tnt-inf-spc-exp-ts")
-			spcEnabled := form.PBool (r, "s2c-tnt-inf-spc-enabled")
-			pageNumber := form.VInt  (r, "s2c-tnt-inf-spc-page-number")
-			offset     := (pageNumber - 1) * resultLimit
-
-			ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Get::get data from form",
-				slog.String("spcNm"      , spcNm),
-				slog.Any   ("spcIncTs"   , spcIncTs),
-				slog.Any   ("spcExpTs"   , spcExpTs),
-				slog.Any   ("spcEnabled" , spcEnabled),
-				slog.Int   ("pageNumber" , pageNumber),
-				slog.Int   ("offset"     , offset),
-			)
-
-			spcInfRs, spcInfRsErr := GetSpcInf(&ctx, ssd.Logger, ssd.Conn, ssd.TntId, spcNm, spcIncTs, spcExpTs, spcEnabled, offset, resultLimit)
-			if spcInfRsErr != nil {
-				error.IntSrv(ctx, rw, spcInfRsErr)
-				return
-			}
-
-			ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Get::retrieve datasets",
-				slog.Int("len(spcInfRs)" , len(spcInfRs)),
-			)
-
-			data.ResultSet = &map[string]any{
-				"Spc"         : &spcInfRs,
-				"SpcParams"   : spcParams(spcNm, spcIncTs, spcExpTs, spcEnabled, pageNumber + 1),
-				"ResultLimit" : resultLimit,
-			}
-
-			rw.Header().Set("HX-Trigger", "inf")
-
-			html.Tmpl(ctx, ssd.Logger, rw, r, "core/auth/s2c/tnt/template/res-spc", http.StatusOK, &data)
-
-			ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Get::end [infinite scroll]")
-
-		case "s2c-tnt-inf-spc-form" : // spc search
-			pfErr := r.ParseForm()
-			if pfErr != nil {
-				error.IntSrv(ctx, rw, pfErr)
-				return
-			}
-
-			spcNm      := form.VText (r, "s2c-tnt-inf-spc-nm")
-			spcIncTs   := form.PDate (r, "s2c-tnt-inf-spc-inc-ts")
-			spcExpTs   := form.PDate (r, "s2c-tnt-inf-spc-exp-ts")
-			spcEnabled := form.PBool (r, "s2c-tnt-inf-spc-enabled")
-			pageNumber := form.VInt  (r, "s2c-tnt-inf-spc-page-number")
-
-			ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Get::get data from spc inf form",
-				slog.String("spcNm"      , spcNm),
-				slog.Any   ("spcIncTs"   , spcIncTs),
-				slog.Any   ("spcExpTs"   , spcExpTs),
-				slog.Any   ("spcEnabled" , spcEnabled),
-				slog.Int   ("pageNumber" , pageNumber),
-			)
-
-			spcInfRs, spcInfRsErr := GetSpcInf(&ctx, ssd.Logger, ssd.Conn, ssd.TntId, spcNm, spcIncTs, spcExpTs, spcEnabled, offset, resultLimit)
-			if spcInfRsErr != nil {
-				error.IntSrv(ctx, rw, spcInfRsErr)
-				return
-			}
-
-			data.ResultSet = &map[string]any{
-				"Spc"         : &spcInfRs,
-				"SpcParams"   : spcParams(spcNm, spcIncTs, spcExpTs, spcEnabled, pageNumber),
-				"ResultLimit" : resultLimit,
-			}
-
-			rw.Header().Set("HX-Trigger", "src")
-
-			html.Tmpl(ctx, ssd.Logger, rw, r, "core/auth/s2c/tnt/template/res-spc", http.StatusOK, &data)
-
-			ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Get::end [search]")
 
 		case "s2c-tnt-inf-idp-scr" : // idp infinite scroll
 			pfErr := r.ParseForm()
@@ -510,60 +344,7 @@ func Patch(rw http.ResponseWriter, r *http.Request){
 			html.HiddenUtsFragment(rw, "s2c-tnt-mod-gen-uts-ctr", "s2c-tnt-mod-gen-uts", "s2c-tnt-mod-gen-uts", s2cUtsInfRs[0].Uts, data.TFT())
 
 			notification.Toast(ctx, slog.Default(), rw, r, "success", &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-mod-gen-form.message-input-success")} , data)
-		case "cdf":
-			pfErr := r.ParseForm()
-			if pfErr != nil {
-				error.IntSrv(ctx, rw, pfErr)
-				return
-			}
 
-			s2gCrtCn  := form.VText (r, "s2g-tnt-mod-cdf-crt-cn")
-			s2gCrtOrg := form.VText (r, "s2g-tnt-mod-cdf-crt-org")
-			uts       := form.VTime (r, "s2g-tnt-mod-cdf-uts")
-
-			ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Patch::get data from cdf form",
-				slog.String("s2gCrtCn"  , s2gCrtCn),
-				slog.String("s2gCrtOrg" , s2gCrtOrg),
-				slog.Any   ("uts"       , uts),
-			)
-
-			exptErrs := []string{
-				"OLOCK",
-			}
-
-			patchErr := PatchS2g(&ctx, ssd.Logger, ssd.Conn, ssd.TntId, s2gCrtCn, s2gCrtOrg, data.User.AurNm, uts, exptErrs)
-			if patchErr != nil {
-				var pgErr *pgconn.PgError
-
-				if errors.As(patchErr, &pgErr) {
-					switch pgErr.Code {
-						case "OLOCK":
-							rw.Header().Set("HX-Location", fmt.Sprintf(`{"path":"%v", "target":"#main", "select":"#content", "swap" : "innerHTML show:window:top", "values":{"ntf": "web-core-auth-s2c-tnt-mod-cdf-form.warning-input-olock-error", "lvl": "error"}}`, currentUrl))
-
-						default:
-							slog.LogAttrs(ctx, slog.LevelError, "Patch::unexpected error",
-								slog.String("patchErr"  , patchErr.Error()),
-								slog.String("s2gCrtCn"  , s2gCrtCn),
-								slog.String("s2gCrtOrg" , s2gCrtOrg),
-								slog.Any   ("uts"       , uts),
-							)
-
-							notification.Toast(ctx, slog.Default(), rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-mod-cdf-form.warning-input-unexpected-error")}, data)
-
-							return
-					}
-				}
-			}
-
-			s2gUtsInfRs, s2gUtsInfRsErr := GetS2gUtsInf(&ctx, ssd.Logger, ssd.Conn, ssd.TntId)
-			if s2gUtsInfRsErr != nil {
-				error.IntSrv(ctx, rw, s2gUtsInfRsErr)
-				return
-			}
-
-			html.HiddenUtsFragment(rw, "s2g-tnt-mod-cdf-uts-ctr", "s2g-tnt-mod-cdf-uts", "s2g-tnt-mod-cdf-uts", s2gUtsInfRs[0].Uts, data.TFT())
-
-			notification.Toast(ctx, slog.Default(), rw, r, "success", &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-mod-cdf-form.message-input-success")} , data)
 	}
 
 	ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Patch::end")
@@ -587,66 +368,6 @@ func Post(rw http.ResponseWriter, r *http.Request){
 	}
 
 	switch r.PathValue("nm") {
-		case "spc":
-			pfErr := r.ParseForm()
-			if pfErr != nil {
-				error.IntSrv(ctx, rw, pfErr)
-				return
-			}
-
-			spcNm    := form.VText (r, "s2c-tnt-reg-spc-nm")
-			spcIncTs := form.VDate (r, "s2c-tnt-reg-spc-inc-ts")
-			spcExpTs := form.VDate (r, "s2c-tnt-reg-spc-exp-ts")
-
-			ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Post::get data from spc form",
-				slog.String("spcNm"    , spcNm),
-				slog.Any   ("spcIncTs" , spcIncTs),
-				slog.Any   ("spcExpTs" , spcExpTs),
-			)
-
-			valRs, valRsErr := val.GetSpcInf(&ctx, ssd.Logger, ssd.Conn, ssd.TntId, spcNm)
-			if valRsErr != nil {
-				error.IntSrv(ctx, rw, valRsErr)
-				return
-			}
-
-			if ! valRs[0].SpcNmOk {
-				notification.Toast(ctx, ssd.Logger, rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-reg-spc-form.warning-input-spc-nm-taken", "spcNm", spcNm)}, data)
-
-				return
-			}
-
-			s2gInfRs, s2gInfRsErr := GetS2gInf(&ctx, ssd.Logger, ssd.Conn, ssd.TntId)
-			if s2gInfRsErr != nil {
-				error.IntSrv(ctx, rw, s2gInfRsErr)
-				return
-			}
-
-			encKeyUsage := x509.KeyUsageDataEncipherment | x509.KeyUsageKeyEncipherment
-			sgnKeyUsage := x509.KeyUsageDigitalSignature
-
-			spcEncCrt, spcEncPvk, spcEncCrtErr := saml2.GenCert(s2gInfRs[0].S2gCrtCn, []string{s2gInfRs[0].S2gCrtOrg}, encKeyUsage, spcIncTs, spcExpTs)
-			if spcEncCrtErr != nil {
-				error.IntSrv(ctx, rw, s2gInfRsErr)
-				return
-			}
-
-			spcSgnCrt, spcSgnPvk, spcSgnCrtErr := saml2.GenCert(s2gInfRs[0].S2gCrtCn, []string{s2gInfRs[0].S2gCrtOrg}, sgnKeyUsage, spcIncTs, spcExpTs)
-			if spcSgnCrtErr != nil {
-				error.IntSrv(ctx, rw, spcSgnCrtErr)
-				return
-			}
-
-			postErr := PostSpc(&ctx, ssd.Logger, ssd.Conn, ssd.TntId, spcNm, s2gInfRs[0].S2gCrtCn, s2gInfRs[0].S2gCrtOrg, spcEncCrt, spcEncPvk, spcSgnCrt, spcSgnPvk, spcIncTs, spcExpTs, data.User.AurNm, nil)
-			if postErr != nil {
-				error.IntSrv(ctx, rw, postErr)
-				return
-			}
-
-			rw.Header().Set("HX-Trigger", `{"mod":{"target":"#s2c-tnt-inf-spc-form"}}`)
-
-			notification.Toast(ctx, slog.Default(), rw, r, "success", &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-reg-spc-form.message-input-success")} , data)
-
 		case "mde":
 			pfErr := r.ParseForm()
 			if pfErr != nil {

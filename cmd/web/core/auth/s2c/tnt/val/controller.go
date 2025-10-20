@@ -102,37 +102,5 @@ func Get(rw http.ResponseWriter, r *http.Request) {
 				&msgs,
 				data,
 			)
-
-		case "spc" :
-			spcNm := form.VText (r, "s2c-tnt-reg-spc-nm")
-
-			ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Get::get result of validation",
-				slog.Int   ("ssd.TntId" , ssd.TntId),
-				slog.String("spcNm"     , spcNm),
-			)
-
-			valRs, valRsErr := GetSpcInf(&ctx, ssd.Logger, ssd.Conn, ssd.TntId, spcNm)
-			if valRsErr != nil {
-				error.IntSrv(ctx, rw, valRsErr)
-				return
-			}
-
-			ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Get::retrieve datasets",
-				slog.Int("len(valRs)" , len(valRs)),
-			)
-
-			msgs := make([]string, 0)
-
-			if !valRs[0].SpcNmOk {
-				msgs = append(msgs, data.T("web-core-auth-s2c-tnt-reg-spc-form.warning-input-spc-nm-taken", "spcNm", spcNm))
-			}
-
-			notification.Vrl(ctx, ssd.Logger, rw, r,
-				data.T("web-core-auth-s2c-tnt-page.title-edit"),
-				data.T("web-core-auth-s2c-tnt-reg-spc-form.title-warning-singular", "n", strconv.Itoa(len(msgs))),
-				data.T("web-core-auth-s2c-tnt-reg-spc-form.title-warning-plural"  , "n", strconv.Itoa(len(msgs))),
-				&msgs,
-				data,
-			)
 	}
 }

@@ -56,7 +56,6 @@ import (
 	unauthotpaur     "github.com/andrewah64/base-app-client/cmd/web/core/unauth/otp/aur"
 	unauthotpssnaur  "github.com/andrewah64/base-app-client/cmd/web/core/unauth/otp/ssn/aur"
 	unauthsaml2acs   "github.com/andrewah64/base-app-client/cmd/web/core/unauth/saml2/acs"
-	unauthsaml2mde   "github.com/andrewah64/base-app-client/cmd/web/core/unauth/saml2/mde"
 	unauthssnaur     "github.com/andrewah64/base-app-client/cmd/web/core/unauth/ssn/aur"
 )
 
@@ -200,7 +199,6 @@ func main() {
 			"web.core.unauth.otp.ssn.aur.Get"   : unauthotpssnaur.Get,
 			"web.core.unauth.otp.ssn.aur.Post"  : unauthotpssnaur.Post,
 			"web.core.unauth.saml2.acs.Post"    : unauthsaml2acs.Post,
-			"web.core.unauth.saml2.mde.Get"     : unauthsaml2mde.Get,
 			"web.core.unauth.ssn.aur.Get"       : unauthssnaur.Get,
 			"web.core.unauth.ssn.aur.Post"      : unauthssnaur.Post,
 		}

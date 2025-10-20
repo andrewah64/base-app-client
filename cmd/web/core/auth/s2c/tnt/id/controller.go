@@ -70,32 +70,6 @@ func Get(rw http.ResponseWriter, r *http.Request) {
 			if len(idpRs) == 0 {
 				notification.Toast(ctx, slog.Default(), rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-mod-idp-form.warning-input-olock-error")}, data)
 			}
-
-		case "spc" :
-			spcId, spcIdErr := strconv.Atoi(r.PathValue("id"))
-			if spcIdErr != nil || spcId < 1 {
-				error.IntSrv(ctx, rw, fmt.Errorf("Get::get spcId"))
-				return
-			}
-
-			spcRs, spcRsErr := GetRowSpcMod(&ctx, ssd.Logger, ssd.Conn, ssd.TntId, spcId)
-			if spcRsErr != nil {
-				error.IntSrv(ctx, rw, spcRsErr)
-				return
-			}
-
-			ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Get::retrieve datasets",
-				slog.Int("spcId"      , spcId),
-				slog.Int("len(spcRs)" , len(spcRs)),
-			)
-
-			data.ResultSet = &map[string]any{"Spc": &spcRs}
-
-			html.Fragment(ctx, ssd.Logger, rw, r, "core/auth/s2c/tnt/fragment/modrow-spc", http.StatusCreated, &data)
-
-			if len(spcRs) == 0 {
-				notification.Toast(ctx, slog.Default(), rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-mod-spc-form.warning-input-olock-error")}, data)
-			}
 	}
 
 	ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Get::end")
@@ -212,100 +186,6 @@ func Patch(rw http.ResponseWriter, r *http.Request) {
 			html.Fragment(ctx, ssd.Logger, rw, r, "core/auth/s2c/tnt/fragment/infrow-idp", http.StatusCreated, &data)
 
 			notification.Toast(ctx, slog.Default(), rw, r, "success" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-mod-idp-form.message-input-success")}, data)
-
-		case "spc" :
-			spcId, spcIdErr := strconv.Atoi(r.PathValue("id"))
-			if spcIdErr != nil || spcId < 1 {
-				error.IntSrv(ctx, rw, fmt.Errorf("Get::get spcId"))
-				return
-			}
-
-			pfErr := r.ParseForm()
-			if pfErr != nil {
-				error.IntSrv(ctx, rw, pfErr)
-				return
-			}
-
-			spcNm      := form.VText (r, fmt.Sprintf("s2c-tnt-inf-spc-nm-%v"      , spcId))
-			spcEnabled := form.VBool (r, fmt.Sprintf("s2c-tnt-inf-spc-enabled-%v" , spcId))
-			uts        := form.VTime (r, fmt.Sprintf("s2c-tnt-inf-spc-uts-%v"     , spcId))
-
-			spcValRs, spcValRsErr := GetRowSpcVal(&ctx, ssd.Logger, ssd.Conn, ssd.TntId, spcId, spcNm, spcEnabled)
-			if spcValRsErr != nil {
-				error.IntSrv(ctx, rw, spcValRsErr)
-				return
-			}
-
-			if ! spcValRs[0].SpcNmOk {
-				Get(rw, r)
-
-				notification.Toast(ctx, slog.Default(), rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-mod-spc-form.warning-input-spc-nm-taken", "spcNm" , spcNm)}, data)
-
-				return
-			}
-
-			if ! spcValRs[0].SpcEnabledOk {
-				Get(rw, r)
-
-				notification.Toast(ctx, slog.Default(), rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-mod-spc-form.warning-input-spc-enabled")}, data)
-
-				return
-			}
-
-			if ! spcValRs[0].SpcTsOk {
-				Get(rw, r)
-
-				notification.Toast(ctx, slog.Default(), rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-mod-spc-form.warning-input-spc-ts")}, data)
-
-				return
-			}
-
-			exptErrs := []string{
-				"OLOKU",
-				"OLOKD",
-			}
-
-			patchErr := PatchSpc (&ctx, ssd.Logger, ssd.Conn, ssd.TntId, spcId, spcNm, spcEnabled, data.User.AurNm, uts, exptErrs)
-			if patchErr != nil{
-				Get(rw, r)
-
-				var pgErr *pgconn.PgError
-
-				if errors.As(patchErr, &pgErr) {
-					ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Patch: PatchGrp params",
-						slog.Int   ("ssd.TntId"  , ssd.TntId),
-						slog.Int   ("spcId"      , spcId),
-						slog.String("spcNm"      , spcNm),
-						slog.Bool  ("spcEnabled" , spcEnabled),
-						slog.String("patchErr"   , patchErr.Error()),
-					)
-
-					switch pgErr.Code {
-						case "OLOKU":
-							notification.Toast(ctx, slog.Default(), rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-mod-spc-form.warning-input-olock-error")}, data)
-
-						case "OLOKD":
-							//intentionally empty
-
-						default:
-							notification.Toast(ctx, slog.Default(), rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-mod-spc-form.warning-input-unexpected-error")}, data)
-					}
-
-					return
-				}
-			}
-
-			spcRs, spcRsErr := GetRowSpcInf(&ctx, ssd.Logger, ssd.Conn, ssd.TntId, spcId)
-			if spcRsErr != nil {
-				error.IntSrv(ctx, rw, spcRsErr)
-				return
-			}
-
-			data.ResultSet = &map[string]any{"Spc": &spcRs}
-
-			html.Fragment(ctx, ssd.Logger, rw, r, "core/auth/s2c/tnt/fragment/infrow-spc", http.StatusCreated, &data)
-
-			notification.Toast(ctx, slog.Default(), rw, r, "success" , &map[string]string{"Message" : data.T("web-core-auth-s2c-tnt-mod-spc-form.message-input-success")}, data)
 	}
 
 	ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Patch::end")
