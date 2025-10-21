@@ -147,15 +147,15 @@ func Post (rw http.ResponseWriter, r *http.Request) {
 				return
 			}
 
-			ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Callback::get user's details after registering them",
+			ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Post::get user's details after registering them",
 				slog.Int("len(aurInfRs)" , len(aurInfRs)),
 			)
+		case 1:
+			//The user was already registered
+		default:
+			error.IntSrv(ctx, rw, fmt.Errorf("Post::%v records were returned when only 0 or 1 are expected", len(aurInfRs)))
+			return
 	}
-
-	//get user info based on email address - aur_inf
-
-	//if they aren't registered, reg aur, get user info based on email address - reg_aur, aur_inf
-
 
 	cookieExpiry := time.Now().Add(aurInfRs[0].SsnDn)
 

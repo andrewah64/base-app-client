@@ -1,6 +1,7 @@
 package aur
 
 import (
+	"crypto/x509"
 	"encoding/json"
 	"fmt"
 	"log/slog"
@@ -28,6 +29,11 @@ import (
 	"github.com/go-webauthn/webauthn/webauthn"
 )
 
+import (
+	"github.com/russellhaering/gosaml2"
+	"github.com/russellhaering/goxmldsig"
+)
+
 func Get(rw http.ResponseWriter, r *http.Request){
 	ctx := r.Context()
 
@@ -52,17 +58,74 @@ func Get(rw http.ResponseWriter, r *http.Request){
 		error.IntSrv(ctx, rw, aumRsErr)
 		return
 	}
-/*
-	if aumRs[0].Saml2S2i { //IdP initiated SAML2 : this endpoint doesn't serve a purpose
-		
+
+	if aumRs[0].Saml2S2i {
+		ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Get::IDP-initiated SAML2 authentication configured")
+
+		rw.WriteHeader(http.StatusForbidden)
 
 		return
 	}
 
 	if aumRs[0].Saml2S2s {
-		http.Redirect(rw, r, "", http.StatusSeeOther)
+		s2sInfRs, s2sRsErr := GetS2sInf(&ctx, ssd.Logger, ssd.Conn, ssd.TntId)
+		if s2sRsErr != nil {
+			error.IntSrv(ctx, rw, s2sRsErr)
+
+			return
+		}
+
+		if len(s2sInfRs) == 0 {
+			ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Get::no IDP information retrieved")
+
+			rw.WriteHeader(http.StatusForbidden)
+
+			return
+		}
+
+		roots := make([]*x509.Certificate, len(s2sInfRs[0].IpcCrt))
+
+		for i, ipcCrt := range s2sInfRs[0].IpcCrt {
+			crt, crtErr := x509.ParseCertificate(ipcCrt)
+			if crtErr != nil {
+				error.IntSrv(ctx, rw, crtErr)
+				return
+			}
+
+			roots[i] = crt
+		}
+
+		idpCs := dsig.MemoryX509CertificateStore{
+			Roots: roots,
+		}
+
+		var sp *saml2.SAMLServiceProvider
+
+		sp = &saml2.SAMLServiceProvider {
+			IdentityProviderSSOURL      : s2sInfRs[0].SsoUrl,
+			IdentityProviderSSOBinding  : s2sInfRs[0].SsoBndNm,
+			IdentityProviderIssuer      : s2sInfRs[0].IdpEntityId,
+			ServiceProviderIssuer       : s2sInfRs[0].S2cEntityId,
+			AssertionConsumerServiceURL : s2sInfRs[0].AcsEppPt,
+			SignAuthnRequests           : true,
+			AudienceURI                 : s2sInfRs[0].S2cEntityId,
+			IDPCertificateStore         : &idpCs,
+			SPKeyStore                  : dsig.RandomKeyStoreForTest(),
+		}
+
+		idpSsoUrl, idpSsoUrlErr := sp.BuildAuthURL("")
+		if idpSsoUrlErr != nil {
+			slog.LogAttrs(ctx, slog.LevelError, "Get::unable to generate URL to redirect to for SP-initiated SAML2 auth")
+
+			error.IntSrv(ctx, rw, idpSsoUrlErr)
+
+			return
+		}
+
+		http.Redirect(rw, r, idpSsoUrl, http.StatusSeeOther)
+
 		return
-	} else {*/
+	} else {
 		p := r.URL.Query()
 
 		if p.Has("ntf"){
@@ -88,7 +151,7 @@ func Get(rw http.ResponseWriter, r *http.Request){
 		html.Tmpl(ctx, ssd.Logger, rw, r, "core/unauth/ssn/aur/content", http.StatusOK, &data)
 
 		ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Get::end")
-	//}
+	}
 }
 
 func Post(rw http.ResponseWriter, r *http.Request){

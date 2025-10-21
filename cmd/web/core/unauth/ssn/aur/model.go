@@ -347,6 +347,38 @@ func GetPkyAur (ctx *context.Context, conn *pgxpool.Conn, tntId int, aurNm strin
 	return user, nil
 }
 
+type S2sInf struct {
+	SsoUrl      string
+	SsoBndNm    string
+	IdpEntityId string
+	AcsEppPt    string
+	S2cEntityId string
+	IpcCrt      [][]byte
+}
+
+func GetS2sInf (ctx *context.Context, logger *slog.Logger, conn *pgxpool.Conn, tntId int) ([]S2sInf, error) {
+	rs, rErr := db.DataSet[S2sInf](ctx, logger, conn,
+		func(ctx *context.Context, tx *pgx.Tx)(string, string, *pgx.Rows, error){
+			dbFunc := "s2s_inf"
+			qry    := fmt.Sprintf("select web_core_unauth_ssn_aur_reg.%v($1, $2)", dbFunc)
+
+			c, cErr := (*tx).Query(*ctx, qry, dbFunc, tntId)
+			if cErr != nil {
+				slog.LogAttrs(*ctx, slog.LevelError, "get dataset",
+					slog.String("error" , cErr.Error()),
+					slog.String("qry"   , qry),
+					slog.Int   ("tntId" , tntId),
+				)
+
+				return qry, dbFunc, nil, fmt.Errorf("call database function: %w", cErr)
+			}
+
+			return qry, dbFunc, &c, nil
+		})
+	
+	return rs, rErr
+}
+
 func PostNnc (ctx *context.Context, logger *slog.Logger, conn *pgxpool.Conn, tntId int, aurId int, nncNonce string, nncExpTs time.Time, exptErrs []string) error {
 	var (
 		sprocCall   = "call web_core_unauth_ssn_aur_reg.reg_nnc(@p_tnt_id, @p_aur_id, @p_nnc_nonce, @p_nnc_exp_ts)"
