@@ -52,15 +52,17 @@ func Get(rw http.ResponseWriter, r *http.Request){
 		error.IntSrv(ctx, rw, aumRsErr)
 		return
 	}
-
+/*
 	if aumRs[0].Saml2S2i { //IdP initiated SAML2 : this endpoint doesn't serve a purpose
+		
+
 		return
 	}
 
 	if aumRs[0].Saml2S2s {
 		http.Redirect(rw, r, "", http.StatusSeeOther)
 		return
-	} else {
+	} else {*/
 		p := r.URL.Query()
 
 		if p.Has("ntf"){
@@ -86,7 +88,7 @@ func Get(rw http.ResponseWriter, r *http.Request){
 		html.Tmpl(ctx, ssd.Logger, rw, r, "core/unauth/ssn/aur/content", http.StatusOK, &data)
 
 		ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Get::end")
-	}
+	//}
 }
 
 func Post(rw http.ResponseWriter, r *http.Request){
@@ -268,6 +270,7 @@ func Post(rw http.ResponseWriter, r *http.Request){
 			rw.Header().Set("Content-Type", "application/json")
 
 			json.NewEncoder(rw).Encode(c)
+
 		case "pky-atn-end":
 			aurNm := strings.ToLower(strings.TrimSpace(strings.Split(r.PathValue("aum"), "/")[1]))
 

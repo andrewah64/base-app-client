@@ -78,14 +78,14 @@ func GetCallbackInf (ctx *context.Context, logger *slog.Logger, conn *pgxpool.Co
 	return rs, rErr
 }
 
-type CallbackAurInf struct {
+type AurInf struct {
 	AurId           int
 	SsnDn           time.Duration
 	EppPt           string
 }
 
-func GetCallbackAurInf (ctx *context.Context, logger *slog.Logger, conn *pgxpool.Conn, tntId int, aurEa string) ([]CallbackAurInf, error) {
-	rs, rErr := db.DataSet[CallbackAurInf](ctx, logger, conn,
+func GetAurInf (ctx *context.Context, logger *slog.Logger, conn *pgxpool.Conn, tntId int, aurEa string) ([]AurInf, error) {
+	rs, rErr := db.DataSet[AurInf](ctx, logger, conn,
 		func(ctx *context.Context, tx *pgx.Tx)(string, string, *pgx.Rows, error){
 			dbFunc := "aur_inf"
 			qry    := fmt.Sprintf("select web_core_unauth_oidc_callback_mod.%v($1, $2, $3)", dbFunc)
@@ -108,13 +108,12 @@ func GetCallbackAurInf (ctx *context.Context, logger *slog.Logger, conn *pgxpool
 	return rs, rErr
 }
 
-func RegAur (ctx *context.Context, logger *slog.Logger, conn *pgxpool.Conn, tntId int, aurEa string, ocpNm string, exptErrs []string) error {
+func RegAur (ctx *context.Context, logger *slog.Logger, conn *pgxpool.Conn, tntId int, aurEa string, exptErrs []string) error {
 	var (
-		sprocCall   = "call web_core_unauth_oidc_callback_mod.reg_aur(@p_tnt_id, @p_aur_ea, @p_ocp_nm)"
+		sprocCall   = "call web_core_unauth_oidc_callback_mod.reg_aur(@p_tnt_id, @p_aur_ea)"
 		sprocParams = pgx.NamedArgs{
 			"p_tnt_id" : tntId,
 			"p_aur_ea" : aurEa,
-			"p_ocp_nm" : ocpNm,
 		}
 	)
 
@@ -125,7 +124,6 @@ func RegAur (ctx *context.Context, logger *slog.Logger, conn *pgxpool.Conn, tntI
 			slog.String("error"     , sprocErr.Error()),
 			slog.Int   ("tntId"     , tntId),
 			slog.String("aurEa"     , aurEa),
-			slog.Any   ("ocpNm"     , ocpNm),
 			slog.Any   ("exptErrs"  , exptErrs),
 		)
 

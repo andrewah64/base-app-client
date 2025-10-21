@@ -249,53 +249,53 @@ func Callback(rw http.ResponseWriter, r *http.Request){
 		slog.String("aurEa" , aurEa),
 	)
 
-	cbAurInfRs, cbAurInfRsErr := GetCallbackAurInf(&ctx, ssd.Logger, ssd.Conn, ssd.TntId, aurEa)
-	if cbAurInfRsErr != nil {
-		e.IntSrv(ctx, rw, cbAurInfRsErr)
+	aurInfRs, aurInfRsErr := GetAurInf(&ctx, ssd.Logger, ssd.Conn, ssd.TntId, aurEa)
+	if aurInfRsErr != nil {
+		e.IntSrv(ctx, rw, aurInfRsErr)
 		return
 	}
 
 	ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Callback::get user's details",
-		slog.Int("len(cbAurInfRs)" , len(cbAurInfRs)),
+		slog.Int("len(aurInfRs)" , len(aurInfRs)),
 	)
 
-	switch len(cbAurInfRs) {
+	switch len(aurInfRs) {
 		case 0:
-			regErr := RegAur (&ctx, ssd.Logger, ssd.Conn, ssd.TntId, aurEa, ocpNm, nil)
+			regErr := RegAur (&ctx, ssd.Logger, ssd.Conn, ssd.TntId, aurEa, nil)
 			if regErr != nil {
 				e.IntSrv(ctx, rw, regErr)
 				return
 			}
 
-			cbAurInfRs, cbAurInfRsErr = GetCallbackAurInf(&ctx, ssd.Logger, ssd.Conn, ssd.TntId, aurEa)
-			if cbAurInfRsErr != nil {
-				e.IntSrv(ctx, rw, cbAurInfRsErr)
+			aurInfRs, aurInfRsErr = GetAurInf(&ctx, ssd.Logger, ssd.Conn, ssd.TntId, aurEa)
+			if aurInfRsErr != nil {
+				e.IntSrv(ctx, rw, aurInfRsErr)
 				return
 			}
 
 			ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Callback::get user's details after registering them",
-				slog.Int("len(cbAurInfRs)" , len(cbAurInfRs)),
+				slog.Int("len(aurInfRs)" , len(aurInfRs)),
 			)
 		case 1:
 			//the user was already registered
 		default:
-			e.IntSrv(ctx, rw, fmt.Errorf("Callback::%v records were returned when only 0 or 1 are expected", len(cbAurInfRs)))
+			e.IntSrv(ctx, rw, fmt.Errorf("Callback::%v records were returned when only 0 or 1 are expected", len(aurInfRs)))
 			return
 	}
 
-	cookieExpiry := time.Now().Add(cbAurInfRs[0].SsnDn)
+	cookieExpiry := time.Now().Add(aurInfRs[0].SsnDn)
 
 	cs.Identity(&ctx, ssd.Logger, ssd.Conn, "role_web_core_unauth_ssn_aur_reg")
 
-	ssnErr := ws.Begin(&ctx, ssd.Logger, ssd.Conn, rw, cbAurInfRs[0].AurId, cookieExpiry)
+	ssnErr := ws.Begin(&ctx, ssd.Logger, ssd.Conn, rw, aurInfRs[0].AurId, cookieExpiry)
 	if ssnErr != nil {
 		e.IntSrv(ctx, rw, ssnErr)
 		return
 	}
 
 	ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Post::redirect to user's home page",
-		slog.String("cbAurInfRs[0].EppPt", cbAurInfRs[0].EppPt),
+		slog.String("aurInfRs[0].EppPt", aurInfRs[0].EppPt),
 	)
 
-	http.Redirect(rw, r, cbAurInfRs[0].EppPt, http.StatusFound)
+	http.Redirect(rw, r, aurInfRs[0].EppPt, http.StatusFound)
 }

@@ -6,11 +6,13 @@ import (
 	"log/slog"
 	"net/http"
 	"net/mail"
+	"time"
 )
 
 import (
-	"github.com/andrewah64/base-app-client/internal/common/core/session"
-	"github.com/andrewah64/base-app-client/internal/web/core/error"
+	cs "github.com/andrewah64/base-app-client/internal/common/core/session"
+	ws "github.com/andrewah64/base-app-client/internal/web/core/session"
+	   "github.com/andrewah64/base-app-client/internal/web/core/error"
 )
 
 import (
@@ -21,7 +23,7 @@ import (
 func Post (rw http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
-	ssd, ok := session.FromContext(ctx)
+	ssd, ok := cs.FromContext(ctx)
 	if ! ok {
 		error.IntSrv(ctx, rw, fmt.Errorf("Post::get request info"))
 		return
@@ -35,7 +37,7 @@ func Post (rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	session.Identity(&ctx, ssd.Logger, ssd.Conn, "role_web_core_unauth_saml2_acs_inf")
+	cs.Identity(&ctx, ssd.Logger, ssd.Conn, "role_web_core_unauth_saml2_acs_mod")
 
 	acsInfRs, acsInfRsErr := GetAcsInf(&ctx, ssd.Logger, ssd.Conn, ssd.TntId)
 	if acsInfRsErr != nil {
@@ -44,7 +46,6 @@ func Post (rw http.ResponseWriter, r *http.Request) {
 	}
 
 	if len(acsInfRs) == 0 {
-		fmt.Printf("\n\n A \n\n")
 		ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Post::no acs information retrieved")
 
 		rw.WriteHeader(http.StatusForbidden)
@@ -64,7 +65,7 @@ func Post (rw http.ResponseWriter, r *http.Request) {
 		roots[i] = crt
 	}
 
-	cs := dsig.MemoryX509CertificateStore{
+	idpCs := dsig.MemoryX509CertificateStore{
 		Roots: roots,
 	}
 
@@ -78,7 +79,7 @@ func Post (rw http.ResponseWriter, r *http.Request) {
 		AssertionConsumerServiceURL : acsInfRs[0].AcsEppPt,
 		SignAuthnRequests           : true,
 		AudienceURI                 : acsInfRs[0].S2cEntityId,
-		IDPCertificateStore         : &cs,
+		IDPCertificateStore         : &idpCs,
 		SPKeyStore                  : dsig.RandomKeyStoreForTest(),
 	}
 
@@ -122,13 +123,53 @@ func Post (rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	aurInfRs, aurInfRsErr := GetAurInf(&ctx, ssd.Logger, ssd.Conn, ssd.TntId, aurEa)
+	if aurInfRsErr != nil {
+		error.IntSrv(ctx, rw, aurInfRsErr)
+		return
+	}
+
+	ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Post::get user's details",
+		slog.Int("len(aurInfRs)" , len(aurInfRs)),
+	)
+
+	switch len(aurInfRs) {
+		case 0:
+			regErr := RegAur (&ctx, ssd.Logger, ssd.Conn, ssd.TntId, aurEa, nil)
+			if regErr != nil {
+				error.IntSrv(ctx, rw, regErr)
+				return
+			}
+
+			aurInfRs, aurInfRsErr = GetAurInf(&ctx, ssd.Logger, ssd.Conn, ssd.TntId, aurEa)
+			if aurInfRsErr != nil {
+				error.IntSrv(ctx, rw, aurInfRsErr)
+				return
+			}
+
+			ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Callback::get user's details after registering them",
+				slog.Int("len(aurInfRs)" , len(aurInfRs)),
+			)
+	}
+
 	//get user info based on email address - aur_inf
 
 	//if they aren't registered, reg aur, get user info based on email address - reg_aur, aur_inf
 
-	//begin http session
 
-	//redirect them to the app
+	cookieExpiry := time.Now().Add(aurInfRs[0].SsnDn)
 
-	fmt.Printf("\n\n Hang on, did we get here? \n\n")
+	cs.Identity(&ctx, ssd.Logger, ssd.Conn, "role_web_core_unauth_ssn_aur_reg")
+
+	ssnErr := ws.Begin(&ctx, ssd.Logger, ssd.Conn, rw, aurInfRs[0].AurId, cookieExpiry)
+	if ssnErr != nil {
+		error.IntSrv(ctx, rw, ssnErr)
+		return
+	}
+
+	ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Post::redirect to user's home page",
+		slog.String("aurInfRs[0].EppPt", aurInfRs[0].EppPt),
+	)
+
+	http.Redirect(rw, r, aurInfRs[0].EppPt, http.StatusFound)
 }
