@@ -89,7 +89,11 @@
 											<div class="col-start-1">
 												<label for="s2c-tnt-mod-gen-aum-id"
 												       class="block text-sm/6 font-medium text-gray-900">
-													{{ .T "web-core-auth-s2c-tnt-mod-gen-form.label-aum-id" }}
+													{{if $hasRoleWebCoreS2cTntMod}}
+														{{ .T "web-core-auth-s2c-tnt-mod-gen-form.edit-label-aum-id" }}
+													{{else}}
+														{{ .T "web-core-auth-s2c-tnt-mod-gen-form.view-label-aum-id" }}
+													{{end}}
 												</label>
 												<div class="mt-2">
 													{{if $hasRoleWebCoreS2cTntMod}}
@@ -125,7 +129,9 @@
 												<label for="s2c-tnt-mod-gen-entity-id"
 												       class="block text-sm/6 font-medium text-gray-900">
 													{{if $hasRoleWebCoreS2cTntMod}}
-														{{ .T "web-core-auth-s2c-tnt-mod-gen-form.label-entity-id" }}
+														{{ .T "web-core-auth-s2c-tnt-mod-gen-form.edit-label-entity-id" }}
+													{{else}}
+														{{ .T "web-core-auth-s2c-tnt-mod-gen-form.view-label-entity-id" }}
 													{{end}}
 												</label>
 												<div class="mt-2">
@@ -251,6 +257,7 @@
 			     id="panel-s2c-idp"
 			     aria-labelledby="tab-s2c-idp"
 			     hidden>
+				{{if $hasRoleWebCoreS2cTntMod}}
 				<div class="grid grid-cols-2 grid-rows-1 border-b border-gray-200 pb-5 mb-5">
 					<div class="col-start-1 row-start-1">
 						<h2 class="text-base font-semibold text-gray-900">
@@ -408,16 +415,17 @@
 						</form>
 					</div>
 				</div>
+				{{end}}
 
 				<div class="grid grid-cols-2 grid-rows-1 mb-8">
 					<div class="col-start-1 row-start-1">
 						<h2 class="text-base font-semibold text-gray-900">
-							Manage Identity Providers
+							{{.T "web-core-auth-s2c-tnt-inf-idp-form.header"}}
 						</h2>
 					</div>
 					<div class="col-start-1 row-start-2">
 						<p class="mt-2 max-w-4xl text-sm text-gray-500">
-							Search, delete and modify identity providers
+							{{.T "web-core-auth-s2c-tnt-inf-idp-form.descr"}}
 						</p>
 					</div>
 					<div class="col-start-2 row-start-1 flex items-center gap-6">
