@@ -69,16 +69,22 @@ func WebUnauth(next http.Handler) http.Handler {
 				),
 			))
 		} else {
+			idErr := cs.Identity(&ctx, slog.Default(), ssd.Conn, "role_web_core_auth_ssn_aur_inf")
+			if idErr != nil {
+				error.IntSrv(ctx, rw, idErr)
+				return
+			}
+
 			asuiRs, asuiErr := ws.AuthSessionUserInfo(&ctx, slog.Default(), ssd.Conn, ssd.TntId, ssnTkn.Value, *eppPt, *hrmNm)
 			if asuiErr != nil{
 				error.IntSrv(ctx, rw, asuiErr)
 				return
 			}
 
-			ssd.Logger = log.Setup(slog.Level(asuiRs[0].LvlNb))
-
 			switch len(asuiRs){
 				case 1:
+					ssd.Logger = log.Setup(slog.Level(asuiRs[0].LvlNb))
+
 					ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "found active session",
 						slog.Int   ("asuiRs[0].AurId"                   , asuiRs[0].AurId),
 						slog.String("asuiRs[0].AurNm"                   , asuiRs[0].AurNm),
@@ -124,7 +130,7 @@ func WebUnauth(next http.Handler) http.Handler {
 							slog.String("hrmNm"           , *hrmNm),
 						)
 
-						rw.Header().Set("HX-Redirect", asuiRs[0].EppPt)
+						http.Redirect(rw, r, asuiRs[0].EppPt, http.StatusSeeOther)
 
 						return
 					}
@@ -138,7 +144,7 @@ func WebUnauth(next http.Handler) http.Handler {
 
 					fallthrough
 				case 0:
-					ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "user details not found",
+					slog.LogAttrs(ctx, slog.LevelDebug, "user details not found",
 						slog.String("ssnTkn.Value" , ssnTkn.Value),
 						slog.String("eppPt"        , *eppPt),
 						slog.String("hrmNm"        , *hrmNm),
