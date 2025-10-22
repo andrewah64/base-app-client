@@ -349,11 +349,7 @@ func GetPkyAur (ctx *context.Context, conn *pgxpool.Conn, tntId int, aurNm strin
 
 type S2sInf struct {
 	SsoUrl      string
-	SsoBndNm    string
-	IdpEntityId string
-	AcsEppPt    string
 	S2cEntityId string
-	IpcCrt      [][]byte
 }
 
 func GetS2sInf (ctx *context.Context, logger *slog.Logger, conn *pgxpool.Conn, tntId int) ([]S2sInf, error) {

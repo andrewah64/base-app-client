@@ -5,6 +5,7 @@ header                              = "Sign in to your account"
 label-link-sign-up                  = "No account? Sign up"
 title-warning-plural                = "{{.n}} problems were identified which prevented sign in"
 title-warning-singular              = "{{.n}} problem was identified which prevented sign in"
+warning-idp-init-auth-configured    = "Authenticate through your organisation's identity provider"
 
 [web-core-unauth-ssn-aur-reg-aupc-form]
 

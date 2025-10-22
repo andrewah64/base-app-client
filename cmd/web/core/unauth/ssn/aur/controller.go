@@ -1,7 +1,6 @@
 package aur
 
 import (
-	"crypto/x509"
 	"encoding/json"
 	"fmt"
 	"log/slog"
@@ -62,7 +61,7 @@ func Get(rw http.ResponseWriter, r *http.Request){
 	if aumRs[0].Saml2S2i {
 		ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Get::IDP-initiated SAML2 authentication configured")
 
-		rw.WriteHeader(http.StatusForbidden)
+		fmt.Fprintf(rw, data.T("web-core-unauth-ssn-aur-reg-page.warning-idp-init-auth-configured"))
 
 		return
 	}
@@ -83,34 +82,12 @@ func Get(rw http.ResponseWriter, r *http.Request){
 			return
 		}
 
-		roots := make([]*x509.Certificate, len(s2sInfRs[0].IpcCrt))
-
-		for i, ipcCrt := range s2sInfRs[0].IpcCrt {
-			crt, crtErr := x509.ParseCertificate(ipcCrt)
-			if crtErr != nil {
-				error.IntSrv(ctx, rw, crtErr)
-				return
-			}
-
-			roots[i] = crt
-		}
-
-		idpCs := dsig.MemoryX509CertificateStore{
-			Roots: roots,
-		}
-
 		var sp *saml2.SAMLServiceProvider
 
 		sp = &saml2.SAMLServiceProvider {
-			IdentityProviderSSOURL      : s2sInfRs[0].SsoUrl,
-			IdentityProviderSSOBinding  : s2sInfRs[0].SsoBndNm,
-			IdentityProviderIssuer      : s2sInfRs[0].IdpEntityId,
-			ServiceProviderIssuer       : s2sInfRs[0].S2cEntityId,
-			AssertionConsumerServiceURL : s2sInfRs[0].AcsEppPt,
-			SignAuthnRequests           : true,
-			AudienceURI                 : s2sInfRs[0].S2cEntityId,
-			IDPCertificateStore         : &idpCs,
-			SPKeyStore                  : dsig.RandomKeyStoreForTest(),
+			IdentityProviderSSOURL : s2sInfRs[0].SsoUrl,
+			ServiceProviderIssuer  : s2sInfRs[0].S2cEntityId,
+			SPKeyStore             : dsig.RandomKeyStoreForTest(),
 		}
 
 		idpSsoUrl, idpSsoUrlErr := sp.BuildAuthURL("")
