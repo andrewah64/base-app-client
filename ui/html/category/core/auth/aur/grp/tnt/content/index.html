@@ -44,6 +44,7 @@
 						<tr>
 							<th scope="col"
 							    class="relative px-7 sm:w-12 sm:px-6">
+								{{if $grpCanEdt}}
 								<div class="group absolute top-1/2 left-4 -mt-2 grid size-4 grid-cols-1">
 									<input type="checkbox"
 									       id="aur-grp-tnt-inf-aur-id"
@@ -54,6 +55,7 @@
 										<path class="opacity-0 group-has-indeterminate:opacity-100" d="M3 7H11" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
 									</svg>
 								</div>
+								{{end}}
 							</th>
 							<th scope="col"
 							    class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
