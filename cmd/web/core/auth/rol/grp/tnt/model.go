@@ -15,24 +15,25 @@ import (
 	"github.com/andrewah64/base-app-client/internal/common/core/db"
 )
 
-type Grp struct {
+type GrpInf struct {
 	GrpId      int
 	GrpNm      string
 	GrpCanEdt  bool
 }
 
-type Rol struct {
+type RolInf struct {
+	PgNm       string
 	DbrlId     int
 	DbrlDs     string
 	DbrlHas    bool
 }
 
-func GetGrp(ctx *context.Context, logger *slog.Logger, conn *pgxpool.Conn, tntId int, aurId int, grpId int) ([]Grp, error) {
+func GetGrpInf(ctx *context.Context, logger *slog.Logger, conn *pgxpool.Conn, tntId int, aurId int, grpId int) ([]GrpInf, error) {
 	const (
 		dbFunc = "grp_inf"
 	)
 
-	rs, rErr := db.DataSet[Grp](ctx, logger, conn,
+	rs, rErr := db.DataSet[GrpInf](ctx, logger, conn,
 		func(ctx *context.Context, tx *pgx.Tx)(string, string, *pgx.Rows, error){
 			qry := fmt.Sprintf("select web_core_auth_rol_grp_tnt_inf.%v($1, $2, $3, $4)", dbFunc)
 
@@ -55,12 +56,12 @@ func GetGrp(ctx *context.Context, logger *slog.Logger, conn *pgxpool.Conn, tntId
 	return rs, rErr
 }
 
-func GetRol(ctx *context.Context, logger *slog.Logger, conn *pgxpool.Conn, tntId int, aurId int, grpId int) ([]Rol, error) {
+func GetRolInf(ctx *context.Context, logger *slog.Logger, conn *pgxpool.Conn, tntId int, aurId int, grpId int) ([]RolInf, error) {
 	const (
 		dbFunc = "rol_inf"
 	)
 
-	rs, rErr := db.DataSet[Rol](ctx, logger, conn,
+	rs, rErr := db.DataSet[RolInf](ctx, logger, conn,
 		func(ctx *context.Context, tx *pgx.Tx)(string, string, *pgx.Rows, error){
 			qry := fmt.Sprintf("select web_core_auth_rol_grp_tnt_inf.%v($1, $2, $3, $4)", dbFunc)
 

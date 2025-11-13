@@ -39,13 +39,13 @@ func Get (rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	grpRs, grpRsErr := GetGrp(&ctx, ssd.Logger, ssd.Conn, ssd.TntId, data.User.AurId, grpId)
+	grpRs, grpRsErr := GetGrpInf(&ctx, ssd.Logger, ssd.Conn, ssd.TntId, data.User.AurId, grpId)
 	if grpRsErr != nil {
 		error.IntSrv(ctx, rw, grpRsErr)
 		return
 	}
 
-	rolRs, rolRsErr := GetRol(&ctx, ssd.Logger, ssd.Conn, ssd.TntId, data.User.AurId, grpId)
+	rolRs, rolRsErr := GetRolInf(&ctx, ssd.Logger, ssd.Conn, ssd.TntId, data.User.AurId, grpId)
 	if rolRsErr != nil {
 		error.IntSrv(ctx, rw, rolRsErr)
 		return
