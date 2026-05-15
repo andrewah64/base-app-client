@@ -8,7 +8,7 @@ This repository contains the front end for (1) a template web application and th
 
 ## Philosophy
 
-- The database is source of truth.
+- The database is the source of truth.
 - Any business rule that can be enforced by the database, will be enforced by the database.
 - Database functions and stored procedure calls are the only way to interact with the database.
 - The technology stack will be as spartan as possible.
