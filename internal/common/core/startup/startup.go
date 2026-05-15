@@ -29,6 +29,7 @@ type RuntimeParams struct {
 	PgSslMode   *string
 	PgCacheSize *int
 	PgApp       *string
+	PgCred      *string
 }
 
 func GetRuntimeParams () *RuntimeParams {
@@ -38,10 +39,11 @@ func GetRuntimeParams () *RuntimeParams {
 	pgPort      := flag.Int   ("pgport"      , 5432        , "Port of PostgreSQL")
 	pgUser      := flag.String("pguser"      , "postgres"  , "Name of PostgreSQL user")
 	pgPw        := flag.String("pgpw"        , "secret"    , "Password for 'pguser'")
-	pgDb        := flag.String("pgdb"        , "gopgtest"  , "Database name")
+	pgDb        := flag.String("pgdb"        , "base-app"  , "Database name")
 	pgSslMode   := flag.String("pgsslmode"   , "disable"   , "Secure connections to PG with SSL (enable|disable")
 	pgCacheSize := flag.Int   ("pgcachesize" , 0           , "Size of the PG statement cache")
 	pgApp       := flag.String("pgapp"       , "myapp"     , "Name of the application")
+	pgCred      := flag.String("pgcred"      , "systemd"   , "PostgreSQL password retrieval method (systemd)")
 
 	p := &RuntimeParams {
 		HttpPort    : httpPort,
@@ -54,6 +56,7 @@ func GetRuntimeParams () *RuntimeParams {
 		PgSslMode   : pgSslMode,
 		PgCacheSize : pgCacheSize,
 		PgApp       : pgApp,
+		PgCred      : pgCred,
 	}
 
 	flag.Parse()

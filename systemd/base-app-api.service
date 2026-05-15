@@ -1,0 +1,35 @@
+[Unit]
+Description=base-app-api
+After=network.target
+
+[Service]
+Type=simple
+User=andrew
+Group=andrew
+
+WorkingDirectory=/home/andrew
+ExecStart=/home/andrew/base-app-api \
+    -port 8080 \
+    -loglvl debug \
+    -pghost localhost \
+    -pgport 5432 \
+    -pguser postgres \
+    -pgdb base-app \
+    -pgsslmode disable \
+    -pgcred systemd
+
+# For dev: Restart=no
+# For prod: Restart=always
+Restart=no
+
+# Supports retrieval of postgres password from systemd
+LoadCredential=postgres-password
+
+# Dev-friendly settings
+ProtectSystem=strict
+ProtectHome=read-only
+PrivateTmp=yes
+NoNewPrivileges=yes
+
+[Install]
+WantedBy=multi-user.target
