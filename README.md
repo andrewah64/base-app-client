@@ -2,7 +2,7 @@
 
 This is a template web application and set of APIs written in go, htmx, tailwind, _hyperscript and postgresql. This project is elite for how boring it is. Dependencies are minimised, all communications between the application and database are done via stored procedures and functions and there is an aversion to technology that is ubiquitous but inappropriate for a straighforward web application and set of APIs.
 
-If you desire to be exposed to the latest, most fashionable technology and become a sophistcated developer then any investment in time you make here will be wasted. If you want to learn how to build a boring, solid web application that will not increase your ability to gain employment but will run without much maintenance then you should stay.
+If you desire to be exposed to the latest, most fashionable technology and become a sophisticated developer then any investment in time you make here will be wasted. If you want to learn how to build a boring, solid web application that will not increase your ability to gain employment but will run without much maintenance then you should stay.
 
 This repository contains the front end for (1) a template web application and that uses go, htmx, _hyperscript and postgresql and (2) a set of APIs. The postgresql scripts are are in the repository [https://github.com/andrewah64/base-app-db/](https://github.com/andrewah64/base-app-db/).
 
