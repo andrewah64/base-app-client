@@ -9,21 +9,21 @@ Group=andrew
 
 WorkingDirectory=/home/andrew
 ExecStart=/home/andrew/base-app-web \
-    -port 8080 \
+    -port 8081 \
     -loglvl debug \
     -pghost localhost \
     -pgport 5432 \
     -pguser postgres \
     -pgdb base-app \
     -pgsslmode disable \
-    -pgcred systemd
+    -pgcred password-systemd
 
 # For dev: Restart=no
 # For prod: Restart=always
 Restart=no
 
 # Supports retrieval of postgres password from systemd
-LoadCredential=postgres-password
+LoadCredentialEncrypted=postgres-password:/etc/credstore.encrypted/postgres-password
 
 # Dev-friendly settings
 ProtectSystem=strict

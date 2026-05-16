@@ -54,13 +54,14 @@ Choose the method that will be used to get database credentials.
 - Username / password
     - TBD
 - systemd
-    - Create a systemd unit file override directory:
-        - ```sudo mkdir -p /etc/systemd/system/base-app.service.d/```
-    - Generate an encrypted password file
-        - ```echo "[Service]" sudo systemd-ask-password -n | sudo systemd-creds encrypt --name=postgres-password -p - - | sudo tee /etc/systemd/system/base-app.service.d/postgresql.conf > /dev/null```
-    - Tailor ```<root>/systemd/base-app.service```
-        - ```sudo cp <root>/base-app-api.service /etc/systemd/system```
-        - ```sudo cp <root>/base-app-web.service /etc/systemd/system```
+    - Create a folder to store files containing secrets:
+        - ```sudo mkdir -p /etc/credstore.encrypted; sudo chmod 700 /etc/credstore.encrypted```
+    - As root, generate an encrypted password file
+        - ```systemd-ask-password -n | systemd-creds encrypt --name=postgres-password -p - /etc/credstore.encrypted/postgres-password```
+    - Tailor ```<root>/systemd/base-app-api.service```
+        - ```sudo cp <root>/systemd/base-app-api.service /etc/systemd/system```
+    - Tailor ```<root>/systemd/base-app-web.service```
+        - ```sudo cp <root>/systemd/base-app-web.service /etc/systemd/system```
     - Enable the unit file:
         - ```sudo systemctl daemon-reload```
         - ```sudo systemctl enable --now base-app-api.service```

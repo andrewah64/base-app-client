@@ -5,6 +5,9 @@ import (
 	"flag"
 	"fmt"
 	"log/slog"
+	"os"
+	"path/filepath"
+	"strings"
 )
 
 import (
@@ -38,7 +41,7 @@ func GetRuntimeParams () *RuntimeParams {
 	pgHost      := flag.String("pghost"      , "localhost" , "Host of PostgreSQL")
 	pgPort      := flag.Int   ("pgport"      , 5432        , "Port of PostgreSQL")
 	pgUser      := flag.String("pguser"      , "postgres"  , "Name of PostgreSQL user")
-	pgPw        := flag.String("pgpw"        , "secret"    , "Password for 'pguser'")
+	pgPw        := flag.String("pgpw"        , ""          , "Password for 'pguser'")
 	pgDb        := flag.String("pgdb"        , "base-app"  , "Database name")
 	pgSslMode   := flag.String("pgsslmode"   , "disable"   , "Secure connections to PG with SSL (enable|disable")
 	pgCacheSize := flag.Int   ("pgcachesize" , 0           , "Size of the PG statement cache")
@@ -60,6 +63,47 @@ func GetRuntimeParams () *RuntimeParams {
 	}
 
 	flag.Parse()
+
+	provided := make(map[string]bool)
+
+	flag.Visit(func(f *flag.Flag){
+		provided[f.Name] = true
+	})
+
+	if ! provided["pgcred"] {
+		panic("pgcred must be supplied and can be (password-plain|password-systemd)")
+	} else {
+		passwordPlain   := "password-plain"
+		passwordSystemd := "password-systemd"
+
+		if ! ( *p.PgCred == passwordPlain || *p.PgCred == passwordSystemd ) {
+			panic("pgcred must be supplied and can be (password-plain|password-systemd)")
+		}
+
+		if *p.PgCred == passwordPlain && ! provided["pgpw"] {
+			panic("pgpw must be supplied")
+		}
+
+		if *p.PgCred == passwordSystemd {
+			if provided["pgpw"] {
+				panic("pgpw must not be supplied when pgcred is password-systemd")
+			}
+
+			credPath := os.Getenv("CREDENTIALS_DIRECTORY")
+
+			_, credPathErr := os.Open(credPath)
+			if credPathErr != nil {
+				panic("Failed to locate the systemd credentials folder")
+			}
+
+			pgPw, pgPwErr := os.ReadFile(filepath.Join(credPath,"postgres-password"))
+			if pgPwErr != nil {
+				panic("Failed to retrieve postgres password from systemd")
+			}
+
+			*p.PgPw = strings.TrimSpace(string(pgPw))
+		}
+	}
 
 	return p
 }
