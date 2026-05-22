@@ -131,7 +131,7 @@ func Patch(rw http.ResponseWriter, r *http.Request){
 						slog.Any  ("uts"              , uts),
 					)
 
-					notification.Toast(ctx, slog.Default(), rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-atn-tnt-aupc-tab.warning-input-aupc-unexpected-error")}, data)
+					notification.Toast(ctx, slog.Default(), rw, r, "error" , &map[string]string{"Message" : data.T("web-core-auth-aupc-tnt-mod-form.warning-input-aupc-unexpected-error")}, data)
 			}
 		}
 
@@ -146,7 +146,7 @@ func Patch(rw http.ResponseWriter, r *http.Request){
 
 	html.HiddenUtsFragment(rw, "aupc-tnt-mod-uts-ctr", "aupc-tnt-mod-uts", "aupc-tnt-mod-uts", aupcUtsInfRs[0].Uts, data.TFT())
 
-	notification.Toast(ctx, slog.Default(), rw, r, "success", &map[string]string{"Message" : data.T("web-core-auth-atn-tnt-aupc-tab.message-input-success")} , data)
+	notification.Toast(ctx, slog.Default(), rw, r, "success", &map[string]string{"Message" : data.T("web-core-auth-aupc-tnt-mod-form.message-input-success")} , data)
 
 	ssd.Logger.LogAttrs(ctx, slog.LevelDebug, "Patch::end")
 }
