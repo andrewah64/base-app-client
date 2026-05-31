@@ -26,16 +26,16 @@ func params(aurNm string, eppPt string, hrmId *int64, lvlId *int64, pageNumber i
 
 	switch hrmId {
 		case nil:
-			v.Set("aur-tnt-inf-hrm-id" , "")
+			v.Set("log-aur-tnt-inf-hrm-id" , "")
 		default :
-			v.Set("aur-tnt-inf-hrm-id" , strconv.FormatInt(*hrmId, 10))
+			v.Set("log-aur-tnt-inf-hrm-id" , strconv.FormatInt(*hrmId, 10))
 	}
 
 	switch lvlId {
 		case nil:
-			v.Set("aur-tnt-inf-lvl-id" , "")
+			v.Set("log-aur-tnt-inf-lvl-id" , "")
 		default :
-			v.Set("aur-tnt-inf-lvl-id" , strconv.FormatInt(*lvlId, 10))
+			v.Set("log-aur-tnt-inf-lvl-id" , strconv.FormatInt(*lvlId, 10))
 	}
 
 	v.Set("log-aur-tnt-inf-page-number" , strconv.Itoa(pageNumber))
