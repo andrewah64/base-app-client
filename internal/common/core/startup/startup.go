@@ -21,6 +21,12 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
+import (
+    "github.com/aws/aws-sdk-go-v2/aws"
+    "github.com/aws/aws-sdk-go-v2/config"
+    "github.com/aws/aws-sdk-go-v2/service/secretsmanager"
+)
+
 type RuntimeParams struct {
 	HttpPort    *int
 	LogLvl      *string
@@ -33,6 +39,8 @@ type RuntimeParams struct {
 	PgCacheSize *int
 	PgApp       *string
 	PgCred      *string
+	AwsProfile  *string
+	AwsSecretNm *string
 }
 
 func GetRuntimeParams () *RuntimeParams {
@@ -47,6 +55,8 @@ func GetRuntimeParams () *RuntimeParams {
 	pgCacheSize := flag.Int   ("pgcachesize" , 0           , "Size of the PG statement cache")
 	pgApp       := flag.String("pgapp"       , "myapp"     , "Name of the application")
 	pgCred      := flag.String("pgcred"      , "systemd"   , "PostgreSQL password retrieval method (systemd)")
+	awsProfile  := flag.String("awsprofile"  , ""          , "AWS profile used to retrieve pgpw from secret's manager")
+	awsSecretNm := flag.String("awssecretnm" , ""          , "Name of AWS secret")
 
 	p := &RuntimeParams {
 		HttpPort    : httpPort,
@@ -60,6 +70,8 @@ func GetRuntimeParams () *RuntimeParams {
 		PgCacheSize : pgCacheSize,
 		PgApp       : pgApp,
 		PgCred      : pgCred,
+		AwsProfile  : awsProfile,
+		AwsSecretNm : awsSecretNm,
 	}
 
 	flag.Parse()
@@ -73,35 +85,62 @@ func GetRuntimeParams () *RuntimeParams {
 	if ! provided["pgcred"] {
 		panic("pgcred must be supplied and can be (password-plain|password-systemd)")
 	} else {
-		passwordPlain   := "password-plain"
-		passwordSystemd := "password-systemd"
+		passwordPlain             := "password-plain"
+		passwordSystemd           := "password-systemd"
+		passwordAWSSecretsManager := "password-aws-secrets-manager"
 
-		if ! ( *p.PgCred == passwordPlain || *p.PgCred == passwordSystemd ) {
-			panic("pgcred must be supplied and can be (password-plain|password-systemd)")
+		if ! ( *p.PgCred == passwordPlain || *p.PgCred == passwordSystemd || *p.PgCred == passwordAWSSecretsManager) {
+			panic("pgcred must be supplied and can be (password-plain|password-systemd|password-aws-secrets-manager)")
 		}
 
 		if *p.PgCred == passwordPlain && ! provided["pgpw"] {
 			panic("pgpw must be supplied")
 		}
 
-		if *p.PgCred == passwordSystemd {
-			if provided["pgpw"] {
-				panic("pgpw must not be supplied when pgcred is password-systemd")
-			}
+		if *p.PgCred == passwordAWSSecretsManager && ! provided["awsprofile"] && ! provided["awssecretnm"] {
+			panic("awsprofile and awssecretnm must be provided")
+		}
 
-			credPath := os.Getenv("CREDENTIALS_DIRECTORY")
+		switch *p.PgCred {
+			case passwordSystemd:
+				if provided["pgpw"] {
+					panic("pgpw must not be supplied when pgcred is password-systemd")
+				}
 
-			_, credPathErr := os.Open(credPath)
-			if credPathErr != nil {
-				panic("Failed to locate the systemd credentials folder")
-			}
+				credPath := os.Getenv("CREDENTIALS_DIRECTORY")
 
-			pgPw, pgPwErr := os.ReadFile(filepath.Join(credPath,"postgres-password"))
-			if pgPwErr != nil {
-				panic("Failed to retrieve postgres password from systemd")
-			}
+				_, credPathErr := os.Open(credPath)
+				if credPathErr != nil {
+					panic("Failed to locate the systemd credentials folder")
+				}
 
-			*p.PgPw = strings.TrimSpace(string(pgPw))
+				pgPw, pgPwErr := os.ReadFile(filepath.Join(credPath,"postgres-password"))
+				if pgPwErr != nil {
+					panic("Failed to retrieve postgres password from systemd")
+				}
+
+				*p.PgPw = strings.TrimSpace(string(pgPw))
+			case passwordAWSSecretsManager:
+				if provided["pgpw"] {
+					panic("pgpw must not be supplied when pgcred is password-aws-secrets-manager")
+				}
+
+				cfg, err := config.LoadDefaultConfig(context.TODO(), config.WithSharedConfigProfile(*awsProfile))
+				if err != nil {
+					panic("Failed to retrieve profile from the aws config file")
+				}
+
+				input := &secretsmanager.GetSecretValueInput{
+					SecretId:     aws.String(*awsSecretNm),
+					VersionStage: aws.String("AWSCURRENT"),
+				}
+
+				pgpw, err := secretsmanager.NewFromConfig(cfg).GetSecretValue(context.TODO(), input)
+				if err != nil {
+					panic("Failed to retrieve password from AWS Secrets Manager")
+				}
+
+				*p.PgPw = *pgpw.SecretString
 		}
 	}
 
@@ -121,7 +160,6 @@ func SetupDefaultLogger (logLvl string) {
 		default      :
 			panic(fmt.Sprintf("'loglvl' can be (debug|info|error). '%v' is an invalid choice", logLvl))
 	}
-
 	slog.SetDefault(log.Setup(slog.Level(lvl)))
 }
 
